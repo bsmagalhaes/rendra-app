@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Rendra App",
+    "slug": "rendra-app",
+    "scheme": "rendra",
+    "version": "0.3.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router"],
+    "web": { "bundler": "metro", "output": "static" },
+    "ios": { "supportsTablet": true },
+    "experiments": {
+      "baseUrl": "/rendra-app"
+    }
+  }
+}

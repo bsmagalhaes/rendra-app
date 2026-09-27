@@ -1,0 +1,229 @@
+import { useState } from 'react'
+import { render, fireEvent, waitFor } from '@testing-library/react-native'
+import { BrandProvider } from '../../brand/brand-provider'
+import { ThemeColorProbe } from '../../test-utils/theme-color-probe'
+import { Input, type InputProps } from './input'
+import * as useLookupModule from '../../hooks/use-lookup'
+
+function ControlledInput(props: Omit<InputProps, 'value' | 'onChange'> & { initial?: string; sync?: boolean }) {
+  const { initial = '', sync = true, ...rest } = props
+  const [value, setValue] = useState(initial)
+  return <Input {...rest} value={value} onChange={sync ? setValue : () => {}} />
+}
+
+describe('Input com máscara', () => {
+  it('cpf: changeText chama onChange e onValueChange, e o campo mostra o texto mascarado', async () => {
+    const onChange = jest.fn()
+    const onValueChange = jest.fn()
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <Input testID="campo" mask="cpf" onChange={onChange} onValueChange={onValueChange} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, '12345678901')
+    expect(onChange).toHaveBeenCalledWith('123.456.789-01')
+    expect(onValueChange).toHaveBeenCalledWith('12345678901', '123.456.789-01')
+    // Efeito visível, não só a chamada: o próprio campo passa a exibir o texto mascarado.
+    expect(campo.props.value).toBe('123.456.789-01')
+  })
+
+  it('currency: onCentsChange recebe o valor em centavos e o campo mostra o texto formatado', async () => {
+    const onCentsChange = jest.fn()
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <Input testID="campo" mask="currency" onCentsChange={onCentsChange} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, '125050')
+    expect(onCentsChange).toHaveBeenCalledWith(12505000)
+    expect(campo.props.value).toBe('R$ 125.050,00')
+  })
+
+  it('phone: ddi 351 troca para a máscara internacional, o gatilho mostra +351 e onDdiChange é chamado', async () => {
+    const onDdiChange = jest.fn()
+    const onChange = jest.fn()
+    const { findByTestId, findByLabelText, findByText } = await render(
+      <BrandProvider>
+        <Input testID="campo" mask="phone" onChange={onChange} onDdiChange={onDdiChange} />
+      </BrandProvider>,
+    )
+    const seletor = await findByLabelText(/Código do país \(DDI\)/)
+    await fireEvent.press(seletor)
+    const portugal = await findByText(/Portugal/)
+    await fireEvent.press(portugal)
+    await waitFor(() => expect(onDdiChange).toHaveBeenCalledWith('351'))
+    expect(await findByText('+351')).toBeTruthy()
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, '912345678')
+    expect(onChange).toHaveBeenCalledWith('912 345 678')
+    expect(campo.props.value).toBe('912 345 678')
+  })
+
+  it('phone: o gatilho do DDI mede min-h-touch min-w-touch (achado do Playwright, altura real 24px sem a classe)', async () => {
+    // Causa raiz: o gatilho do DDI (`trigger` customizado do Select dentro do Input) fica
+    // dentro do `<View className="relative">` do PickerPanel (sem altura própria), então
+    // `h-full` não tem uma altura de referência para resolver a porcentagem e o navegador
+    // usa a altura de conteúdo (~24px), abaixo do mínimo de toque. `npm run test:layout`
+    // mediu isso via `boundingBox()` real (role=button índice 0, altura 24), o que o Jest
+    // (sem layout de navegador) não conseguia flagrar; comprovado com a mesma técnica de
+    // asserção de classe já usada em checkbox.test.tsx/switch.test.tsx.
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <Input testID="campo" mask="phone" />
+      </BrandProvider>,
+    )
+    const seletor = await findByLabelText(/Código do país \(DDI\)/)
+    const classes = seletor.props.className.split(' ')
+    expect(classes).toEqual(expect.arrayContaining(['min-h-touch', 'min-w-touch']))
+  })
+
+  it('achado do Playwright (test:a11y): o placeholder usa placeholderTextColor com --muted-foreground (contraste)', async () => {
+    // axe (WCAG "color-contrast") reprovava o placeholder no export web real mesmo depois de
+    // uma primeira tentativa via className (`placeholder:text-muted-foreground`): o axe-core
+    // clona o elemento para medir a cor do placeholder, e o clone não herda a variável CSS
+    // `--muted-foreground` (definida só no ancestral `BrandProvider`), então `var(--muted-foreground)`
+    // fica inválida no clone e a regra cai para o cinza fixo do preflight do Tailwind
+    // (#9ca3af), contraste 2.34 contra o fundo do campo, abaixo do mínimo de 4,5:1 (comprovado
+    // por inspeção direta com @axe-core/playwright fora do Jest, script de depuração removido
+    // antes do commit). Corrigido usando a prop `placeholderTextColor` (RN/react-native-web),
+    // que vira um valor INLINE no próprio elemento (sobrevive ao clone do axe), resolvido a
+    // partir de `themeColorString(themeVars, '--muted-foreground')` (o mesmo valor já aplicado
+    // como variável CSS pelo `BrandProvider`, garantido 4,5:1 por `reach(...)`/`systemColorsLight`).
+    const capturado = { cor: '' }
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <ThemeColorProbe token="--muted-foreground" onCapture={(cor) => { capturado.cor = cor }} />
+        <Input testID="campo" mask="cpf" />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await waitFor(() => expect(capturado.cor).not.toBe(''))
+    expect(campo.props.placeholderTextColor).toBe(capturado.cor)
+  })
+
+  it('clearable chama onChange/onValueChange/onCentsChange e reseta o texto mascarado', async () => {
+    // Desvio de execução: o plano pedia `jest.spyOn(campo, 'focus')` sobre o TestInstance devolvido por
+    // `findByTestId`; esse objeto não é a instância nativa do componente (não tem métodos
+    // imperativos como `.focus`, só `tag/type/props/children/parent`), então o spy nunca
+    // teria o que espiar. A devolução de foco (`inputRef.current?.focus()`) continua em
+    // input.tsx; o teste passou a conferir os efeitos visíveis que o RNTL 14 consegue medir.
+    //
+    // Achado 5 do veredito do Bloco A: no modo controlado, o texto exibido passou a
+    // derivar só de `controlledValue`; por isso o "pai" aqui precisa de fato aceitar a
+    // mudança (`ControlledInput` com `useState`) para o texto exibido resetar de verdade,
+    // em vez de depender do objeto `masked` mutável (o bug que o achado 5 corrigiu).
+    const onValueChange = jest.fn()
+    const onCentsChange = jest.fn()
+    const { findByTestId, findByLabelText } = await render(
+      <BrandProvider>
+        <ControlledInput
+          testID="campo"
+          mask="currency"
+          initial="R$ 10,00"
+          clearable
+          onValueChange={onValueChange}
+          onCentsChange={onCentsChange}
+        />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    const limpar = await findByLabelText('Limpar campo')
+    await fireEvent.press(limpar)
+    expect(onValueChange).toHaveBeenCalledWith('', '')
+    expect(onCentsChange).toHaveBeenCalledWith(null)
+    // Efeito visível, não só a chamada: a máscara de moeda é `lazy: false` (sempre mostra
+    // o prefixo "R$ ", mesmo vazia, src/lib/masks.ts), então limpar reseta o texto exibido
+    // para o prefixo sem dígitos, não para uma string vazia.
+    expect(campo.props.value).toBe('R$ ')
+  })
+
+  it('achado 5: no modo controlado, se o pai não aceitar a mudança, o texto exibido não fica com o valor digitado', async () => {
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <ControlledInput testID="campo" mask="cpf" initial="123.456.789-01" sync={false} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    expect(campo.props.value).toBe('123.456.789-01')
+    await fireEvent.changeText(campo, '99999999999')
+    // O pai (onChange vazio, `sync={false}`) não aceitou a mudança: `value` continua
+    // "123.456.789-01"; o campo não deve exibir o texto recém-digitado.
+    expect(campo.props.value).toBe('123.456.789-01')
+  })
+
+  it('clearable num campo sem prefixo fixo (cpf) esvazia o texto e some o botão', async () => {
+    const { findByTestId, findByLabelText, queryByLabelText } = await render(
+      <BrandProvider>
+        <Input testID="campo" mask="cpf" defaultValue="12345678901" clearable />
+      </BrandProvider>,
+    )
+    expect(await findByLabelText('Limpar campo')).toBeTruthy()
+    const campo = await findByTestId('campo')
+    expect(campo.props.value).toBe('123.456.789-01')
+    await fireEvent.press(await findByLabelText('Limpar campo'))
+    expect(campo.props.value).toBe('')
+    expect(queryByLabelText('Limpar campo')).toBeNull()
+  })
+
+  it('secureTextEntry alterna pelo botão mostrar/ocultar senha', async () => {
+    const { findByLabelText, findByTestId } = await render(
+      <BrandProvider>
+        <Input testID="campo" secureTextEntry />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    expect(campo.props.secureTextEntry).toBe(true)
+    const mostrar = await findByLabelText('Mostrar senha')
+    expect(mostrar.props.accessibilityRole).toBe('button')
+    await fireEvent.press(mostrar)
+    expect(campo.props.secureTextEntry).toBe(false)
+    expect(await findByLabelText('Ocultar senha')).toBeTruthy()
+  })
+
+  it('achado do Playwright (test:a11y): os botões "Limpar campo" e "Mostrar/Ocultar senha" têm accessibilityRole="button"', async () => {
+    // axe (WCAG "aria-prohibited-attr") reprovava esses adornos no export web real: sem
+    // accessibilityRole, o react-native-web renderiza um <div> sem role, e aria-label num
+    // elemento sem role válido é proibido pela especificação ARIA.
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <Input testID="campo" defaultValue="teste" clearable />
+      </BrandProvider>,
+    )
+    const limpar = await findByLabelText('Limpar campo')
+    expect(limpar.props.accessibilityRole).toBe('button')
+  })
+
+  it('achado 6: digitar antes e trocar o DDI depois reaplica os dígitos sob a máscara nova', async () => {
+    const { findByTestId, findByLabelText, findByText } = await render(
+      <BrandProvider>
+        <Input testID="campo" mask="phone" />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, '11987654321')
+    expect(campo.props.value).toBe('(11) 98765-4321')
+    const seletor = await findByLabelText(/Código do país \(DDI\)/)
+    await fireEvent.press(seletor)
+    const portugal = await findByText(/Portugal/)
+    await fireEvent.press(portugal)
+    // Efeito visível, não só a chamada: os dígitos já digitados ("11987654321") são
+    // reaplicados sob a máscara internacional, em vez de ficar parado no formato nacional
+    // antigo (achado 6 do veredito do Bloco A).
+    expect(campo.props.value).toBe('119 876 543 21')
+  })
+
+  it('onLookup é chamado quando useLookup resolve um valor não nulo', async () => {
+    jest.spyOn(useLookupModule, 'useLookup').mockReturnValue(async () => ({ logradouro: 'Rua Teste', cidade: 'São Paulo', uf: 'SP' }))
+    const onLookup = jest.fn()
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <Input testID="campo" mask="cep" onLookup={onLookup} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, '01310100')
+    await waitFor(() => expect(onLookup).toHaveBeenCalledWith({ logradouro: 'Rua Teste', cidade: 'São Paulo', uf: 'SP' }))
+  })
+})

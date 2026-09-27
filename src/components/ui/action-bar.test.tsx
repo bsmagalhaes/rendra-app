@@ -1,0 +1,98 @@
+import { StyleSheet } from 'react-native'
+import { render, fireEvent } from '@testing-library/react-native'
+import * as SafeAreaContext from 'react-native-safe-area-context'
+import { BrandProvider } from '../../brand/brand-provider'
+import { ActionBar } from './action-bar'
+
+describe('ActionBar: layout de colunas', () => {
+  it('só primary: ocupa flex-1', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <ActionBar primary={{ label: 'Salvar', onPress: () => {} }} sticky={false} />
+      </BrandProvider>,
+    )
+    const primary = await findByText('Salvar')
+    // .parent?.parent, não .parent: a Tarefa 32 (achado do Playwright, ver desvios do lote 1)
+    // reestruturou Button para Pressable (className, o root de verdade) > Animated.View (só a
+    // escala do press), porque um Pressable animado por
+    // Animated.createAnimatedComponent(Pressable) não resolve className em CSS real no export
+    // web; o texto agora fica dois níveis abaixo do Pressable, não um.
+    expect(primary.parent?.parent?.props.className.split(' ')).toContain('flex-1')
+  })
+
+  it('primary + cancel: cancel flex-3, primary flex-7', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <ActionBar
+          primary={{ label: 'Salvar', onPress: () => {} }}
+          cancel={{ label: 'Cancelar', onPress: () => {} }}
+          sticky={false}
+        />
+      </BrandProvider>,
+    )
+    const cancel = await findByText('Cancelar')
+    const primary = await findByText('Salvar')
+    expect(cancel.parent?.parent?.props.className.split(' ')).toContain('flex-3')
+    expect(primary.parent?.parent?.props.className.split(' ')).toContain('flex-7')
+  })
+
+  it('secondary vazio ([]) não abre menu (hasMenu deve ser falso)', async () => {
+    const { queryByLabelText } = await render(
+      <BrandProvider>
+        <ActionBar primary={{ label: 'Salvar', onPress: () => {} }} secondary={[]} sticky={false} />
+      </BrandProvider>,
+    )
+    expect(queryByLabelText('Mais ações')).toBeNull()
+  })
+
+  it('secondary com itens: menu, coluna do meio vazia (sem cancel) e primary', async () => {
+    const onSecondaryPress = jest.fn()
+    const { findByLabelText, findByText } = await render(
+      <BrandProvider>
+        <ActionBar
+          primary={{ label: 'Salvar', onPress: () => {} }}
+          secondary={[{ label: 'Duplicar', onPress: onSecondaryPress }]}
+          sticky={false}
+        />
+      </BrandProvider>,
+    )
+    const trigger = await findByLabelText('Mais ações')
+    await fireEvent.press(trigger)
+    const item = await findByText('Duplicar')
+    await fireEvent.press(item)
+    expect(onSecondaryPress).toHaveBeenCalledTimes(1)
+  })
+
+  it('primary.loading mostra loadingLabel e desabilita', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <ActionBar primary={{ label: 'Salvar', onPress: () => {}, loading: true }} sticky={false} />
+      </BrandProvider>,
+    )
+    expect(await findByText('Salvando...')).toBeTruthy()
+  })
+})
+
+describe('ActionBar: safe area inferior (pendência 4)', () => {
+  it('paddingBottom = insets.bottom quando maior que 16', async () => {
+    jest.spyOn(SafeAreaContext, 'useSafeAreaInsets').mockReturnValue({ top: 0, bottom: 34, left: 0, right: 0 })
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <ActionBar primary={{ label: 'Salvar', onPress: () => {} }} testID="barra" />
+      </BrandProvider>,
+    )
+    const bar = await findByTestId('barra')
+    expect(StyleSheet.flatten(bar.props.style)).toMatchObject({ paddingBottom: 34 })
+  })
+
+  it('paddingBottom = 16 (mínimo) quando insets.bottom é 0', async () => {
+    jest.spyOn(SafeAreaContext, 'useSafeAreaInsets').mockReturnValue({ top: 0, bottom: 0, left: 0, right: 0 })
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <ActionBar primary={{ label: 'Salvar', onPress: () => {} }} testID="barra" />
+      </BrandProvider>,
+    )
+    const bar = await findByTestId('barra')
+    expect(StyleSheet.flatten(bar.props.style)).toMatchObject({ paddingBottom: 16 })
+  })
+})

@@ -1,0 +1,53 @@
+# Publica @rendra-ui/app no npm quando uma tag v* é empurrada (ex.: v0.3.0). A tag precisa
+# bater com "version" do package.json, checado abaixo antes de publicar. Nada é publicado sem
+# uma tag: nenhuma tarefa deste lote cria tag, e a primeira publicação de cada pacote é manual,
+# feita pelo Bruno num terminal interativo (padrão dos produtos Rendra, seção 1, item 5).
+name: Publicar pacote (npm)
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publicar:
+    # Guarda de repositório (achado B15 do Opus): o workflow só roda no repositório oficial,
+    # nunca num fork, mesmo que alguém empurre uma tag v* lá.
+    if: github.repository == 'bsmagalhaes/rendra-app'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # Achado M4 do veredito da entrega dos Blocos 3 e 4 (Fable): barato, roda logo depois do
+      # checkout, antes de gastar minutos com npm ci/build:lib/verify:pack. Lê a version direto
+      # do package.json (grep/sed), sem depender do Node já configurado (setup-node vem só
+      # depois).
+      - name: Tag bate com a version do package.json
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG="$(grep -m1 '"version"' package.json | sed -E 's/.*"version": *"([^"]+)".*/\1/')"
+          if [ "$TAG" != "$PKG" ]; then
+            echo "Tag v$TAG não bate com a version $PKG do package.json." >&2
+            exit 1
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      # Achado M4: os mesmos portões do ci.yml, para uma tag empurrada sobre um commit fora de
+      # main (que não passa pelo job "verify" do ci.yml) não publicar sem eles.
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run check:rules
+      - run: npm run test:coverage
+      - run: npm run build:lib
+      - run: npm run verify:pack -- --publicacao
+      # O trusted publishing do npm (registro configurado para este repositório e este
+      # workflow) dispensa o segredo NPM_TOKEN; sem ele configurado, o publish usa o token.
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

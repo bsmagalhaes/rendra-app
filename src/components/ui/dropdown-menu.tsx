@@ -1,0 +1,126 @@
+import { cloneElement, createContext, isValidElement, useContext, useState } from 'react'
+import type { ReactElement, ReactNode } from 'react'
+import { Pressable, View } from 'react-native'
+import { Text } from '../internal/text'
+import { cn } from '../../lib/cn'
+import { a11yPresets } from '../../lib/a11y'
+import { useControlledState } from '../../hooks/use-controlled-state'
+import { BottomSheet } from '../internal/bottom-sheet'
+
+interface DropdownMenuContextValue {
+  open: boolean
+  setOpen: (open: boolean) => void
+}
+
+const DropdownMenuContext = createContext<DropdownMenuContextValue | null>(null)
+
+function useDropdownMenuContext(componentName: string): DropdownMenuContextValue {
+  const context = useContext(DropdownMenuContext)
+  if (!context) {
+    throw new Error(`${componentName} precisa estar dentro de <DropdownMenu>.`)
+  }
+  return context
+}
+
+export interface DropdownMenuProps {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  children: ReactNode
+}
+
+export function DropdownMenu({ open: controlledOpen, onOpenChange, children }: DropdownMenuProps) {
+  const [open, setOpen] = useControlledState<boolean>(controlledOpen, false, onOpenChange)
+  return <DropdownMenuContext.Provider value={{ open, setOpen }}>{children}</DropdownMenuContext.Provider>
+}
+
+export interface DropdownMenuTriggerProps {
+  children: ReactElement<{ onPress?: () => void; accessibilityState?: Record<string, unknown> }>
+}
+
+export function DropdownMenuTrigger({ children }: DropdownMenuTriggerProps) {
+  const { open, setOpen } = useDropdownMenuContext('DropdownMenuTrigger')
+  if (!isValidElement(children)) return children
+  return cloneElement(children, {
+    onPress: () => setOpen(true),
+    accessibilityState: { ...children.props.accessibilityState, expanded: open },
+  })
+}
+
+export interface DropdownMenuContentProps {
+  children: ReactNode
+  accessibilityLabel?: string
+}
+
+export function DropdownMenuContent({ children, accessibilityLabel }: DropdownMenuContentProps) {
+  const { open, setOpen } = useDropdownMenuContext('DropdownMenuContent')
+  return (
+    <BottomSheet open={open} onOpenChange={setOpen} accessibilityLabel={accessibilityLabel} contentContainerClassName="p-1">
+      <View accessibilityRole={a11yPresets.menu.accessibilityRole} className="rounded-t-surface bg-popover p-1">
+        {children}
+      </View>
+    </BottomSheet>
+  )
+}
+
+export interface DropdownMenuItemProps {
+  children: ReactNode
+  icon?: ReactNode
+  destructive?: boolean
+  disabled?: boolean
+  onSelect: () => void
+}
+
+export function DropdownMenuItem({ children, icon, destructive = false, disabled = false, onSelect }: DropdownMenuItemProps) {
+  const { setOpen } = useDropdownMenuContext('DropdownMenuItem')
+  const [pressed, setPressed] = useState(false)
+  return (
+    <Pressable
+      accessibilityRole={a11yPresets.menuitem.accessibilityRole}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      onPress={() => {
+        onSelect()
+        setOpen(false)
+      }}
+      className={cn(
+        'min-h-touch flex-row items-center gap-2 rounded-item px-3',
+        pressed && !disabled && (destructive ? 'bg-destructive-soft' : 'bg-accent'),
+        disabled && 'opacity-50',
+      )}
+    >
+      {icon}
+      <Text
+        className={cn(
+          'text-sm',
+          // Divergência do contrato §12.4 (que usa `text-destructive` em repouso): o axe
+          // (Tarefa 15) reprovou color-contrast (2.67, abaixo de 4,5:1) para `text-destructive`
+          // sobre `bg-popover`; `text-destructive-soft-foreground` já é usado com o mesmo
+          // objetivo em field.tsx:80. Sem diferença visual entre repouso e pressionado no
+          // destrutivo (os dois já usam este tom); o não destrutivo continua diferenciando
+          // repouso de pressionado.
+          destructive
+            ? 'text-destructive-soft-foreground'
+            : pressed && !disabled
+              ? 'text-accent-foreground'
+              : 'text-foreground',
+        )}
+      >
+        {children}
+      </Text>
+    </Pressable>
+  )
+}
+
+export function DropdownMenuSeparator() {
+  return <View className="-mx-1 my-1 h-px bg-border" />
+}
+
+export function DropdownMenuLabel({ children }: { children: ReactNode }) {
+  return (
+    <Text weight="medium" className="px-2 py-2 text-xs text-muted-foreground">
+      {children}
+    </Text>
+  )
+}

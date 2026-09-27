@@ -1,0 +1,169 @@
+{
+  "name": "@rendra-ui/app",
+  "version": "0.3.0",
+  "description": "Design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind.",
+  "main": "expo-router/entry",
+  "author": {
+    "name": "Bruno Magalhaes",
+    "email": "contato@brunomagalhaes.me",
+    "url": "https://www.brunomagalhaes.me"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/bsmagalhaes/rendra-app#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bsmagalhaes/rendra-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bsmagalhaes/rendra-app/issues"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "expo-router",
+    "nativewind",
+    "design-system",
+    "boilerplate",
+    "ui-kit",
+    "tailwind",
+    "tailwindcss",
+    "typescript",
+    "ui-components",
+    "pt-br"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist-lib",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist-lib/index.d.ts",
+      "default": "./dist-lib/index.js"
+    },
+    "./router-bridge": {
+      "types": "./dist-lib/router-bridge.d.ts",
+      "default": "./dist-lib/router-bridge.js"
+    },
+    "./fonts": {
+      "types": "./dist-lib/fonts.d.ts",
+      "default": "./dist-lib/fonts.js"
+    },
+    "./tailwind-preset": {
+      "types": "./dist-lib/theme/tailwind-preset.d.ts",
+      "default": "./dist-lib/theme/tailwind-preset.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist-lib/index.d.ts",
+  "sideEffects": [
+    "dist-lib/components/gradient/gradient.js",
+    "dist-lib/components/ui/brand-logo.js",
+    "dist-lib/components/ui/brand-feedback-icon.js"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": ">=2.2.0",
+    "expo": ">=57.0.0",
+    "expo-font": ">=57.0.0",
+    "expo-status-bar": ">=57.0.0",
+    "nativewind": ">=4.2.0 <5",
+    "react": ">=19.2.0",
+    "react-native": ">=0.86.0",
+    "react-native-gesture-handler": ">=2.32.0",
+    "react-native-reanimated": ">=4.5.0",
+    "react-native-safe-area-context": ">=5.7.0",
+    "react-native-svg": ">=15.15.0",
+    "react-native-web": ">=0.21.0",
+    "tailwindcss": ">=3.4.0 <4"
+  },
+  "peerDependenciesMeta": {
+    "expo-font": {
+      "optional": true
+    },
+    "react-native-web": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.29.7",
+    "@expo-google-fonts/dm-sans": "^0.4.2",
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/poppins": "^0.4.1",
+    "@hookform/resolvers": "^5.9.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "imask": "^7.6.1",
+    "lucide-react-native": "^1.48.0",
+    "react-hook-form": "^7.89.0",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@expo/metro-runtime": "~57.0.16",
+    "@playwright/test": "^1.63.0",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@testing-library/react-native": "^14.0.1",
+    "@types/jest": "^30.0.0",
+    "@types/react": "~19.2.2",
+    "babel-preset-expo": "~57.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~57.0.2",
+    "expo": "~57.0.25",
+    "expo-asset": "~57.0.18",
+    "expo-constants": "~57.0.19",
+    "expo-font": "~57.0.4",
+    "expo-linking": "~57.0.11",
+    "expo-router": "~57.0.23",
+    "expo-splash-screen": "~57.0.9",
+    "expo-status-bar": "~57.0.1",
+    "glob": "^13.0.6",
+    "jest": "~29.7.0",
+    "jest-expo": "~57.0.5",
+    "js-yaml": "^5.4.2",
+    "nativewind": "^4.2.7",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
+    "react-native-web": "^0.21.2",
+    "react-native-worklets": "0.10.1",
+    "serve": "^14.2.6",
+    "tailwindcss": "^3.4.19",
+    "ts-morph": "^28.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "lint": "expo lint",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "check:rules": "tsx scripts/check-rules.ts",
+    "build:web": "expo export --platform web && tsx scripts/add-banner.ts && tsx scripts/seo-build.ts && tsx scripts/verify-build.ts",
+    "build": "npm run build:web",
+    "build:lib": "node -e \"require('fs').rmSync('dist-lib',{recursive:true,force:true})\" && tsc -p tsconfig.lib.json && tsx scripts/build-lib-worklets.ts && tsx scripts/add-banner.ts --lib",
+    "verify:pack": "tsx scripts/verify-pack.ts",
+    "pages:stage": "node -e \"const fs=require('fs');fs.rmSync('.pages',{recursive:true,force:true});fs.mkdirSync('.pages/rendra-app',{recursive:true});fs.cpSync('dist','.pages/rendra-app',{recursive:true})\"",
+    "test:layout": "playwright test e2e/layout.spec.ts",
+    "test:a11y": "playwright test e2e/a11y.spec.ts",
+    "docs:images": "npm run pages:stage && tsx scripts/readme-images.ts",
+    "clean:clone": "tsx scripts/clean-clone.ts"
+  },
+  "private": false
+}

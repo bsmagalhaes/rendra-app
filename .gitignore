@@ -1,0 +1,51 @@
+node_modules/
+.expo/
+dist/
+dist-lib/
+web-build/
+*.log
+.env*
+coverage/
+playwright-report/
+test-results/
+.pages/
+
+# Histórico de processo (briefing, planos, vereditos, desvios de execução): fica só local,
+# nunca no repositório público (produto final é código + documentação de uso).
+docs/superpowers/
+docs/specs/
+docs/plans/
+docs/BRIEFING.md
+.superpowers/
+.claude/
+storybook-static/
+screenshots/
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# typescript
+*.tsbuildinfo
+expo-env.d.ts
+
+# generated native folders
+/ios
+/android

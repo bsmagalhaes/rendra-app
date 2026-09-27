@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "lib": ["DOM", "ESNext"],
+    "outDir": "dist-lib",
+    "rootDir": "src",
+    "declaration": true,
+    "noEmit": false,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "nativewind"
+  },
+  "include": [
+    "src/index.ts",
+    "src/router-bridge.tsx",
+    "src/fonts.ts",
+    "src/theme/tailwind-preset.ts",
+    "nativewind-env.d.ts",
+    "src/types/css.d.ts",
+    "src/types/react-native-web.d.ts"
+  ],
+  "exclude": ["**/*.test.*", "**/__tests__/**", "**/__canary__/**", "**/__fixtures__/**"]
+}

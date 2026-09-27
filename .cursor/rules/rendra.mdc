@@ -1,0 +1,36 @@
+---
+description: Regras do Rendra App (React Native, Expo Router, NativeWind)
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# Rendra App
+
+Design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind, espelho do Rendra web (`https://github.com/bsmagalhaes/rendra-design-system`), publicado sob licença MIT.
+
+<!-- rendra:verificacao:inicio -->
+Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.
+
+Regras que não podem ser quebradas, resumidas (texto completo em `AGENTS.md`):
+
+1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
+2. Cor em três camadas (modelo, paleta, sistema), chaves de paleta sempre `--kebab-case`, nenhuma cor fixa fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
+3. Toque mínimo 44x44 em todo elemento interativo, mesmo quando o conteúdo visual é menor.
+4. Nenhum valor arbitrário fora da escala do `tailwind.config.ts`, nenhum `style` inline fora da lista fechada de `DESIGN_RULES.md`, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
+5. TDD real: teste escrito primeiro, rodado e confirmado vermelho pelo motivo esperado, só então a implementação mínima, rodada de novo até verde.
+6. `check:rules` limpo (R1-R13, mais a checagem de `CLAUDE.md`) antes de qualquer commit; licença MIT em todo o projeto, crédito "Feito com Rendra" opcional (ver `AGENTS.md`).
+
+Comandos:
+
+```bash
+npm run typecheck
+npm run lint
+npm run check:rules
+npm run test:coverage
+npm run build
+npm run build:lib
+npm run verify:pack
+npm run test:layout
+npm run test:a11y
+```
+<!-- rendra:verificacao:fim -->

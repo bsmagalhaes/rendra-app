@@ -1,7 +1,36 @@
 // e2e/a11y.spec.ts
 import { test, expect } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { blockingViolations } from '../src/lib/axe-false-positives'
+
+/**
+ * Toast (`toast.tsx`, `FadeInUp`) e Modal (`modal.tsx`, `withTiming` de opacidade) têm entrada
+ * própria de 200 ms com fade: a `View` com o papel/testID já existe no DOM assim que o
+ * `waitFor`/`toBeVisible` resolve (o nó nasce de imediato, só a opacidade do ancestral animado
+ * sobe de 0 a 1), então rodar o axe nesse instante pode acontecer em qualquer ponto da rampa,
+ * não só no fim dela. Cor de primeiro plano e de fundo passando pelo mesmo `opacity` < 1 se
+ * misturam com o que está atrás e o contraste medido some varia (comprovado localmente: rodando
+ * o axe de verdade logo após o `waitFor`, sem qualquer CPU throttling, o toast e o Modal de
+ * formulário reproduzem `color-contrast` em 100% das tentativas, com `contrastRatio` e cores
+ * diferentes a cada rodada, a assinatura exata do achado de CI). Esta função espera a opacidade
+ * combinada (o próprio nó vezes cada ancestral, até `body`) chegar a 1 de verdade antes do axe
+ * rodar, em vez de confiar só na presença do nó no DOM.
+ */
+async function waitForFullOpacity(page: Page, selector: string) {
+  await page.waitForFunction((sel) => {
+    const el = document.querySelector(sel)
+    if (!el) return false
+    let node: Element | null = el
+    let combined = 1
+    while (node && node !== document.body) {
+      const value = Number.parseFloat(getComputedStyle(node).opacity)
+      if (!Number.isNaN(value)) combined *= value
+      node = node.parentElement
+    }
+    return combined >= 0.999
+  }, selector)
+}
 
 const ROUTES = [
   '/componentes',
@@ -69,6 +98,7 @@ test('axe com um toast de erro visível, em /componentes/feedback', async ({ pag
   await page.getByTestId(`rendra-${codigo}`).waitFor()
   await page.getByRole('button', { name: 'Mostrar erro' }).click()
   await page.getByText('Falha ao salvar').waitFor()
+  await waitForFullOpacity(page, '[data-testid^="toast-"]')
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   await expect(page.getByText('Falha ao salvar')).toBeVisible()
   const serious = blockingViolations(results.violations)
@@ -81,6 +111,7 @@ test('axe com o Modal de formulário aberto, em /componentes/feedback', async ({
   await page.getByTestId(`rendra-${codigo}`).waitFor()
   await page.getByRole('button', { name: 'Abrir modal' }).click()
   await page.getByRole('dialog', { name: 'Novo contato' }).waitFor()
+  await waitForFullOpacity(page, '[role="dialog"]')
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const serious = blockingViolations(results.violations)
   expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
@@ -92,6 +123,7 @@ test('axe com o Modal de informação (InfoHint) aberto, em /componentes/feedbac
   await page.getByTestId(`rendra-${codigo}`).waitFor()
   await page.getByRole('button', { name: 'Sobre: Sobre este campo' }).click()
   await page.getByRole('dialog', { name: 'Sobre este campo' }).waitFor()
+  await waitForFullOpacity(page, '[role="dialog"]')
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const serious = blockingViolations(results.violations)
   expect(serious, JSON.stringify(serious, null, 2)).toEqual([])

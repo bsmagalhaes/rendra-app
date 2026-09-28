@@ -143,6 +143,7 @@ export function Drawer({
                 accessibilityLabel={typeof title === 'string' ? title : undefined}
                 accessibilityViewIsModal
                 className="flex-1 bg-card"
+                dataSet={{ rendra: 'GAV-001' }}
               >
                 <KeyboardAvoidingView
                   behavior="padding"

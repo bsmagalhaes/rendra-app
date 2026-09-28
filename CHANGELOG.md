@@ -2,6 +2,45 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
+## [1.0.0] - 28/09/2026
+
+Sincronização 1 com o design system web (levantamento do Fable, web `fb19143`, app `afd6be0`; validação do plano pelo Opus). Renomear uma variável `--rendra-*` é sempre mudança major (padrão dos produtos Rendra, seção 5.6); como a 0.3.0 já está publicada no npm, a 1.0.0 é a próxima versão de verdade, com o guia de migração abaixo para quem já instalou o pacote.
+
+### Adicionado
+
+- Catálogo de códigos de componente (`src/catalog/components.ts`), com a mesma interface e as mesmas funções do design system web: 47 entradas (os 35 componentes catalogáveis do app, incluindo `SPIN-001`/`Spinner`; `LIST-002`, lista reordenável, fica para quando `onReorder` entrar), exportado pela entrada principal do pacote (`CATALOG`, `resolveCatalogCode`, `getCatalogEntry`, `catalogByComponent`, tipo `ComponentCatalogEntry`).
+- `Spinner` (`SPIN-001`): indicador de carregamento único do sistema, giro por Reanimated parado no reduce motion, decorativo sem `label` e anunciado (`role="status"`) com `label`; extraído do giro que antes vivia solto dentro de `Button`. Entrada de vitrine no grupo Feedback de `/componentes`.
+- `Input` ganha unidades embutidas (`units`, `unit`, `onUnitChange`, `percentMax`): seletor à direita no mesmo padrão do seletor de DDI; trocar de unidade sempre limpa o valor; `percentMask(max)` em `src/lib/masks.ts` (teto configurável, padrão 100).
+- `Input` ganha `variant="secret"` (`hasValue`, `maskedHint`, `isEditing`, `onStartEdit`, `onCancelEdit`, `onRemove`, `removing`): modo leitura com texto mascarado e botões "Trocar"/"Remover"; modo edição sempre com campo vazio (o valor salvo nunca chega a existir no campo).
+- `List` ganha `ListItem.tone` (`'success' | 'warning' | 'error' | 'neutral'`): selo textual (`Badge`) antes do `trailing`, nunca só cor.
+- Selo do código do catálogo ao lado do título de cada exemplo na vitrine `/componentes`.
+- Tokens de rótulo e orientação do campo (`--rendra-label-color`, `--rendra-help-color`, `fontSize.label`/`fontSize.help`, `colors['label-foreground']`/`colors['help-foreground']`), com teste de contraste AA nas 4 paletas, claro e escuro.
+- `BrandConfig.labelStyle` (`'discreto'` padrão, `'normal'` opcional), exposto por `useBrand()` e refletido em `dataSet.label` na raiz do `BrandProvider` (chega ao export web como `data-label`).
+- `dataSet.rendra` (`data-rendra` no export web) na raiz dos 34 componentes catalogáveis, lido de `resolveCatalogCode` nos componentes com variante (`Button`, `Modal`, `Tabs`, `RadioGroup`); `Card` ganha o campo interno `code` (usado por `FormSection`/`STAT-001`); `InfoHint` ganha raiz `View` própria (antes um fragmento); `BrandProvider` completa o `dataSet` da raiz com `rendraRoot`, `brand`, `shape` e `palette` (`data-rendra-root` no export web).
+- `check:rules` ganha as regras R14 (variável do tema referenciada sem o prefixo `--rendra-`) e R15 (texto orientativo fora do limite do `span`, ou com verbo de instrução, nas telas de `app/`), com fixtures que comprovam os dois lados de cada regra.
+
+### Alterado
+
+- Raio do modelo Equilíbrio (T2) de 10px para 8px, igual ao design system web (fórmulas por papel inalteradas: control raio-2, item raio-4, surface raio, block raio-4, avatar 9999px; Safira e Aurora sem mudança).
+- `Label` troca de classe fixa por `labelStyle` (discreto: `text-label text-label-foreground uppercase`; normal: `text-sm text-foreground`), com código `FLD-002`.
+- `Field`: mensagem de ajuda troca de `text-muted-foreground` para `text-help text-help-foreground` (mesmos números de `text-xs`, nome semântico do contrato); código `FLD-001` na raiz. A cor do erro continua `text-destructive-soft-foreground` (divergência pré-existente contra o web, registrada, não corrigida nesta sincronização).
+- `OtpInput` usa `gap-1` sempre (era `gap-2`), garantindo 44px por caixa a 360px dentro de um `Card`; código `OTP-001`.
+- `Button`, `Select` e `Input` (busca de CEP/CNPJ) passam a usar o `Spinner` no lugar de um `Loader2 animate-spin` solto e giro manual próprio.
+
+### Quebras e guia de migração
+
+- Toda variável própria do tema ganha o prefixo `--rendra-`: as chaves de `Palette.light`/`Palette.dark` (devolvidas por `createPalette`), de `buildThemeVars()` e de `useBrand().themeVars` mudam de nome (por exemplo, `'--primary'` vira `'--rendra-primary'`).
+- `themeColorString(vars, '--muted-foreground')` vira `themeColorString(vars, '--rendra-muted-foreground')`: o segundo argumento (a chave) também precisa do prefixo.
+- O preset do Tailwind/NativeWind (`@rendra-ui/app/tailwind-preset`) passa a resolver `var(--rendra-*)`; CSS próprio de quem consome o pacote e lia `var(--primary)` direto no seu próprio stylesheet precisa acrescentar o prefixo.
+- Classes JSX (`bg-primary`, `rounded-control`, `text-muted-foreground`) **não mudam**: a tradução para o nome prefixado acontece só dentro do preset, nunca no código de quem consome.
+- `npm run check:rules` (regra R14, a partir do Bloco 7 desta sincronização) passa a acusar toda variável própria do tema citada sem o prefixo `--rendra-`, para quem esquecer algum lugar.
+- Nota: `--radius-control`/`-item`/`-surface`/`-block`/`-avatar` foram renomeadas para `--rendra-shape-control`/`-item`/`-surface`/`-block`/`-avatar` (mesmo nome do design system web), no mesmo commit do prefixo; as fórmulas por papel não mudaram, só o nome.
+- `resolveCatalogCode(component, props)` passa a lançar (`throw`) quando o componente não tem nenhuma entrada no catálogo, igual ao design system web, em vez de devolver `undefined`; o tipo de retorno muda de `string | undefined` para `string`. Quem chamava a função esperando `undefined` como valor de erro precisa envolver a chamada num `try/catch` (ou conferir o componente antes, com `catalogByComponent(component).length > 0`).
+
+### Pendente
+
+- Simulação dos dois leigos: pendente da validação da entrega (a simulação aprovada em 27/09/2026, registrada na versão 0.3.0, não cobre a 1.0.0; `verify:pack -- --publicacao` exige a frase por versão).
+
 ## [0.3.0] - 27/09/2026
 
 ### Alterado

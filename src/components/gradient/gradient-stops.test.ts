@@ -13,12 +13,12 @@ describe('gradientStops', () => {
   // casos travam o contrato da função para esses tokens antes/depois do refactor.
   it('token soft devolve [primary-soft, branco] no modo claro', () => {
     const palette = createPalette(paletteSeeds[0]!)
-    expect(gradientStops(palette, 'light', 'soft')).toEqual([palette.light['--primary-soft']!, '#ffffff'])
+    expect(gradientStops(palette, 'light', 'soft')).toEqual([palette.light['--rendra-primary-soft']!, '#ffffff'])
   })
 
   it('token soft devolve [primary-soft, card] no modo escuro', () => {
     const palette = createPalette(paletteSeeds[0]!)
-    expect(gradientStops(palette, 'dark', 'soft')).toEqual([palette.dark['--primary-soft']!, palette.dark['--card']!])
+    expect(gradientStops(palette, 'dark', 'soft')).toEqual([palette.dark['--rendra-primary-soft']!, palette.dark['--rendra-card']!])
   })
 
   it('token accent devolve [primária semente, secundária semente], sem depender do modo', () => {

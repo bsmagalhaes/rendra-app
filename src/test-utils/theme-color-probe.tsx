@@ -5,7 +5,7 @@ import { themeColorString } from '../theme/vars'
 /**
  * Sonda de teste (não é parte da API pública): resolve, pelo mesmo caminho (`useBrand` +
  * `themeColorString`) que os componentes de produção usam para colorir `placeholderTextColor`, a
- * cor CSS de um token do tema (ex.: `--muted-foreground`), e entrega o valor a `onCapture`.
+ * cor CSS de um token do tema (ex.: `--rendra-muted-foreground`), e entrega o valor a `onCapture`.
  * Usada pelos testes de `Input`/`Select`/`Textarea` que comprovam o achado de contraste do
  * placeholder: antes desta extração, os três arquivos de teste declaravam a mesma sonda
  * (`function Sonda() {...}`) de forma idêntica (melhoria 2 do veredito do fechamento, Fable:

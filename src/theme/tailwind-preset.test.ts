@@ -3,7 +3,7 @@ import rendraPreset from './tailwind-preset'
 describe('rendraPreset (src/theme/tailwind-preset.ts)', () => {
   it('traz o token de toque minimo e a cor primaria resolvida por variavel css', () => {
     expect(rendraPreset.theme.spacing.touch).toBe('44px')
-    expect(rendraPreset.theme.colors.primary).toContain('var(--primary)')
+    expect(rendraPreset.theme.colors.primary).toContain('var(--rendra-primary)')
   })
 
   it('inclui o preset do nativewind', () => {

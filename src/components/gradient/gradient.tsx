@@ -21,7 +21,7 @@ export function gradientStops(palette: Palette, mode: 'light' | 'dark', token: G
   const vars = mode === 'light' ? palette.light : palette.dark
   const seeds = palette.seeds
   if (token === 'brand') return [...seeds.gradient]
-  if (token === 'soft') return [vars['--primary-soft']!, mode === 'light' ? '#ffffff' : vars['--card']!]
+  if (token === 'soft') return [vars['--rendra-primary-soft']!, mode === 'light' ? '#ffffff' : vars['--rendra-card']!]
   return [seeds.primary, seeds.secondary]
 }
 

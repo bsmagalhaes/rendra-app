@@ -41,11 +41,11 @@ export default function TokensIndex() {
   const { palette, resolvedMode } = useBrand()
   const vars = resolvedMode === 'light' ? palette.light : palette.dark
   const pairs: [string, string, string][] = [
-    ['Primária', vars['--primary-foreground']!, vars['--primary']!],
-    ['Hover da primária', vars['--primary-hover-foreground']!, vars['--primary-hover']!],
-    ['Secundária', vars['--secondary-foreground']!, vars['--secondary']!],
-    ['Hover da secundária', vars['--secondary-hover-foreground']!, vars['--secondary-hover']!],
-    ['Suave da primária', vars['--primary-soft-foreground']!, vars['--primary-soft']!],
+    ['Primária', vars['--rendra-primary-foreground']!, vars['--rendra-primary']!],
+    ['Hover da primária', vars['--rendra-primary-hover-foreground']!, vars['--rendra-primary-hover']!],
+    ['Secundária', vars['--rendra-secondary-foreground']!, vars['--rendra-secondary']!],
+    ['Hover da secundária', vars['--rendra-secondary-hover-foreground']!, vars['--rendra-secondary-hover']!],
+    ['Suave da primária', vars['--rendra-primary-soft-foreground']!, vars['--rendra-primary-soft']!],
   ]
 
   return (

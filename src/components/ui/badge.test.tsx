@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native'
 import { View } from 'react-native'
 import { BrandProvider } from '../../brand'
 import { Badge, dotClass, dotSolidClass } from './badge'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('Badge', () => {
   it('neutral (padrao) usa bg-muted na raiz e text-foreground no texto', async () => {
@@ -82,5 +83,14 @@ describe('Badge', () => {
       </BrandProvider>,
     )
     expect(await findByTestId('icone-badge')).toBeTruthy()
+  })
+
+  it('carrega dataSet.rendra = BDG-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Badge>Novo</Badge>
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'BDG-001')).toHaveLength(1)
   })
 })

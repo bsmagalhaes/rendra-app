@@ -2,11 +2,11 @@ import { createPalette, contrast, mix, paletteCss, type PaletteSeeds } from './p
 import { paletteSeeds } from './palettes'
 
 const pairs: [string, string][] = [
-  ['--primary-foreground', '--primary'],
-  ['--primary-hover-foreground', '--primary-hover'],
-  ['--secondary-foreground', '--secondary'],
-  ['--secondary-hover-foreground', '--secondary-hover'],
-  ['--primary-soft-foreground', '--primary-soft'],
+  ['--rendra-primary-foreground', '--rendra-primary'],
+  ['--rendra-primary-hover-foreground', '--rendra-primary-hover'],
+  ['--rendra-secondary-foreground', '--rendra-secondary'],
+  ['--rendra-secondary-hover-foreground', '--rendra-secondary-hover'],
+  ['--rendra-primary-soft-foreground', '--rendra-primary-soft'],
 ]
 
 const cliente: PaletteSeeds = {
@@ -25,26 +25,26 @@ describe('createPalette', () => {
         expect(palette[mode][fg]).toMatch(/^#[0-9a-f]{6}$/)
       }
     }
-    expect(contrast(palette.light['--primary-text']!, '#f5f6f7')).toBeGreaterThanOrEqual(4.5)
-    expect(contrast(palette.dark['--primary-text']!, palette.dark['--card']!)).toBeGreaterThanOrEqual(4.5)
-    expect(contrast(palette.dark['--foreground']!, palette.dark['--card']!)).toBeGreaterThanOrEqual(4.5)
-    expect(contrast(palette.dark['--muted-foreground']!, palette.dark['--muted']!)).toBeGreaterThanOrEqual(4.5)
-    expect(contrast(palette.light['--sidebar-foreground']!, seeds.gradient[0])).toBeGreaterThanOrEqual(4.5)
-    expect(contrast(palette.light['--sidebar-muted-foreground']!, seeds.gradient[0])).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(palette.light['--rendra-primary-text']!, '#f5f6f7')).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(palette.dark['--rendra-primary-text']!, palette.dark['--rendra-card']!)).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(palette.dark['--rendra-foreground']!, palette.dark['--rendra-card']!)).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(palette.dark['--rendra-muted-foreground']!, palette.dark['--rendra-muted']!)).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(palette.light['--rendra-sidebar-foreground']!, seeds.gradient[0])).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(palette.light['--rendra-sidebar-muted-foreground']!, seeds.gradient[0])).toBeGreaterThanOrEqual(4.5)
   })
 
   it('Safira: primária e secundária cruas, sem ajuste', () => {
     const p = createPalette(paletteSeeds[0]!)
-    expect(p.light['--primary']).toBe('#0b6fe0')
-    expect(p.light['--secondary']).toBe('#98d10a')
+    expect(p.light['--rendra-primary']).toBe('#0b6fe0')
+    expect(p.light['--rendra-secondary']).toBe('#98d10a')
     expect(p.adjustments).toEqual([])
   })
 
   it('Ardósia: secundária ajustada, com nota', () => {
     const ardosia = paletteSeeds.find((s) => s.id === 'ardosia')!
     const p = createPalette(ardosia)
-    expect(p.light['--secondary']).not.toBe('#ea600d')
-    expect(p.light['--secondary-foreground']).toBe('#ffffff')
+    expect(p.light['--rendra-secondary']).not.toBe('#ea600d')
+    expect(p.light['--rendra-secondary-foreground']).toBe('#ffffff')
     expect(p.adjustments.join()).toMatch(/Secundária: #EA600D ajustada/)
   })
 
@@ -57,10 +57,10 @@ describe('createPalette', () => {
     expect(() => createPalette({ ...cliente, primary: 'azul' })).toThrow(/Cor inválida/)
   })
 
-  it('--shadow-color já é um trio RGB nos dois modos, nunca hex (spec 5.3)', () => {
+  it('--rendra-shadow-color já é um trio RGB nos dois modos, nunca hex (spec 5.3)', () => {
     const p = createPalette(paletteSeeds[0]!)
-    expect(p.light['--shadow-color']).toMatch(/^\d+ \d+ \d+$/)
-    expect(p.dark['--shadow-color']).toBe('0 0 0')
+    expect(p.light['--rendra-shadow-color']).toMatch(/^\d+ \d+ \d+$/)
+    expect(p.dark['--rendra-shadow-color']).toBe('0 0 0')
   })
 })
 

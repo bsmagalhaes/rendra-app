@@ -1,6 +1,6 @@
 # Rendra App
 
-**Design system e boilerplate mobile em React Native (Expo), com Expo Router e NativeWind, para todo app novo em português do Brasil.** Traz 43 componentes de UI prontos, 3 modelos de marca e 4 paletas, para quem precisa sair do zero com um app funcionando e trocar marca sem mexer em componente.
+**Design system e boilerplate mobile em React Native (Expo), com Expo Router e NativeWind, para todo app novo em português do Brasil.** Traz 44 componentes de UI prontos, 3 modelos de marca e 4 paletas, para quem precisa sair do zero com um app funcionando e trocar marca sem mexer em componente.
 
 ![React Native](https://img.shields.io/badge/React%20Native-0.86-61DAFB?logo=react&logoColor=white)
 ![Expo SDK](https://img.shields.io/badge/Expo%20SDK-57-000020?logo=expo&logoColor=white)
@@ -15,7 +15,7 @@
 
 Vitrine publicada: [`https://bsmagalhaes.github.io/rendra-app/`](https://bsmagalhaes.github.io/rendra-app/) (atualizada a cada push em `main` com CI verde).
 
-- [Componentes](https://bsmagalhaes.github.io/rendra-app/componentes) (40 entradas)
+- [Componentes](https://bsmagalhaes.github.io/rendra-app/componentes) (41 entradas)
 - [Tokens](https://bsmagalhaes.github.io/rendra-app/tokens) (paleta com AA ao vivo, tipografia, espaço, raio, sombra)
 - [Galeria](https://bsmagalhaes.github.io/rendra-app/galeria) (troca ao vivo de modelo, paleta e modo pelo controle real)
 - Exemplo com modelo e modo escolhidos por URL: [`/galeria?codigo=T3-C3&modo=escuro`](https://bsmagalhaes.github.io/rendra-app/galeria?codigo=T3-C3&modo=escuro)
@@ -40,9 +40,9 @@ Critério de sucesso: trocar marca continua sendo 4 cores, degradê, modelo, nom
 
 Galeria completa, com troca ao vivo de modelo, paleta e modo pelo controle real: [`https://bsmagalhaes.github.io/rendra-app/galeria`](https://bsmagalhaes.github.io/rendra-app/galeria).
 
-## Códigos
+## Códigos de modelo e de componente
 
-Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1` é o modelo Safira com a paleta Safira; `T1-C4` é o modelo Safira com a paleta Ardósia). Os 3 modelos são `T1` Safira/Poppins, `T2` Equilíbrio/DM Sans e `T3` Aurora/Inter; as 4 paletas são `C1` Safira, `C2` Equilíbrio, `C3` Aurora e `C4` Ardósia. O catálogo de códigos por componente (formato `SIGLA-000`, igual em web e app) é do design system web e entra neste app na Sincronização 1, ainda não aplicada aqui.
+Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1` é o modelo Safira com a paleta Safira; `T1-C4` é o modelo Safira com a paleta Ardósia). Os 3 modelos são `T1` Safira/Poppins, `T2` Equilíbrio/DM Sans e `T3` Aurora/Inter; as 4 paletas são `C1` Safira, `C2` Equilíbrio, `C3` Aurora e `C4` Ardósia. Cada componente e cada variante tem um código no formato `SIGLA-000` (por exemplo, `BTN-001` é o botão primário, `ABA-002` são as abas em pílula), igual em web e app: o catálogo é `src/catalog/components.ts`, com o selo do código ao lado do título de cada exemplo em [`/componentes`](https://bsmagalhaes.github.io/rendra-app/componentes).
 
 ## O que tem dentro
 
@@ -51,22 +51,22 @@ Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1
 - 3 modelos prontos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter) e 4 paletas prontas (Safira, Equilíbrio, Aurora, Ardósia).
 - `BrandProvider`/`useBrand`, com persistência local e troca em tempo de execução.
 - `Gradient` em SVG.
-- Os 43 componentes de UI (`src/components/ui`, `src/components/layout`), listados abaixo.
+- Os 44 componentes de UI (`src/components/ui`, `src/components/layout`), listados abaixo.
 - `check:rules`, verificação estática das regras de `DESIGN_RULES.md`.
 - Piso de cobertura (`coverageThreshold`): 90% em `src/lib`, 80% em `src/components` e `src/theme`, além do piso por arquivo nos módulos de contrato (`src/lib/masks.ts`, `src/lib/validators.ts`, `src/brand/palette.ts`, `src/theme/vars.ts`, `src/config/presets.ts`, `src/config/showcase.tsx`, `src/lib/robots.ts`, `src/lib/llms-txt.ts`, `src/config/seo.ts`).
-- Rota `/componentes` (vitrine completa, 40 entradas), `/tokens` (paleta com AA ao vivo, tipografia, espaço, raio, sombra) e `/galeria` (troca ao vivo de modelo, paleta e modo pelo controle real).
+- Rota `/componentes` (vitrine completa, 41 entradas), `/tokens` (paleta com AA ao vivo, tipografia, espaço, raio, sombra) e `/galeria` (troca ao vivo de modelo, paleta e modo pelo controle real).
 - Export web com SEO por rota (título, description, canonical, Open Graph, `sitemap.xml`, `robots.txt`, `llms.txt`), testado por Playwright (layout e toque) e axe (WCAG 2.1 AA).
 - CI (GitHub Actions), fluxo de IA e documentação completos.
 
-### Os 43 componentes de UI (disponíveis)
+### Os 44 componentes de UI (disponíveis)
 
 - **Ações (4):** Button, ButtonGroup, ActionBar, DropdownMenu.
 - **Formulário (14):** Input, Textarea, Select, Checkbox, CheckboxGroup, RadioGroup, Switch, Slider, OtpInput, DatePicker, Field, Form, FormField, FormSection.
-- **Feedback (9):** BrandFeedbackIcon, Alert, Toast, Progress, Skeleton, EmptyState, InfoHint, Modal, Drawer.
+- **Feedback (10):** BrandFeedbackIcon, Alert, Toast, Progress, Skeleton, Spinner, EmptyState, InfoHint, Modal, Drawer.
 - **Exibição (10):** Card, Badge, Avatar, AvatarGroup, List, StatCard, Accordion, Tabs, Separator, BrandLogo.
 - **Layout (6):** Container, Stack, Inline, Grid, Section, PageHeader.
 
-A vitrine em `/componentes` mostra 40 entradas reais (Ações 4, Formulário 12, Feedback 9, Exibição 9,
+A vitrine em `/componentes` mostra 41 entradas reais (Ações 4, Formulário 12, Feedback 10, Exibição 9,
 Layout 6): `FormField`/`FormSection` entram compostos nos exemplos de `Form`, e `'Select (lista
 longa)'` conta como entrada própria (decisão do fechamento da F1b), por isso a contagem da vitrine
 difere da contagem por exportação acima.
@@ -150,7 +150,7 @@ não o dev server do Metro.
 ```bash
 npm run typecheck      # tsc --noEmit
 npm run lint           # expo lint
-npm run check:rules    # R1-R13, mais a checagem de CLAUDE.md
+npm run check:rules    # R1-R15, mais a checagem de CLAUDE.md
 npm run test:coverage  # Jest + jest-expo + RNTL
 npm run build          # expo export --platform web (alias: build:web)
 npm run build:lib      # tsc -p tsconfig.lib.json + cabeçalho de autoria (dist-lib/)
@@ -211,13 +211,13 @@ src/
   components/
     internal/           # Text base, primitivas internas
     gradient/            # <Gradient token="brand|soft|accent" />
-    ui/                  # os 43 componentes de UI
+    ui/                  # os 44 componentes de UI
     layout/              # Container, Stack, Inline, Grid, Section, PageHeader
   hooks/               # useControlledState, useLookup, usePlaceholderColor
   lib/                 # cn, masks, validators, shape, a11y, robots, llms-txt
   config/              # presets.ts (parseModelCode/formatModelCode), showcase.tsx (vitrine), seo.ts
 scripts/
-  check-rules.ts        # R1-R13 (ts-morph) + checagem de CLAUDE.md
+  check-rules.ts        # R1-R15 (ts-morph) + checagem de CLAUDE.md
   seo-build.ts          # title/description/og por rota, sitemap, robots.txt, llms.txt, 404
   readme-images.ts       # capturas do README e og-image.png, por script
   verify-pack.ts        # npm pack real, instala num projeto temporário, renderiza um componente
@@ -258,7 +258,7 @@ Trocar marca é sempre: 4 cores, degradê, modelo, nome e logotipo, nunca compon
 
 **Qual a licença? Preciso manter o crédito "Feito com Rendra"?** MIT. O crédito na interface é opcional e pode ser removido, mas a licença MIT sempre exige manter o aviso de copyright e o arquivo `LICENSE`.
 
-**Este projeto vira um pacote npm instalável?** Sim: `npm install @rendra-ui/app` (ver "Formas de uso e comandos" acima). O pacote está pronto para a primeira publicação (`private: false`, estrutura de `exports`/`peerDependencies`/`verify:pack` completa); falta só a tag `v0.3.0` e o `npm publish` manual, num terminal interativo do autor (padrão dos produtos Rendra, seção 1, item 5). Até lá, `npm install @rendra-ui/app` não resolve; use "cópia dos arquivos".
+**Este projeto vira um pacote npm instalável?** Sim, e já está publicado: `npm install @rendra-ui/app` (ver "Formas de uso e comandos" acima). A primeira publicação saiu na versão 0.3.0; a tag `v1.0.0` e o `npm publish` desta versão continuam manuais, num terminal interativo do autor (padrão dos produtos Rendra, seção 1, item 5).
 
 **Uso outro roteador, e agora?** Sem Expo Router, forneça seu próprio `RendraNavigationProvider` (de `@rendra-ui/app`) alimentado pelas funções de navegação do seu roteador, em vez do `RendraRouterBridge` (que é específico do Expo Router).
 

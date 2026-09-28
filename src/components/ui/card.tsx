@@ -23,7 +23,19 @@ export function CardContent({
   )
 }
 
-export function Card({ children, className, nativeID }: { children: ReactNode; className?: string; nativeID?: string }) {
+export function Card({
+  children,
+  className,
+  nativeID,
+  code,
+}: {
+  children: ReactNode
+  className?: string
+  nativeID?: string
+  /** Código interno do catálogo (item D4 do levantamento da Sincronizacao 1), usado por
+   *  `FormSection` (`FORM-002`) e `StatCard` (`STAT-001`); sem a prop, `CARD-001`. */
+  code?: string
+}) {
   const items = Children.toArray(children).filter(isValidElement) as ReactElement[]
   const mapped = items.map((child, index) => {
     const prev = items[index - 1]
@@ -33,7 +45,11 @@ export function Card({ children, className, nativeID }: { children: ReactNode; c
     return cloneElement(child, { key: index })
   })
   return (
-    <View nativeID={nativeID} className={cn('flex min-w-0 flex-col rounded-surface border bg-card', className)}>
+    <View
+      nativeID={nativeID}
+      dataSet={{ rendra: code ?? 'CARD-001' }}
+      className={cn('flex min-w-0 flex-col rounded-surface border bg-card', className)}
+    >
       {mapped}
     </View>
   )

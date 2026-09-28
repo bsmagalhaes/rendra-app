@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native'
 import { fireGestureHandler, getByGestureTestId } from 'react-native-gesture-handler/jest-utils'
 import { BrandProvider } from '../../brand/brand-provider'
 import { Slider, thumbTranslateX } from './slider'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('Slider', () => {
   it('arraste move o valor proporcionalmente à largura medida', async () => {
@@ -118,5 +119,14 @@ describe('Slider', () => {
     expect(alca.props['aria-disabled']).toBe(true)
     fireEvent(alca, 'accessibilityAction', { nativeEvent: { actionName: 'increment' } })
     expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('carrega dataSet.rendra = SLD-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Slider value={[50]} accessibilityLabel="Volume" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'SLD-001')).toHaveLength(1)
   })
 })

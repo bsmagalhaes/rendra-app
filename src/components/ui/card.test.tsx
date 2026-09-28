@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native'
 import { View } from 'react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './card'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('Card', () => {
   it('CardContent logo após CardHeader não tem padding superior', async () => {
@@ -75,5 +76,16 @@ describe('Card', () => {
     )
     const footer = await findByTestId('rodape')
     expect(footer.props.className.split(' ')).toContain('border-t')
+  })
+
+  it('sem prop code, carrega dataSet.rendra = CARD-001 (item D4 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Card>
+          <View />
+        </Card>
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'CARD-001')).toHaveLength(1)
   })
 })

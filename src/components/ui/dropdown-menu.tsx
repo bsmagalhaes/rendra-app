@@ -55,7 +55,11 @@ export function DropdownMenuContent({ children, accessibilityLabel }: DropdownMe
   const { open, setOpen } = useDropdownMenuContext('DropdownMenuContent')
   return (
     <BottomSheet open={open} onOpenChange={setOpen} accessibilityLabel={accessibilityLabel} contentContainerClassName="p-1">
-      <View accessibilityRole={a11yPresets.menu.accessibilityRole} className="rounded-t-surface bg-popover p-1">
+      <View
+        accessibilityRole={a11yPresets.menu.accessibilityRole}
+        className="rounded-t-surface bg-popover p-1"
+        dataSet={{ rendra: 'DDM-001' }}
+      >
         {children}
       </View>
     </BottomSheet>

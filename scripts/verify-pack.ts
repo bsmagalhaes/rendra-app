@@ -44,6 +44,7 @@ import {
   validatePackFiles,
   changelogMissingEntryError,
   pluginVersionLeakError,
+  presetVarsWithoutPrefix,
   buildWindowsShellCommand,
 } from './lib/verify-pack-checks'
 import {
@@ -412,18 +413,24 @@ function main() {
     if (jestResult.status !== 0) falhar('teste do consumidor (src/__tests__/pack-consumer.test.tsx) falhou.')
 
     // 10. tailwind-preset instalado, em processo filho isolado (com NODE_PATH para o nativewind
-    //     não instalado no projeto temporário).
+    //     não instalado no projeto temporário); o filho só imprime o `theme` (JSON), e a checagem
+    //     de prefixo roda aqui no pai com `presetVarsWithoutPrefix` (achado B5 do Opus, item H6:
+    //     nenhuma cor/raio/sombra do preset instalado pode resolver `var(--x)` sem `--rendra-`).
     const presetPath = join(entradaPacote, 'dist-lib', 'theme', 'tailwind-preset.js')
     const presetCheck = spawnSync(
       process.execPath,
       [
         '-e',
-        `const p = require(${JSON.stringify(presetPath)}); if (p.theme.spacing.touch !== '44px' || !String(p.theme.colors.primary).includes('var(--primary)')) { console.error('preset instalado sem os tokens esperados'); process.exit(1); }`,
+        `const p = require(${JSON.stringify(presetPath)}); if (p.theme.spacing.touch !== '44px' || !String(p.theme.colors.primary).includes('var(--rendra-primary)')) { console.error('preset instalado sem os tokens esperados'); process.exit(1); } console.log(JSON.stringify(p.theme));`,
       ],
       { encoding: 'utf8', env: { ...process.env, NODE_PATH: nodeModulesDoRepo } },
     )
     if (presetCheck.status !== 0) {
       falhar(`tailwind-preset instalado não tem os tokens esperados: ${presetCheck.stderr}`)
+    }
+    const varsSemPrefixo = presetVarsWithoutPrefix(JSON.parse(presetCheck.stdout))
+    if (varsSemPrefixo.length > 0) {
+      falhar(`tailwind-preset instalado resolve variável sem o prefixo --rendra- (nem --tw-): ${varsSemPrefixo.join(', ')}.`)
     }
 
     // 11. Reproduz a lacuna 2 do veredito Fable sobre o pacote npm: o Jest do

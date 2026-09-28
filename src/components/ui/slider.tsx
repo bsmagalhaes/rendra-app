@@ -169,7 +169,7 @@ export function Slider({
   const filledRightRatio = isRange ? (values[1] - min) / (max - min) : (values[0] - min) / (max - min)
 
   return (
-    <View className="flex-col gap-3">
+    <View className="flex-col gap-3" dataSet={{ rendra: 'SLD-001' }}>
       {showValue ? (
         <View className="flex-row justify-between">
           <Text weight="medium" className="text-sm text-foreground">

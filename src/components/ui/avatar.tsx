@@ -38,6 +38,7 @@ export function Avatar({ name, src, size = 'md', className, testID }: AvatarProp
   return (
     <View
       testID={testID}
+      dataSet={{ rendra: 'AVT-001' }}
       accessibilityLabel={showImage ? undefined : name}
       className={cn(
         'relative items-center justify-center overflow-hidden rounded-avatar bg-primary-soft',
@@ -77,6 +78,7 @@ export function AvatarGroup({ people, max = 4, size = 'md', className, testID }:
   return (
     <View
       testID={testID}
+      dataSet={{ rendra: 'AVT-002' }}
       accessible
       role={a11yPresets.group.role}
       accessibilityLabel={people.map((person) => person.name).join(', ')}

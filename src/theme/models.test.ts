@@ -8,9 +8,9 @@ describe('models', () => {
       productName: 'Rendra Safira', tagline: 'Precisão lapidada em cada tela.',
     })
   })
-  it('T2 Equilíbrio: DM Sans, rounded, radius 10', () => {
+  it('T2 Equilibrio (T2) tem raio 8, igual ao web (item A3 do levantamento)', () => {
     expect(models.T2).toMatchObject({
-      brandId: 'equilibrio', shape: 'rounded', radius: 10,
+      brandId: 'equilibrio', shape: 'rounded', radius: 8,
       fontFamily: { normal: 'DMSans_400Regular', medium: 'DMSans_500Medium', semibold: 'DMSans_600SemiBold' },
       productName: 'Rendra Equilíbrio', tagline: 'O ponto certo entre firmeza e leveza.',
     })

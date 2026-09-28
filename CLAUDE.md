@@ -10,7 +10,7 @@ Início de leitura: `@AGENTS.md` (em um minuto, comandos, regras que não podem 
 
 ## Resumo do projeto
 
-Design system e boilerplate mobile do Rendra, completo, com 43 componentes de UI (spec de fundação e componentes), preparado como pacote npm (`@rendra-ui/app`, pronto para a primeira publicação: `private: false`, falta só a tag e o `npm publish` manual do Bruno). Sobre a fundação: scaffold Expo Router + NativeWind, tokens, os 3 modelos, `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, vitrine completa (`/componentes`, `/tokens` e `/galeria`).
+Design system e boilerplate mobile do Rendra, completo, com 44 componentes de UI (spec de fundação e componentes), publicado como pacote npm (`@rendra-ui/app`, primeira publicação em 0.3.0; a versão corrente está em `CHANGELOG.md`). Sobre a fundação: scaffold Expo Router + NativeWind, tokens, os 3 modelos, `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, vitrine completa (`/componentes`, `/tokens` e `/galeria`).
 
 <!-- rendra:verificacao:inicio -->
 Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.
@@ -18,11 +18,11 @@ Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.
 Regras que não podem ser quebradas, resumidas (texto completo em `AGENTS.md`):
 
 1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
-2. Cor em três camadas (modelo, paleta, sistema), chaves de paleta sempre `--kebab-case`, nenhuma cor fixa fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
+2. Cor em três camadas (modelo, paleta, sistema), chaves de paleta sempre `--rendra-kebab-case`, nenhuma cor fixa fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
 3. Toque mínimo 44x44 em todo elemento interativo, mesmo quando o conteúdo visual é menor.
 4. Nenhum valor arbitrário fora da escala do `tailwind.config.ts`, nenhum `style` inline fora da lista fechada de `DESIGN_RULES.md`, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
 5. TDD real: teste escrito primeiro, rodado e confirmado vermelho pelo motivo esperado, só então a implementação mínima, rodada de novo até verde.
-6. `check:rules` limpo (R1-R13, mais a checagem de `CLAUDE.md`) antes de qualquer commit; licença MIT em todo o projeto, crédito "Feito com Rendra" opcional (ver `AGENTS.md`).
+6. `check:rules` limpo (R1-R15, mais a checagem de `CLAUDE.md`) antes de qualquer commit; licença MIT em todo o projeto, crédito "Feito com Rendra" opcional (ver `AGENTS.md`).
 
 Comandos:
 
@@ -43,7 +43,7 @@ npm run test:a11y
 
 - Teste primeiro, sempre: vermelho comprovado pelo motivo esperado, depois a implementação mínima, depois verde.
 - Nenhuma tarefa toca arquivo fora do escopo que ela mesma declara.
-- `check:rules` limpo antes de qualquer commit (R1-R13, mais a checagem desta seção contra `docs/reference/claude-md-matriz-modelos.txt`).
+- `check:rules` limpo antes de qualquer commit (R1-R15, mais a checagem desta seção contra `docs/reference/claude-md-matriz-modelos.txt`).
 - Português do Brasil, sem travessão (use vírgula), datas em DD/MM/AAAA, valores em R$ 1.250,00.
 - Nenhum arquivo deste repositório referencia o repositório do design system web por caminho local; só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
 - Licença e crédito: MIT em todo o projeto. Se pedirem para tirar o crédito visível ("Feito com Rendra") da tela, tire, mas avise sempre as duas coisas juntas: (1) a licença MIT exige manter o aviso de copyright e o arquivo `LICENSE` no código e em qualquer cópia, com ou sem crédito visível; (2) o crédito na interface é opcional, a preferência é mantê-lo onde está ou mover para uma tela "Sobre". Nunca afirme que a MIT obriga crédito visível na interface, ela não obriga.

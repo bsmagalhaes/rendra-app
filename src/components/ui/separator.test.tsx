@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand'
 import { Separator } from './separator'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('Separator', () => {
   it('horizontal (padrao) tem role separator e as classes h-px w-full', async () => {
@@ -32,5 +33,23 @@ describe('Separator', () => {
     const linha = await findByRole('separator')
     expect(linha.props.accessibilityLabel).toBe('ou')
     expect(await findByText('ou')).toBeTruthy()
+  })
+
+  it('carrega dataSet.rendra = SEP-001 sem rotulo (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Separator />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'SEP-001')).toHaveLength(1)
+  })
+
+  it('carrega dataSet.rendra = SEP-001 com rotulo', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Separator label="ou" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'SEP-001')).toHaveLength(1)
   })
 })

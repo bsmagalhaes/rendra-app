@@ -225,3 +225,69 @@ describe('R11: Gradient na forma JsxElement', () => {
     expect(violations.filter((v) => v.rule === 'R11').length).toBe(1)
   })
 })
+
+describe('R14: variavel do tema sem prefixo --rendra- (itens H2/H3 do levantamento da Sincronizacao 1)', () => {
+  it('acusa variavel do tema sem o prefixo --rendra-', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r14-violacao.tsx'])
+    expect(violations.filter((v) => v.rule === 'R14')).toHaveLength(1)
+  })
+
+  it('nao acusa chave ja prefixada', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r14-limpo.tsx'])
+    expect(violations.filter((v) => v.rule === 'R14')).toHaveLength(0)
+  })
+
+  it('nao acusa variavel interna do Tailwind (--tw-*)', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r14-tailwind-ok.tsx'])
+    expect(violations.filter((v) => v.rule === 'R14')).toHaveLength(0)
+  })
+
+  it('o repositorio inteiro (ja limpo pelo Bloco 3) nao acusa nenhuma variavel sem prefixo', () => {
+    const { globSync } = require('glob') as typeof import('glob')
+    const srcFiles: string[] = globSync('src/**/*.{ts,tsx}', { ignore: ['src/**/*.test.{ts,tsx}'], posix: true })
+    const violations = runCheckRules(srcFiles)
+    expect(violations.filter((v) => v.rule === 'R14')).toHaveLength(0)
+  })
+})
+
+describe('R15: texto orientativo fora do limite ou com verbo de instrucao (item H2 do levantamento)', () => {
+  it('acusa help acima do limite do span (sem span, md = 40)', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r15-help-longo.tsx'], { r15IsScreen: true })
+    expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(1)
+  })
+
+  it('nao acusa help dentro do limite', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r15-help-curto.tsx'], { r15IsScreen: true })
+    expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(0)
+  })
+
+  it('span="full" aceita ate 150 caracteres', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r15-span-full.tsx'], { r15IsScreen: true })
+    expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(0)
+  })
+
+  it('acusa mais da metade dos Field de uma FormSection com help', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r15-form-section.tsx'], { r15IsScreen: true })
+    expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(1)
+  })
+
+  it('acusa description do PageHeader acima de 150 caracteres', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r15-page-header.tsx'], { r15IsScreen: true })
+    expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(1)
+  })
+
+  it('acusa CardDescription comecando com verbo de instrucao', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r15-verbo.tsx'], { r15IsScreen: true })
+    expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(1)
+  })
+
+  it('help={variavel} nunca e medido', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r15-variavel.tsx'], { r15IsScreen: true })
+    expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(0)
+  })
+
+  it('sem r15IsScreen (fora de app/), a mesma violacao nao e acusada (prova o escopo)', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r15-help-longo.tsx'])
+    expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(0)
+  })
+})

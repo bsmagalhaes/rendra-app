@@ -106,6 +106,7 @@ export function Toaster() {
         >
           <View
             testID={`toast-${item.id}`}
+            dataSet={{ rendra: 'TST-001' }}
             accessibilityRole={item.type === 'error' ? a11yPresets.alert.accessibilityRole : undefined}
             role={item.type === 'error' ? undefined : a11yPresets.status.role}
             accessibilityLiveRegion={item.type === 'error' ? 'assertive' : 'polite'}

@@ -24,7 +24,7 @@ export const models: Record<ModelId, Model> = {
     code: 'T2', brandId: 'equilibrio', name: 'Equilíbrio',
     productName: 'Rendra Equilíbrio', tagline: 'O ponto certo entre firmeza e leveza.',
     fontFamily: { normal: 'DMSans_400Regular', medium: 'DMSans_500Medium', semibold: 'DMSans_600SemiBold' },
-    shape: 'rounded', radius: 10,
+    shape: 'rounded', radius: 8,
   },
   T3: {
     code: 'T3', brandId: 'aurora', name: 'Aurora',

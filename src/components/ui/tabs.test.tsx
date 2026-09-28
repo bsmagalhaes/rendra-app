@@ -10,6 +10,7 @@ import { registerCSS, resetComponents } from 'react-native-css-interop/test'
 import { cssInterop } from 'react-native-css-interop'
 import { BrandProvider } from '../../brand'
 import { Tabs } from './tabs'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 const items = [
   { value: 'pedidos', label: 'Pedidos', count: 3, content: 'Lista de pedidos.' },
@@ -178,5 +179,21 @@ describe('Tabs', () => {
     )
     const medida = getByTestId('tabs-medida', { includeHiddenElements: true })
     expect(medida.props.className.split(' ')).toContain('p-1')
+  })
+})
+
+describe('Tabs: data-rendra por variante (item D12 do levantamento da Sincronizacao 1)', () => {
+  it('variant line (padrao) carrega dataSet.rendra = ABA-001', async () => {
+    const { container } = await render(
+      <BrandProvider><Tabs items={items} accessibilityLabel="Secoes" /></BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'ABA-001')).toHaveLength(1)
+  })
+
+  it('variant pill carrega dataSet.rendra = ABA-002', async () => {
+    const { container } = await render(
+      <BrandProvider><Tabs items={items} variant="pill" accessibilityLabel="Secoes" /></BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'ABA-002')).toHaveLength(1)
   })
 })

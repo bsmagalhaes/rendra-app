@@ -53,7 +53,7 @@ export function Textarea({
   }
 
   return (
-    <View className="flex min-w-0 flex-col gap-1">
+    <View className="flex min-w-0 flex-col gap-1" dataSet={{ rendra: 'TXT-001' }}>
       <TextInput
         testID={testID}
         multiline

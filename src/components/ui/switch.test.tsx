@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native'
 import { StyleSheet, AccessibilityInfo } from 'react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { Switch } from './switch'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 function ControlledSwitch({ onCheckedChange }: { onCheckedChange: (checked: boolean) => void }) {
   const [checked, setChecked] = useState(false)
@@ -102,5 +103,14 @@ describe('Switch', () => {
     // Efeito visível, não só a chamada: sem `checked` controlado de fora, o próprio Switch
     // atualiza o estado interno.
     expect(chave.props.accessibilityState.checked).toBe(false)
+  })
+
+  it('carrega dataSet.rendra = SWT-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Switch label="Notificações" checked onCheckedChange={() => {}} />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'SWT-001')).toHaveLength(1)
   })
 })

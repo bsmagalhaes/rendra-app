@@ -2,6 +2,7 @@ import { render, fireEvent } from '@testing-library/react-native'
 import { Text as RNText } from 'react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { InfoHint } from './info-hint'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('InfoHint', () => {
   it('botão fechado por padrão: accessibilityLabel "Sobre: <título>"', async () => {
@@ -53,5 +54,16 @@ describe('InfoHint', () => {
     const trigger = await findByLabelText('Sobre: Sobre este campo')
     await fireEvent.press(trigger)
     expect(await findByText('Texto de ajuda simples.')).toBeTruthy()
+  })
+
+  it('tem raiz View propria com dataSet.rendra = INFO-001 (item D11 do levantamento, traducao para RN)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <InfoHint title="Sobre este campo">
+          <RNText>Texto de ajuda.</RNText>
+        </InfoHint>
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'INFO-001')).toHaveLength(1)
   })
 })

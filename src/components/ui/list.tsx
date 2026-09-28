@@ -3,9 +3,13 @@ import { FlatList, Pressable, View } from 'react-native'
 import { ChevronRight } from 'lucide-react-native'
 import { Text } from '../internal/text'
 import { Separator } from './separator'
+import { Badge, type BadgeTone } from './badge'
 import { useRendraNavigation } from '../../navigation/rendra-navigation'
 import { a11yPresets } from '../../lib/a11y'
 import { cn } from '../../lib/cn'
+
+/** Selo textual de status da linha, com contraste AA (nunca so cor). Item D8 do levantamento. */
+export type ListItemTone = 'success' | 'warning' | 'error' | 'neutral'
 
 export interface ListItem {
   id: string
@@ -15,6 +19,21 @@ export interface ListItem {
   trailing?: ReactNode
   href?: string
   onPress?: () => void
+  tone?: ListItemTone
+}
+
+const toneLabel: Record<ListItemTone, string> = {
+  success: 'Sucesso',
+  warning: 'Atenção',
+  error: 'Erro',
+  neutral: 'Neutro',
+}
+
+const toneBadge: Record<ListItemTone, BadgeTone> = {
+  success: 'success',
+  warning: 'warning',
+  error: 'error',
+  neutral: 'neutral',
 }
 
 export interface ListProps {
@@ -65,6 +84,11 @@ function ListRow({ item }: { item: ListItem }) {
           </Text>
         ) : null}
       </View>
+      {item.tone ? (
+        <Badge tone={toneBadge[item.tone]} className="shrink-0">
+          {toneLabel[item.tone]}
+        </Badge>
+      ) : null}
       {/* M4 (Fable, validacao da entrega): quando a linha e interativa, o trailing (Button e
           composicao autorizada) so entra aqui dentro da Pressable se NAO for interativo; um
           trailing interativo fica fora, irmao da Pressable, para nao dar controle aninhado em
@@ -122,6 +146,7 @@ export function List({ items, divided = true, empty, scrollEnabled = true, testI
   return (
     <FlatList
       testID={testID}
+      dataSet={{ rendra: 'LIST-001' }}
       scrollEnabled={scrollEnabled}
       data={items}
       keyExtractor={(item) => item.id}

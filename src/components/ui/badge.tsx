@@ -79,6 +79,7 @@ export function Badge({ tone = 'neutral', solid = false, icon, dot = false, chil
   return (
     <View
       testID={testID}
+      dataSet={{ rendra: 'BDG-001' }}
       className={cn(
         'flex-row max-w-full shrink-0 items-center gap-1 rounded-item border px-2 py-1',
         rootSolid ?? rootToneClass[tone],

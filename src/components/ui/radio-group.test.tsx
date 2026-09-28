@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { render, fireEvent } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { RadioGroup } from './radio-group'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 const options = [
   { value: 'mensal', label: 'Mensal' },
@@ -86,5 +87,25 @@ describe('RadioGroup', () => {
     // RadioGroup atualiza a seleção interna.
     expect(radios[0].props.accessibilityState.checked).toBe(true)
     expect(radios[1].props.accessibilityState.checked).toBe(false)
+  })
+})
+
+describe('RadioGroup: data-rendra por variante (item D12 do levantamento da Sincronizacao 1)', () => {
+  it('variant list (padrao) carrega dataSet.rendra = RDO-001', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <RadioGroup options={options} defaultValue="mensal" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'RDO-001')).toHaveLength(1)
+  })
+
+  it('variant cards carrega dataSet.rendra = RDO-002', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <RadioGroup options={options} defaultValue="mensal" variant="cards" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'RDO-002')).toHaveLength(1)
   })
 })

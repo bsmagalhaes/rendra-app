@@ -63,7 +63,7 @@ export function BrandLogo({ on = 'surface', symbolOnly = false, size = 'md', cla
       }
 
   return (
-    <View className={cn('flex-row items-center gap-3', className)}>
+    <View className={cn('flex-row items-center gap-3', className)} dataSet={{ rendra: 'LOGO-001' }}>
       <View
         testID={testID ? `${testID}-selo` : undefined}
         className={cn('shrink-0 items-center justify-center rounded-control', tileBgClass[on], sizeClass[size])}

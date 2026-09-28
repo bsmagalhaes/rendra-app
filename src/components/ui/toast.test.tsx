@@ -3,6 +3,7 @@ import { AccessibilityInfo, StyleSheet } from 'react-native'
 import * as SafeAreaContext from 'react-native-safe-area-context'
 import { BrandProvider } from '../../brand'
 import { toast, Toaster } from './toast'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('Toast e Toaster', () => {
   beforeEach(() => {
@@ -191,5 +192,17 @@ describe('Toast e Toaster', () => {
     })
     const host = await findByTestId('toast-host')
     expect(StyleSheet.flatten(host.props.style)).toMatchObject({ paddingBottom: 16 })
+  })
+
+  it('carrega dataSet.rendra = TST-001 por notificacao (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Toaster />
+      </BrandProvider>,
+    )
+    await act(async () => {
+      toast.success('Um')
+    })
+    expect(nodesWithCode(container, 'TST-001')).toHaveLength(1)
   })
 })

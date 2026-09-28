@@ -29,7 +29,7 @@ const PREFLIGHT_PLACEHOLDER_GRAY = '#9ca3af'
  * `input::placeholder`/`textarea::placeholder` do preflight do Tailwind: o axe sempre reporta a
  * cor do preflight (`#9ca3af`), mesmo quando o valor REAL renderizado (comprovado por
  * `getComputedStyle(el, '::placeholder').color` num Chromium real, fora do axe) já usa
- * `--muted-foreground`, garantido 4,5:1 de contraste por `reach(...)` (`src/brand/palette.ts`).
+ * `--rendra-muted-foreground`, garantido 4,5:1 de contraste por `reach(...)` (`src/brand/palette.ts`).
  *
  * Melhoria 4 do veredito do fechamento (Fable): o filtro original só conferia a FORMA do nó
  * (`input`/`textarea` com `placeholder`), largo demais — um `color-contrast` genuíno num

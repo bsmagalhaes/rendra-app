@@ -5,6 +5,8 @@ import { createMask } from 'imask'
 import { ChevronDown, Eye, EyeOff, X } from 'lucide-react-native'
 import { Text } from '../internal/text'
 import { Select } from './select'
+import { Spinner } from './spinner'
+import { Button } from './button'
 import { cn } from '../../lib/cn'
 import { a11yPresets } from '../../lib/a11y'
 import { useControlledState } from '../../hooks/use-controlled-state'
@@ -16,10 +18,21 @@ import {
   phoneCountries,
   DEFAULT_DDI,
   internationalPhoneMask,
+  percentMask,
   toCents,
   type PhoneCountry,
 } from '../../lib/masks'
 import { useLookup, type LookupResult } from '../../hooks/use-lookup'
+
+/**
+ * Uma unidade do seletor embutido do Input (item D7 do levantamento da Sincronizacao 1). Os ids
+ * "percent" e "currency" ligam a mascara de percentual (teto configuravel por `percentMax`) e de
+ * moeda; qualquer outro id nao aplica mascara, so rotulo.
+ */
+export interface InputUnitOption {
+  id: string
+  label: string
+}
 
 export interface InputProps {
   size?: ControlSize
@@ -39,6 +52,30 @@ export interface InputProps {
   hideDdi?: boolean
   onCentsChange?: (cents: number | null) => void
   onLookup?: (result: LookupResult) => void
+  /** Unidades: seletor embutido a direita, no mesmo padrao do seletor de DDI. Trocar de unidade
+   *  sempre limpa o valor do campo. `suffix` e ignorado quando `units` esta presente. */
+  units?: InputUnitOption[]
+  /** Unidade escolhida (controlada). Sem ela, usa a primeira de `units`. */
+  unit?: string
+  onUnitChange?: (unit: string) => void
+  /** Teto do percentual quando a unidade escolhida e "percent". Padrao 100. */
+  percentMax?: number
+  /** Variante de valor guardado: mostra `maskedHint` no lugar do valor real, que nunca chega a
+   *  existir no campo. "Trocar" abre um campo vazio (`isEditing`); a tela controla o fluxo
+   *  (`isEditing`, `onStartEdit`, `onCancelEdit`). */
+  variant?: 'secret'
+  /** Ha um valor salvo (mesmo sem mostra-lo). */
+  hasValue?: boolean
+  /** Texto mascarado mostrado no lugar do valor, ex.: "••••1234". Padrao "••••••••". */
+  maskedHint?: string
+  /** Campo aberto para digitar um valor novo. */
+  isEditing?: boolean
+  onStartEdit?: () => void
+  onCancelEdit?: () => void
+  /** Remove o valor salvo. Sem essa prop, o botao "Remover" nao aparece. */
+  onRemove?: () => void
+  /** Remocao em andamento: desabilita e mostra o carregamento no botao "Remover". */
+  removing?: boolean
   disabled?: boolean
   placeholder?: string
   accessibilityLabel?: string
@@ -65,17 +102,43 @@ export function Input({
   hideDdi = false,
   onCentsChange,
   onLookup,
+  units,
+  unit: unitProp,
+  onUnitChange,
+  percentMax,
+  variant,
+  hasValue = false,
+  maskedHint,
+  isEditing = false,
+  onStartEdit,
+  onCancelEdit,
+  onRemove,
+  removing = false,
   disabled = false,
   placeholder,
   accessibilityLabel,
   className,
   testID,
 }: InputProps) {
+  const isSecret = variant === 'secret'
   const placeholderColor = usePlaceholderColor()
   const isPhone = mask === 'phone'
   const [ddi, setDdi] = useControlledState<string>(ddiProp, DEFAULT_DDI, onDdiChange)
   const intl = isPhone && ddi !== '55'
-  const maskOptions = intl ? internationalPhoneMask.options : mask ? masks[mask].options : undefined
+  // Unidades (item D7): seletor embutido a direita. A unidade escolhida decide a mascara efetiva,
+  // por cima da prop `mask` (igual ao contrato do web, input.tsx:180-183).
+  const hasUnits = Boolean(units && units.length > 0)
+  const [innerUnit, setInnerUnit] = useControlledState<string>(unitProp, units?.[0]?.id ?? '', onUnitChange)
+  const unit = hasUnits ? innerUnit : undefined
+  const unitMaskName = unit === 'percent' ? 'percent' : unit === 'currency' ? 'currency' : undefined
+  const unitDef = unitMaskName === 'percent' ? percentMask(percentMax) : unitMaskName === 'currency' ? masks.currency : undefined
+  const maskOptions = hasUnits
+    ? unitDef?.options
+    : intl
+      ? internationalPhoneMask.options
+      : mask
+        ? masks[mask].options
+        : undefined
   const masked = useMemo(() => (maskOptions ? createMask(maskOptions) : null), [maskOptions])
   const [internalValue, setInternalValue] = useState(() => {
     const initial = controlledValue ?? defaultValue
@@ -86,8 +149,18 @@ export function Input({
     return initial
   })
   const [focused, setFocused] = useState(false)
-  const [secure, setSecure] = useState(secureProp)
+  const [secure, setSecure] = useState(secureProp || isSecret)
   const [searching, setSearching] = useState(false)
+  // variant="secret" em edicao (achado B2 do veredito do Fable): o campo nunca deriva de
+  // `value`/`defaultValue` do consumidor (o valor salvo nunca chega a existir no campo, mesmo
+  // controlado por fora); um estado proprio, sempre vazio ao abrir a edicao, mesmo padrao do
+  // contrato web (`defaultValue: ''`, input.tsx:354-364 do web).
+  const [secretDraft, setSecretDraft] = useState('')
+  const [lastIsEditing, setLastIsEditing] = useState(isEditing)
+  if (isEditing !== lastIsEditing) {
+    setLastIsEditing(isEditing)
+    if (isEditing) setSecretDraft('')
+  }
   const inputRef = useRef<TextInput>(null)
   const lookup = useLookup()
 
@@ -124,7 +197,7 @@ export function Input({
       masked.resolve(text)
       onChange?.(masked.value)
       onValueChange?.(masked.unmaskedValue, masked.value)
-      if (mask === 'currency') onCentsChange?.(toCents(masked.value))
+      if (mask === 'currency' || unitMaskName === 'currency') onCentsChange?.(toCents(masked.value))
       setInternalValue(masked.value)
       if ((mask === 'cep' || mask === 'cnpj' || mask === 'cpfCnpj') && onLookup) {
         setSearching(true)
@@ -149,11 +222,50 @@ export function Input({
     inputRef.current?.focus()
   }
 
+  // variant="secret" em edicao: buffer proprio, nunca deriva do valor salvo (achado B2).
+  function handleSecretChangeText(text: string) {
+    setSecretDraft(text)
+    onChange?.(text)
+    onValueChange?.(text, text)
+  }
+
+  // Trocar de unidade sempre limpa o valor do campo (contrato do web, input.tsx:257-260):
+  // o valor digitado sob uma unidade nao faz sentido reaplicado sob outra (ex.: "12,5 %"
+  // virando moeda).
+  function changeUnit(id: string) {
+    setInnerUnit(id)
+    setInternalValue('')
+    onChange?.('')
+    onValueChange?.('', '')
+  }
+
   const country = ddiOptions.find((c) => c.ddi === ddi)
-  const def = mask ? masks[mask] : undefined
+  const def = hasUnits ? unitDef : mask ? masks[mask] : undefined
+  const selectedUnitLabel = units?.find((u) => u.id === unit)?.label ?? unit
+
+  // Modo leitura de variant="secret" (item D7): o valor salvo nunca chega a existir no campo,
+  // so um texto mascarado (nao mede AA, e sempre muted-foreground: nao ha classe de fonte
+  // monoespacada no tema, R5 de DESIGN_RULES.md nao reserva nenhuma).
+  if (isSecret && !isEditing) {
+    return (
+      <View className={cn(controlFrameClasses({ size, invalid, disabled }), className)} dataSet={{ rendra: 'CAMP-001' }}>
+        <Text className="min-w-0 flex-1 text-sm text-muted-foreground" numberOfLines={1}>
+          {hasValue ? (maskedHint ?? '••••••••') : 'Nenhum valor salvo'}
+        </Text>
+        <Button variant="ghost" size="sm" onPress={onStartEdit} disabled={disabled}>
+          Trocar
+        </Button>
+        {hasValue && onRemove ? (
+          <Button variant="ghost" size="sm" onPress={onRemove} disabled={disabled || removing} loading={removing}>
+            Remover
+          </Button>
+        ) : null}
+      </View>
+    )
+  }
 
   return (
-    <View className={cn(controlFrameClasses({ size, invalid, focused, disabled }), className)}>
+    <View className={cn(controlFrameClasses({ size, invalid, focused, disabled }), className)} dataSet={{ rendra: 'CAMP-001' }}>
       {icon ? <View className="flex shrink-0 text-muted-foreground">{icon}</View> : null}
       {isPhone && !hideDdi ? (
         <Select
@@ -176,10 +288,11 @@ export function Input({
         />
       ) : null}
       <TextInput
+        key={hasUnits ? `unit-${unit}` : undefined}
         ref={inputRef}
         testID={testID}
-        value={value}
-        onChangeText={handleChangeText}
+        value={isSecret ? secretDraft : value}
+        onChangeText={isSecret ? handleSecretChangeText : handleChangeText}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         editable={!disabled}
@@ -190,8 +303,27 @@ export function Input({
         accessibilityLabel={accessibilityLabel}
         className="h-full min-w-0 flex-1 bg-transparent text-base text-foreground"
       />
-      {searching ? <Text role={a11yPresets.status.role} className="text-xs text-muted-foreground">Buscando...</Text> : null}
-      {suffix ? <Text className="shrink-0 text-sm text-muted-foreground">{suffix}</Text> : null}
+      {searching ? <Spinner size="sm" label="Buscando..." className="text-muted-foreground" /> : null}
+      {hasUnits ? (
+        <Select
+          options={units!.map((u) => ({ value: u.id, label: u.label }))}
+          value={unit}
+          onChange={(v) => v && changeUnit(v)}
+          label="Unidade"
+          trigger={({ onPress }) => (
+            <Pressable
+              accessibilityRole={a11yPresets.button.accessibilityRole}
+              accessibilityLabel={`Unidade: ${selectedUnitLabel}`}
+              onPress={onPress}
+              className="min-h-touch min-w-touch flex-row items-center gap-1 border-l border-input pl-2"
+            >
+              <Text className="text-sm font-medium text-foreground">{selectedUnitLabel}</Text>
+              <ChevronDown className="size-icon-sm text-muted-foreground" />
+            </Pressable>
+          )}
+        />
+      ) : null}
+      {!hasUnits && suffix ? <Text className="shrink-0 text-sm text-muted-foreground">{suffix}</Text> : null}
       {clearable && value && !disabled ? (
         <Pressable
           accessibilityRole={a11yPresets.button.accessibilityRole}
@@ -202,7 +334,7 @@ export function Input({
           <X className="size-icon-sm" />
         </Pressable>
       ) : null}
-      {secureProp ? (
+      {secureProp || isSecret ? (
         <Pressable
           accessibilityRole={a11yPresets.button.accessibilityRole}
           accessibilityLabel={secure ? 'Mostrar senha' : 'Ocultar senha'}
@@ -212,6 +344,11 @@ export function Input({
         >
           {secure ? <Eye className="size-icon-sm" /> : <EyeOff className="size-icon-sm" />}
         </Pressable>
+      ) : null}
+      {isSecret ? (
+        <Button variant="ghost" size="sm" onPress={onCancelEdit} disabled={disabled}>
+          Cancelar
+        </Button>
       ) : null}
     </View>
   )

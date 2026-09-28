@@ -5,6 +5,7 @@ import { BrandProvider } from '../../brand/brand-provider'
 import { Text } from '../internal/text'
 import { Button } from './button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './dropdown-menu'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 class LimiteDeErro extends Component<{ children: ReactNode }, { erro: Error | null }> {
   state: { erro: Error | null } = { erro: null }
@@ -96,5 +97,12 @@ describe('DropdownMenu', () => {
     )
     expect(await findByText('DropdownMenuItem precisa estar dentro de <DropdownMenu>.')).toBeTruthy()
     spy.mockRestore()
+  })
+
+  it('DropdownMenuContent carrega dataSet.rendra = DDM-001, aberto (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { findByLabelText, container } = await render(<Example />)
+    const trigger = await findByLabelText('Mais ações')
+    await fireEvent.press(trigger)
+    expect(nodesWithCode(container, 'DDM-001')).toHaveLength(1)
   })
 })

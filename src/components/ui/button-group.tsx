@@ -40,6 +40,7 @@ export function ButtonGroup({
       <View
         accessibilityRole={a11yPresets.radiogroup.accessibilityRole}
         accessibilityLabel={accessibilityLabel}
+        dataSet={{ rendra: 'BTNG-001' }}
         className={cn('flex-row flex-wrap gap-1 rounded-control border bg-muted p-1', fullWidth && 'w-full', className)}
       >
         {options.map((option) => {
@@ -60,7 +61,7 @@ export function ButtonGroup({
                 // M1/M2 (veredito do Fable, validação das correções da Tarefa 21): o gatilho do
                 // crash "Couldn't find a navigation context" no nativo Android (achado do
                 // emulador, Tarefa 20/21) não é "consumir variável de tema" (`bg-card`/`bg-muted`
-                // compilam sem `variables`, e `rounded-item`, que consome `var(--radius-item)`
+                // compilam sem `variables`, e `rounded-item`, que consome `var(--rendra-shape-item)`
                 // desde sempre em toda opção, nunca causou upgrade); é a classe `shadow-sm`
                 // *declarar* a propriedade customizada `--tw-shadow-color` no CSS nativo (única
                 // classe usada aqui que declara variável, `nativewind/src/tailwind/shadows.ts`).
@@ -99,7 +100,12 @@ export function ButtonGroup({
   const items = Children.toArray(children).filter(isValidElement) as ReactElement<{ className?: string }>[]
 
   return (
-    <View accessibilityRole={a11yPresets.toolbar.accessibilityRole} accessibilityLabel={accessibilityLabel} className={cn('flex-row', fullWidth && 'w-full', className)}>
+    <View
+      accessibilityRole={a11yPresets.toolbar.accessibilityRole}
+      accessibilityLabel={accessibilityLabel}
+      dataSet={{ rendra: 'BTNG-001' }}
+      className={cn('flex-row', fullWidth && 'w-full', className)}
+    >
       {items.map((child, index) => {
         const isFirst = index === 0
         const isLast = index === items.length - 1

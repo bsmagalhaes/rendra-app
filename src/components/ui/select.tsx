@@ -1,10 +1,11 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { FlatList, Pressable, TextInput, View } from 'react-native'
-import { Check, ChevronDown, Loader2, Plus, Search, X } from 'lucide-react-native'
+import { Check, ChevronDown, Plus, Search, X } from 'lucide-react-native'
 import { Text } from '../internal/text'
 import { PickerPanel } from '../internal/picker-panel'
 import { Button } from './button'
+import { Spinner } from './spinner'
 import { cn } from '../../lib/cn'
 import { a11yPresets } from '../../lib/a11y'
 import { useControlledState } from '../../hooks/use-controlled-state'
@@ -228,6 +229,7 @@ export function Select(props: SelectProps) {
           disabled={disabled}
           onPress={() => !disabled && handleOpenChange(true)}
           className={cn(controlFrameClasses({ size, invalid, disabled }), 'flex-row items-center justify-between', className)}
+          dataSet={{ rendra: 'SEL-001' }}
         >
           {multiple && !props.showCount && chosen.length > 0 ? (
             <View className="flex-1 flex-row flex-wrap items-center gap-1">
@@ -331,7 +333,7 @@ export function Select(props: SelectProps) {
         ListEmptyComponent={
           searching || loading ? (
             <View className="flex-row items-center justify-center gap-2 px-3 py-6">
-              <Loader2 className="size-icon-sm text-muted-foreground" />
+              <Spinner size="sm" className="text-muted-foreground" />
               <Text className="text-sm text-muted-foreground">Carregando opções...</Text>
             </View>
           ) : (

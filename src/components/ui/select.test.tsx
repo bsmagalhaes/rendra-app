@@ -4,6 +4,7 @@ import { registerCSS } from 'react-native-css-interop/test'
 import { BrandProvider } from '../../brand/brand-provider'
 import { ThemeColorProbe } from '../../test-utils/theme-color-probe'
 import { Select } from './select'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 const options = [
   { value: 'a', label: 'Alfa' },
@@ -230,13 +231,13 @@ describe('Select com busca e criação', () => {
     expect(queryByText('Alfa')).toBeNull()
   })
 
-  it('achado do Playwright (test:a11y): o campo de busca usa placeholderTextColor com --muted-foreground (contraste)', async () => {
+  it('achado do Playwright (test:a11y): o campo de busca usa placeholderTextColor com --rendra-muted-foreground (contraste)', async () => {
     // Mesma causa raiz e correção do Input/Textarea: `placeholder:text-muted-foreground` via
     // className não sobrevive ao clone que o axe-core usa para medir a cor do placeholder.
     const capturado = { cor: '' }
     const { findByRole, findByPlaceholderText } = await render(
       <BrandProvider>
-        <ThemeColorProbe token="--muted-foreground" onCapture={(cor) => { capturado.cor = cor }} />
+        <ThemeColorProbe token="--rendra-muted-foreground" onCapture={(cor) => { capturado.cor = cor }} />
         <Select options={options} searchable />
       </BrandProvider>,
     )
@@ -283,6 +284,19 @@ describe('Select com grupos', () => {
     expect(await findByText('Sudeste')).toBeTruthy()
     expect(await findByText('Nordeste')).toBeTruthy()
     expect(await findByText('Bahia')).toBeTruthy()
+  })
+})
+
+describe('Select: Spinner no lugar do Loader2 solto (item D10/F1 da Sincronizacao 1)', () => {
+  it('loading (prop direta) usa Spinner com o texto "Carregando opções..." e o codigo SPIN-001', async () => {
+    const { container, findByRole, findByText } = await render(
+      <BrandProvider>
+        <Select loading options={[]} />
+      </BrandProvider>,
+    )
+    await fireEvent.press(await findByRole('combobox'))
+    expect(await findByText('Carregando opções...')).toBeTruthy()
+    expect(nodesWithCode(container, 'SPIN-001')).toHaveLength(1)
   })
 })
 
@@ -383,5 +397,17 @@ describe('Select múltiplo, adorno de limpar e rodapé', () => {
     )
     const limpar = (await findAllByLabelText('Limpar seleção'))[0]
     expect(limpar.props.accessibilityRole).toBe('button')
+  })
+})
+
+describe('Select: data-rendra (item D10/B9 do levantamento da Sincronizacao 1)', () => {
+  it('carrega dataSet.rendra = SEL-001 no gatilho', async () => {
+    const { findByRole } = await render(
+      <BrandProvider>
+        <Select options={options} placeholder="Selecione" />
+      </BrandProvider>,
+    )
+    const gatilho = await findByRole('combobox')
+    expect(gatilho.props.dataSet).toMatchObject({ rendra: 'SEL-001' })
   })
 })

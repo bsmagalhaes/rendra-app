@@ -20,6 +20,7 @@ import { cssInterop } from 'react-native-css-interop'
 import { BrandProvider } from '../../brand/brand-provider'
 import { ButtonGroup } from './button-group'
 import { Button } from './button'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 const options = [
   { value: 'dia', label: 'Dia' },
@@ -148,5 +149,28 @@ describe('ButtonGroup: modo grupo', () => {
     expect(buttons[1].props.className.split(' ')).toEqual(
       expect.arrayContaining(['rounded-r-control', 'rounded-l-none', 'border-l-0']),
     )
+  })
+})
+
+describe('ButtonGroup: data-rendra (item D12 do levantamento da Sincronizacao 1)', () => {
+  it('carrega dataSet.rendra = BTNG-001 com options', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <ButtonGroup options={options} value="dia" onChange={() => {}} />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'BTNG-001')).toHaveLength(1)
+  })
+
+  it('carrega dataSet.rendra = BTNG-001 com children', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <ButtonGroup>
+          <Button>Um</Button>
+          <Button>Dois</Button>
+        </ButtonGroup>
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'BTNG-001')).toHaveLength(1)
   })
 })

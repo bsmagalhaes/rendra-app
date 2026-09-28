@@ -6,6 +6,7 @@ import { Select } from './select'
 import { a11yPresets } from '../../lib/a11y'
 import { useControlledState } from '../../hooks/use-controlled-state'
 import { cn } from '../../lib/cn'
+import { resolveCatalogCode } from '../../catalog/components'
 
 export interface TabItem {
   value: string
@@ -76,9 +77,10 @@ export function Tabs({
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
   const useSelect = listWidth != null && containerWidth != null && listWidth > containerWidth
   const activeItem = items.find((item) => item.value === active)
+  const code = resolveCatalogCode('Tabs', { variant })
 
   return (
-    <View className={cn('relative min-w-0 flex-col gap-6', className)}>
+    <View className={cn('relative min-w-0 flex-col gap-6', className)} dataSet={{ rendra: code }}>
       {/* B6 (veredito do Opus): o contêiner mede a própria largura e envolve, sempre, ou a
           lista real (abas) ou o Select de fallback; nunca deixa de existir quando o modo troca. */}
       <View

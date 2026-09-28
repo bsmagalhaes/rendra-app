@@ -10,6 +10,7 @@ import { a11yPresets } from '../../lib/a11y'
 import { cn } from '../../lib/cn'
 import { useReducedMotion } from '../../lib/reduced-motion'
 import type { FeedbackType } from '../../brand/types'
+import { resolveCatalogCode } from '../../catalog/components'
 
 export type ModalType = 'confirm' | 'destructive' | 'info' | 'form'
 
@@ -64,6 +65,9 @@ export function Modal({
 }: ModalProps) {
   const [busy, setBusy] = useState(false)
   const isForm = type === 'form'
+  // Item D5 do levantamento da Sincronizacao 1: destructive resolve para o mesmo codigo de
+  // confirm (MOD-001), porque so muda a cor, igual ao web.
+  const code = resolveCatalogCode('Modal', { type: type === 'destructive' ? 'confirm' : type })
   const translateY = useSharedValue(0)
   const opacity = useSharedValue(1)
   const reducedMotion = useReducedMotion()
@@ -171,6 +175,7 @@ export function Modal({
             accessibilityLabel={title}
             accessibilityViewIsModal
             className={cn('shrink max-h-full rounded-t-surface bg-card', className)}
+            dataSet={{ rendra: code }}
           >
             <OverlayShell
               title={title}

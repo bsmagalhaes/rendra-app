@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BrandProvider } from './brand-provider'
 import { useBrand } from './use-brand'
 import { models } from '../theme/models'
+import type { BrandConfig } from './types'
 
 function wrapper({ children }: { children: React.ReactNode }) {
   return <BrandProvider>{children}</BrandProvider>
@@ -15,6 +16,18 @@ function wrapper({ children }: { children: React.ReactNode }) {
 function SondaBrands() {
   const { brands } = useBrand()
   return <Text testID="brands">{JSON.stringify(brands)}</Text>
+}
+
+// Tarefa 4.2 (Sincronizacao 1, item C1 do levantamento, achado B3 do veredito do Opus): marca
+// mínima com todos os campos obrigatórios de `BrandConfig` (src/brand/types.ts), para os testes
+// de `labelStyle` sem depender da marca de demonstração (`brand.config.ts`, que fica só em `app/`).
+const brandMinimo: BrandConfig = {
+  id: 't', productName: 'Teste', companyName: 'Teste', tagline: 'x', shape: 'square', sidebarLogo: 'dark',
+}
+
+function SondaLabelStyle() {
+  const { labelStyle } = useBrand()
+  return <Text testID="label-style">{labelStyle}</Text>
 }
 
 describe('useBrand', () => {
@@ -32,28 +45,28 @@ describe('useBrand', () => {
     expect(result.current.paletteId).toBe('safira')
   })
 
-  it('trocar modelo muda themeVars[--radius-control] de verdade, 0px -> 28px (Review Focus 3)', async () => {
+  it('trocar modelo muda themeVars[--rendra-shape-control] de verdade, 0px -> 28px (Review Focus 3)', async () => {
     const { result } = await renderHook(() => useBrand(), { wrapper })
     await waitFor(() => expect(result.current.hydrated).toBe(true))
-    expect(result.current.themeVars['--radius-control']).toBe('0px')
+    expect(result.current.themeVars['--rendra-shape-control']).toBe('0px')
     await act(async () => result.current.setModelCode('T3'))
-    await waitFor(() => expect(result.current.themeVars['--radius-control']).toBe('28px'))
+    await waitFor(() => expect(result.current.themeVars['--rendra-shape-control']).toBe('28px'))
   })
 
-  it('trocar paleta muda themeVars[--primary] de verdade (acesso --kebab, bloqueadora C1)', async () => {
+  it('trocar paleta muda themeVars[--rendra-primary] de verdade (acesso --kebab, bloqueadora C1)', async () => {
     const { result } = await renderHook(() => useBrand(), { wrapper })
     await waitFor(() => expect(result.current.hydrated).toBe(true))
-    const before = result.current.themeVars['--primary']
+    const before = result.current.themeVars['--rendra-primary']
     await act(async () => result.current.setPaletteId('aurora'))
-    await waitFor(() => expect(result.current.themeVars['--primary']).not.toBe(before))
+    await waitFor(() => expect(result.current.themeVars['--rendra-primary']).not.toBe(before))
   })
 
-  it('trocar modo muda themeVars[--shadow-opacity-sm] de verdade, 0.06 -> 0.3', async () => {
+  it('trocar modo muda themeVars[--rendra-shadow-opacity-sm] de verdade, 0.06 -> 0.3', async () => {
     const { result } = await renderHook(() => useBrand(), { wrapper })
     await waitFor(() => expect(result.current.hydrated).toBe(true))
-    expect(result.current.themeVars['--shadow-opacity-sm']).toBe('0.06')
+    expect(result.current.themeVars['--rendra-shadow-opacity-sm']).toBe('0.06')
     await act(async () => result.current.setMode('dark'))
-    await waitFor(() => expect(result.current.themeVars['--shadow-opacity-sm']).toBe('0.3'))
+    await waitFor(() => expect(result.current.themeVars['--rendra-shadow-opacity-sm']).toBe('0.3'))
     expect(result.current.resolvedMode).toBe('dark')
   })
 
@@ -81,7 +94,7 @@ describe('useBrand', () => {
       }),
     )
     await waitFor(() => expect(result.current.paletteId).toBe('cliente'))
-    expect(result.current.palette.light['--primary']).toBe('#ffcc00')
+    expect(result.current.palette.light['--rendra-primary']).toBe('#ffcc00')
   })
 
   it('testID da raiz combina modelCode e código da paleta ativa, só depois de hydrated (Tarefa B16)', async () => {
@@ -125,7 +138,7 @@ describe('useBrand', () => {
 
     await act(async () => result.current.setPaletteId('safira'))
     await waitFor(() => expect(result.current.paletteId).toBe('safira'))
-    expect(result.current.palette.light['--primary']).toBe('#0b6fe0')
+    expect(result.current.palette.light['--rendra-primary']).toBe('#0b6fe0')
 
     const raw = await AsyncStorage.getItem('rendra:brand')
     const stored = JSON.parse(raw!)
@@ -231,5 +244,54 @@ describe('BrandProvider: prop brands opcional (Tarefa 2.5, achado B7 do veredito
     // M1: os modelos não sobrescritos continuam vindo do padrão interno, nunca da marca de
     // demonstração ("Rendra").
     expect(brands.find((b) => b.id === models.T2.brandId)?.companyName).toBe(models.T2.productName)
+  })
+})
+
+describe('BrandProvider: labelStyle (Tarefa 4.2, item C1 e risco R8 do levantamento)', () => {
+  it('useBrand().labelStyle é "discreto" por padrão, sem prop brands', async () => {
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <SondaLabelStyle />
+      </BrandProvider>,
+    )
+    expect((await findByTestId('label-style')).props.children).toBe('discreto')
+  })
+
+  it('com brands informando labelStyle "normal", useBrand() repassa', async () => {
+    const brands = { T1: { ...brandMinimo, labelStyle: 'normal' as const } }
+    const { findByTestId } = await render(
+      <BrandProvider brands={brands}>
+        <SondaLabelStyle />
+      </BrandProvider>,
+    )
+    expect((await findByTestId('label-style')).props.children).toBe('normal')
+  })
+})
+
+describe('BrandProvider: dataSet.label (Tarefa 4.3, item C2 do levantamento)', () => {
+  it('a View raiz do provider carrega dataSet.label igual ao labelStyle ativo', async () => {
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <Text>x</Text>
+      </BrandProvider>,
+    )
+    expect((await findByTestId(/^rendra-/)).props.dataSet).toMatchObject({ label: 'discreto' })
+  })
+})
+
+describe('BrandProvider: rendraRoot (Tarefa 6.4, secao 3.2 item 4 do levantamento)', () => {
+  it('a View raiz do provider carrega dataSet.rendraRoot, brand, shape e palette, ao lado de label', async () => {
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <Text>x</Text>
+      </BrandProvider>,
+    )
+    expect((await findByTestId(/^rendra-/)).props.dataSet).toMatchObject({
+      rendraRoot: expect.any(String),
+      brand: expect.any(String),
+      shape: expect.any(String),
+      label: 'discreto',
+      palette: expect.any(String),
+    })
   })
 })

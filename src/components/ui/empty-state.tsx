@@ -30,6 +30,7 @@ export function EmptyState({
   return (
     <View
       testID={testID}
+      dataSet={{ rendra: 'VAZ-001' }}
       className={cn('items-center justify-center gap-4', compact ? 'px-4 py-8' : 'px-4 py-12', className)}
     >
       <View className="relative items-center justify-center">

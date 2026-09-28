@@ -194,6 +194,7 @@ export function DatePicker(props: DatePickerProps) {
           disabled={disabled}
           onPress={() => !disabled && handleOpenChange(true)}
           className={cn(controlFrameClasses({ size, invalid, disabled }), className)}
+          dataSet={{ rendra: 'DTP-001' }}
         >
           <CalendarDays className="size-icon-sm shrink-0 text-muted-foreground" />
           <Text numberOfLines={1} className={cn('flex-1 text-base', text ? 'text-foreground' : 'text-muted-foreground')}>

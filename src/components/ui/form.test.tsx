@@ -10,6 +10,7 @@ import { Form, FormField, FormSection } from './form'
 import { Input } from './input'
 import { ActionBar } from './action-bar'
 import { zBR } from '../../lib/validators'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 // React 19: `render(...).rejects.toThrow` é instável para um erro síncrono de render
 // (o rejeitar da promise do RNTL não é garantido nessa versão do React). Um error
@@ -105,5 +106,25 @@ describe('Form', () => {
       </BrandProvider>,
     )
     expect(await findByText('FormField precisa estar dentro de <Form>.')).toBeTruthy()
+  })
+
+  it('carrega dataSet.rendra = FORM-001 na raiz (item D12/B9 do levantamento da Sincronizacao 1)', async () => {
+    const Exemplo = makeExemplo(jest.fn())
+    const { container } = await render(
+      <BrandProvider>
+        <Exemplo />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'FORM-001')).toHaveLength(1)
+  })
+
+  it('FormSection carrega dataSet.rendra = FORM-002 no Card interno (item D4 do levantamento da Sincronizacao 1)', async () => {
+    const Exemplo = makeExemplo(jest.fn())
+    const { container } = await render(
+      <BrandProvider>
+        <Exemplo />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'FORM-002')).toHaveLength(1)
   })
 })

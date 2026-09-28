@@ -13,8 +13,8 @@ declare const module: { exports: unknown }
 // `(string | { lineHeight; letterSpacing })[]` em vez da tupla de 2 posições que o Tailwind espera.
 type FontSizeEntry = [string, { lineHeight: string; letterSpacing: string }]
 
-const color = (name: string) => `rgb(var(--${name}) / <alpha-value>)`
-const colorNoAlpha = (name: string) => `var(--${name})`
+const color = (name: string) => `rgb(var(--rendra-${name}) / <alpha-value>)`
+const colorNoAlpha = (name: string) => `var(--rendra-${name})`
 
 const colorNames = [
   'background', 'foreground', 'card', 'card-foreground', 'popover', 'popover-foreground',
@@ -38,6 +38,12 @@ const colorNoAlphaNames = ['sidebar-border', 'sidebar-accent', 'sidebar-active',
 const colors: Record<string, string> = { transparent: 'transparent', current: 'currentColor' }
 for (const name of colorNames) colors[name] = color(name)
 for (const name of colorNoAlphaNames) colors[name] = colorNoAlpha(name)
+// Rótulo e orientação do campo (item A2 do levantamento da Sincronização 1): a variável de tema
+// é --rendra-label-color/--rendra-help-color (gerada de tokens.ts labelColor e igual a
+// --rendra-muted-foreground, respectivamente, vars.ts), não --rendra-label-foreground; por isso
+// entram fora do laço genérico de colorNames acima, que assume nome de cor === nome de variável.
+colors['label-foreground'] = color('label-color')
+colors['help-foreground'] = color('help-color')
 
 const theme = {
   colors,
@@ -63,6 +69,10 @@ const theme = {
     xl: ['18px', { lineHeight: '26px', letterSpacing: '-0.18px' }] as FontSizeEntry,
     '2xl': ['21px', { lineHeight: '28px', letterSpacing: '-0.315px' }] as FontSizeEntry,
     '3xl': ['24px', { lineHeight: '32px', letterSpacing: '-0.48px' }] as FontSizeEntry,
+    // Rótulo e orientação do campo (item A2 do levantamento da Sincronização 1), mesmos valores
+    // do web (globals.css:238-246).
+    label: ['11px', { lineHeight: '16px', letterSpacing: '0.88px' }] as FontSizeEntry,
+    help: ['12px', { lineHeight: '16px', letterSpacing: '0.12px' }] as FontSizeEntry,
   },
   fontWeight: { normal: '400', medium: '500', semibold: '600' },
   // NativeWind converte rem com inlineRem = 14 (não 16); declarado em px direto, fora de
@@ -73,13 +83,13 @@ const theme = {
     '3xl': '768px',
   },
   borderRadius: {
-    control: 'var(--radius-control)', item: 'var(--radius-item)', surface: 'var(--radius-surface)',
-    block: 'var(--radius-block)', avatar: 'var(--radius-avatar)', full: '9999px', none: '0px',
+    control: 'var(--rendra-shape-control)', item: 'var(--rendra-shape-item)', surface: 'var(--rendra-shape-surface)',
+    block: 'var(--rendra-shape-block)', avatar: 'var(--rendra-shape-avatar)', full: '9999px', none: '0px',
   },
   boxShadow: {
-    sm: '0px 1px 2px rgb(var(--shadow-color) / var(--shadow-opacity-sm))',
-    md: '0px 2px 8px rgb(var(--shadow-color) / var(--shadow-opacity-md))',
-    lg: '0px 12px 32px rgb(var(--shadow-color) / var(--shadow-opacity-lg))',
+    sm: '0px 1px 2px rgb(var(--rendra-shadow-color) / var(--rendra-shadow-opacity-sm))',
+    md: '0px 2px 8px rgb(var(--rendra-shadow-color) / var(--rendra-shadow-opacity-md))',
+    lg: '0px 12px 32px rgb(var(--rendra-shadow-color) / var(--rendra-shadow-opacity-lg))',
     none: 'none',
   },
   flex: {

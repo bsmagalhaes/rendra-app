@@ -127,6 +127,7 @@ export function BrandFeedbackIcon({ type, size = 'md', label, animated = false, 
     <Animated.View style={wrapperStyle}>
       <View
         testID={testID}
+        dataSet={{ rendra: 'BFI-001' }}
         accessible={Boolean(label)}
         accessibilityRole={label ? 'image' : undefined}
         accessibilityLabel={label}

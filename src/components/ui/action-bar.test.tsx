@@ -3,6 +3,7 @@ import { render, fireEvent } from '@testing-library/react-native'
 import * as SafeAreaContext from 'react-native-safe-area-context'
 import { BrandProvider } from '../../brand/brand-provider'
 import { ActionBar } from './action-bar'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('ActionBar: layout de colunas', () => {
   it('só primary: ocupa flex-1', async () => {
@@ -94,5 +95,25 @@ describe('ActionBar: safe area inferior (pendência 4)', () => {
     )
     const bar = await findByTestId('barra')
     expect(StyleSheet.flatten(bar.props.style)).toMatchObject({ paddingBottom: 16 })
+  })
+})
+
+describe('ActionBar: data-rendra (item D12 do levantamento da Sincronizacao 1)', () => {
+  it('carrega dataSet.rendra = ACB-001 sticky (padrao)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <ActionBar primary={{ label: 'Salvar', onPress: () => {} }} />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'ACB-001')).toHaveLength(1)
+  })
+
+  it('carrega dataSet.rendra = ACB-001 nao sticky', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <ActionBar primary={{ label: 'Salvar', onPress: () => {} }} sticky={false} />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'ACB-001')).toHaveLength(1)
   })
 })

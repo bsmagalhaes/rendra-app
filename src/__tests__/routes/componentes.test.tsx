@@ -93,4 +93,19 @@ describe('/componentes/[slug]', () => {
     expect(await context.findByText('Tabs')).toBeTruthy()
     expect(await context.findByText('BrandLogo')).toBeTruthy()
   })
+
+  it('mostra o selo do codigo do catalogo ao lado do titulo (Tarefa 1.3, secao 2.1 e 3.3.4 do levantamento)', async () => {
+    const acoes = await renderRouter(fullRoutes(), { initialUrl: '/componentes/acoes' })
+    expect(await acoes.findByText('BTN-001')).toBeTruthy()
+    const exibicao = await renderRouter(fullRoutes(), { initialUrl: '/componentes/exibicao' })
+    expect(await exibicao.findByText('ABA-001')).toBeTruthy()
+    expect(await exibicao.findByText('AVT-001')).toBeTruthy()
+    expect(await exibicao.findByText('AVT-002')).toBeTruthy()
+  })
+
+  it('grupo de layout nao mostra selo (Container, Stack etc. nao tem codigo de catalogo)', async () => {
+    const layout = await renderRouter(fullRoutes(), { initialUrl: '/componentes/layout' })
+    expect(await layout.findByText('Container')).toBeTruthy()
+    expect(layout.queryByText('CARD-001')).toBeNull()
+  })
 })

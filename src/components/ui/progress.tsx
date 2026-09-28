@@ -87,6 +87,7 @@ export function Progress({
     <View className="flex-row min-w-0 items-center gap-3">
       <View
         accessible
+        dataSet={{ rendra: 'PROG-001' }}
         accessibilityRole={a11yPresets.progressbar.accessibilityRole}
         accessibilityLabel={accessibilityLabel}
         accessibilityValue={{ min: 0, max: 100, now }}

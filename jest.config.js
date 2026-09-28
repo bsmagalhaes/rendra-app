@@ -51,5 +51,13 @@ module.exports = {
     './src/lib/robots.ts': { branches: 100, functions: 100, lines: 100, statements: 100 },
     './src/lib/llms-txt.ts': { branches: 100, functions: 100, lines: 100, statements: 100 },
     './src/config/seo.ts': { branches: 100, functions: 100, lines: 100, statements: 100 },
+    // Piso medido antes de fixar (risco R4 do levantamento da Sincronizacao 1): 100/77,5/100/100
+    // no commit da Tarefa 1.1; branches com margem porque os ramos ainda descobertos sao
+    // fallbacks defensivos (map.get sem entrada previa, entries[0] sem isDefault).
+    './src/catalog/components.ts': { branches: 75, functions: 100, lines: 100, statements: 100 },
+    // Piso medido antes de fixar (Tarefa 8.1, risco R4): 87,5/88,88/100/86,66 no commit desta
+    // tarefa; margem porque o ramo descoberto e o ramo defensivo do reduce motion no proprio
+    // useEffect do componente (o pure function spinnerRotationStyle ja cobre o calculo isolado).
+    './src/components/ui/spinner.tsx': { branches: 85, functions: 100, lines: 85, statements: 85 },
   },
 }

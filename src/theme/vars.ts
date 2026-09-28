@@ -3,12 +3,12 @@ import type { Palette, PaletteVars } from '../brand/palette'
 import { systemColorsLight, systemColorsDark } from './tokens'
 import { radiusByRole } from '../lib/shape'
 
-const kebab = (s: string) => `--${s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()}`
+const kebab = (s: string) => `--rendra-${s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()}`
 
 // chaves de palette.light/dark que não são cor de tema Tailwind (degradê/imagem cru,
 // consumidas só pelo Gradient via useBrand().palette); nunca entram em vars()
 const SKIP_PALETTE_KEYS = new Set([
-  '--sidebar-image', '--gradient-brand', '--gradient-accent', '--gradient-soft', '--background-image',
+  '--rendra-sidebar-image', '--rendra-gradient-brand', '--rendra-gradient-accent', '--rendra-gradient-soft', '--rendra-background-image',
 ])
 
 function toRgbTriplet(hex: string): string {
@@ -42,26 +42,32 @@ export function buildThemeVars(model: Model, palette: Palette, mode: 'light' | '
   // que copia palette.dark por cima, já resolve isso, porque essas chaves existem em
   // palette.dark e são processadas depois deste bloco.
 
-  // 2. Chaves de palette.light/palette.dark: já são '--kebab-case', copiadas direto.
+  // 2. Chaves de palette.light/palette.dark: já são '--rendra-kebab-case', copiadas direto.
   for (const [key, value] of Object.entries(paletteVars)) {
     if (SKIP_PALETTE_KEYS.has(key)) continue
-    if (key === '--shadow-color') { vars[key] = value; continue } // já é trio, nunca hex
+    if (key === '--rendra-shadow-color') { vars[key] = value; continue } // já é trio, nunca hex
     vars[key] = isHex(value) ? toRgbTriplet(value) : value // hex -> trio; rgb(...)/a passa direto
   }
 
-  // 3. Raio por papel, com unidade px.
+  // 2.1 Orientação do campo (item A2 do levantamento): --rendra-help-color é sempre igual a
+  // --rendra-muted-foreground (já gravada pelo laço 1, cor de sistema do modo); nasce depois do
+  // laço da paleta para nunca ser sobrescrita por uma chave homônima.
+  vars['--rendra-help-color'] = vars['--rendra-muted-foreground']!
+
+  // 3. Raio por papel, com unidade px. Nome de token "shape" (nao "radius"), igual ao web
+  // (globals.css:157-162 do design system web: --rendra-shape-control/item/surface/block/avatar).
   const radius = radiusByRole(model.shape, model.radius)
-  vars['--radius-control'] = `${radius.control}px`
-  vars['--radius-item'] = `${radius.item}px`
-  vars['--radius-surface'] = `${radius.surface}px`
-  vars['--radius-block'] = `${radius.block}px`
-  vars['--radius-avatar'] = `${radius.avatar}px`
+  vars['--rendra-shape-control'] = `${radius.control}px`
+  vars['--rendra-shape-item'] = `${radius.item}px`
+  vars['--rendra-shape-surface'] = `${radius.surface}px`
+  vars['--rendra-shape-block'] = `${radius.block}px`
+  vars['--rendra-shape-avatar'] = `${radius.avatar}px`
 
   // 4. Opacidade de sombra por modo (o NativeWind não lê box-shadow multi-camada; a cor vem
-  //    de --shadow-color acima, a opacidade destas 3 variáveis, lidas pelo tailwind.config.ts).
-  vars['--shadow-opacity-sm'] = shadowOpacity[mode].sm
-  vars['--shadow-opacity-md'] = shadowOpacity[mode].md
-  vars['--shadow-opacity-lg'] = shadowOpacity[mode].lg
+  //    de --rendra-shadow-color acima, a opacidade destas 3 variáveis, lidas pelo tailwind.config.ts).
+  vars['--rendra-shadow-opacity-sm'] = shadowOpacity[mode].sm
+  vars['--rendra-shadow-opacity-md'] = shadowOpacity[mode].md
+  vars['--rendra-shadow-opacity-lg'] = shadowOpacity[mode].lg
 
   return vars
 }

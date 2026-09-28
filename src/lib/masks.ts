@@ -54,6 +54,19 @@ export const masks: Record<
   },
 }
 
+/**
+ * Mascara de percentual com teto configuravel (padrao 100), para o Input com unidades (item D7
+ * do levantamento da Sincronizacao 1). Mesmo formato de `masks.percent`, so com o teto do bloco
+ * numerico configuravel; usada quando `Input.units` inclui a opcao "percent" com `percentMax`.
+ */
+export function percentMask(max = 100): { options: FactoryArg; inputMode: InputMode; placeholder: string } {
+  return {
+    options: { mask: 'num %', lazy: false, blocks: { num: numberBlock(2, max) } } as FactoryArg,
+    inputMode: 'decimal',
+    placeholder: '0,00 %',
+  }
+}
+
 /** País para o seletor de DDI do telefone. */
 export interface PhoneCountry {
   /** DDI sem o "+", ex.: "55". */

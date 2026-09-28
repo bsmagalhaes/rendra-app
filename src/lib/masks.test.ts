@@ -1,3 +1,4 @@
+import { createMask } from 'imask'
 import {
   parseLocaleNumber,
   formatCurrency,
@@ -8,6 +9,7 @@ import {
   phoneCountries,
   DEFAULT_DDI,
   internationalPhoneMask,
+  percentMask,
 } from './masks'
 import type { MaskName } from './masks'
 
@@ -83,5 +85,31 @@ describe('masks, cobertura das 9 chaves e valores extremos', () => {
 
   it('toCents com parte inteira vazia usa zero', () => {
     expect(toCents(',50')).toBe(50)
+  })
+})
+
+describe('percentMask', () => {
+  // Desvio de execucao (achado proprio, mesmo padrao das assinaturas reais dos achados B3/B8):
+  // o plano original supunha `percentMask(value, max)` devolvendo string, mas o contrato do web
+  // (src/lib/masks.ts:57-64, conferido nesta execucao) e `percentMask(max = 100)` devolvendo a
+  // config de mascara (options/inputMode/placeholder), no mesmo formato de `masks.percent`; o
+  // teto entra bloqueando o digito que faria o valor passar dele (o motor imask rejeita a tecla),
+  // por isso a prova digita passo a passo, igual ao usuario, em vez de resolver o valor final de
+  // uma vez.
+  it('sem argumento, usa o teto padrao 100: digitar 60 fica em 60,00 %', () => {
+    const m = createMask(percentMask().options)
+    ;['6', '60'].forEach((texto) => m.resolve(texto))
+    expect(m.value).toBe('60,00 %')
+  })
+
+  it('com teto 50, o digito que ultrapassaria o teto e rejeitado: digitar 60 fica em 6,00 %', () => {
+    const m = createMask(percentMask(50).options)
+    ;['6', '60'].forEach((texto) => m.resolve(texto))
+    expect(m.value).toBe('6,00 %')
+  })
+
+  it('inputMode e placeholder iguais aos de masks.percent', () => {
+    expect(percentMask().inputMode).toBe(masks.percent.inputMode)
+    expect(percentMask().placeholder).toBe(masks.percent.placeholder)
   })
 })

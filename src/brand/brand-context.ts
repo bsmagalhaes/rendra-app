@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import type { BrandConfig, PaletteConfig } from './types'
+import type { BrandConfig, LabelStyle, PaletteConfig } from './types'
 import type { Model, ModelId } from '../theme/models'
 import type { Palette, PaletteSeeds } from './palette'
 import type { Shape } from '../lib/shape'
@@ -25,6 +25,9 @@ export interface BrandContextValue {
   setPaletteId: (id: string | null) => void
   applyPalette: (seeds: PaletteSeeds) => void
   sidebarLogoVariant: 'light' | 'dark'
+  /** Estilo do rótulo do campo ativo (item C1 do levantamento da Sincronização 1), resolvido de
+   *  `brand.labelStyle` com padrão `'discreto'`. */
+  labelStyle: LabelStyle
   hydrated: boolean
   /** Saída de buildThemeVars(model, palette, resolvedMode), a mesma passada a vars() na View raiz;
    *  exposta no contexto para o teste da Tarefa B12 confirmar que muda de valor em runtime

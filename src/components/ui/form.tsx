@@ -20,7 +20,7 @@ export interface FormProps<T extends FieldValues> {
 export function Form<T extends FieldValues>({ form, children, className }: FormProps<T>) {
   return (
     <FormProvider {...form}>
-      <View className={cn('flex min-w-0 flex-col gap-8', className)}>{children}</View>
+      <View className={cn('flex min-w-0 flex-col gap-8', className)} dataSet={{ rendra: 'FORM-001' }}>{children}</View>
     </FormProvider>
   )
 }
@@ -67,7 +67,7 @@ export interface FormSectionProps {
 
 export function FormSection({ title, description, help, children, id }: FormSectionProps) {
   return (
-    <Card nativeID={id}>
+    <Card nativeID={id} code="FORM-002">
       <CardHeader>
         <CardTitle help={help}>{title}</CardTitle>
         {description ? <CardDescription>{description}</CardDescription> : null}

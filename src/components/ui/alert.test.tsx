@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native'
 import { BrandProvider, useBrand } from '../../brand'
 import { Text } from '../internal/text'
 import { Alert } from './alert'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 // M2 (veredito do Fable, entrega das Tarefas 1-10): o Alert dispensavel some da tela quando o
 // pai controla `open` a partir de `onDismiss` (uso real, ActionBarExample/showcase nao aplica
@@ -119,5 +120,14 @@ describe('Alert', () => {
       expect(classes).toEqual(expect.arrayContaining(['items-center', 'py-3', 'pr-4', 'pl-4']))
       expect(classes).not.toContain('p-4')
     })
+  })
+
+  it('carrega dataSet.rendra = ALRT-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Alert type="info" title="Aviso" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'ALRT-001')).toHaveLength(1)
   })
 })

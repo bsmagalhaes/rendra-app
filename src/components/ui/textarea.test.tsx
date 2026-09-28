@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { ThemeColorProbe } from '../../test-utils/theme-color-probe'
 import { Textarea } from './textarea'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('Textarea', () => {
   it('cresce com onContentSizeChange até 256px e não passa disso', async () => {
@@ -18,16 +19,16 @@ describe('Textarea', () => {
     expect(StyleSheet.flatten(campo.props.style).height).toBe(256)
   })
 
-  it('achado do Playwright (test:a11y): o placeholder usa placeholderTextColor com --muted-foreground (contraste)', async () => {
+  it('achado do Playwright (test:a11y): o placeholder usa placeholderTextColor com --rendra-muted-foreground (contraste)', async () => {
     // Mesma causa raiz e correção do Input: `placeholder:text-muted-foreground` via className
     // não sobrevive ao clone que o axe-core
-    // usa para medir a cor do placeholder (a variável CSS `--muted-foreground`, herdada só do
+    // usa para medir a cor do placeholder (a variável CSS `--rendra-muted-foreground`, herdada só do
     // `BrandProvider` ancestral, fica inválida no clone). `placeholderTextColor` vira um valor
     // inline no próprio elemento, que sobrevive ao clone.
     const capturado = { cor: '' }
     const { findByTestId } = await render(
       <BrandProvider>
-        <ThemeColorProbe token="--muted-foreground" onCapture={(cor) => { capturado.cor = cor }} />
+        <ThemeColorProbe token="--rendra-muted-foreground" onCapture={(cor) => { capturado.cor = cor }} />
         <Textarea testID="campo" placeholder="Escreva uma mensagem" />
       </BrandProvider>,
     )
@@ -92,5 +93,14 @@ describe('Textarea', () => {
     await fireEvent(campo, 'focus')
     const campoFocado = await findByTestId('campo')
     expect(campoFocado.props.className.split(' ')).toContain('border-ring')
+  })
+
+  it('carrega dataSet.rendra = TXT-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Textarea />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'TXT-001')).toHaveLength(1)
   })
 })

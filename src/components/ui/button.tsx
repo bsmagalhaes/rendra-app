@@ -1,12 +1,13 @@
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Pressable, type PressableProps, View } from 'react-native'
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated'
-import { Loader2 } from 'lucide-react-native'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { Text } from '../internal/text'
+import { Spinner } from './spinner'
 import { cn } from '../../lib/cn'
 import { a11yPresets } from '../../lib/a11y'
 import { useReducedMotion } from '../../lib/reduced-motion'
+import { resolveCatalogCode } from '../../catalog/components'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link'
 export type ButtonSize = 'sm' | 'md' | 'lg'
@@ -76,7 +77,6 @@ const shadowClass: Record<ButtonVariant, string> = {
 }
 const sizeClass: Record<ButtonSize, string> = { sm: 'h-control-sm px-3', md: 'h-control-md px-4', lg: 'h-control-lg px-6' }
 const textSizeClass: Record<ButtonSize, string> = { sm: 'text-sm', md: 'text-sm', lg: 'text-base' }
-const iconSizeClass: Record<ButtonSize, string> = { sm: 'size-icon-sm', md: 'size-icon-sm', lg: 'size-icon-md' }
 const iconOnlyWidthClass: Record<ButtonSize, string> = { sm: 'w-control-sm', md: 'w-control-md', lg: 'w-control-lg' }
 
 export const Button = forwardRef<View, ButtonProps>(function Button(
@@ -105,20 +105,11 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   const [pressed, setPressed] = useState(false)
   const reducedMotion = useReducedMotion()
   const scale = useSharedValue(1)
-  const spin = useSharedValue(0)
   const isDisabled = disabled || loading
   const isLinkVariant = variant === 'link'
-
-  useEffect(() => {
-    if (!loading || reducedMotion) {
-      spin.value = 0
-      return
-    }
-    spin.value = withRepeat(withTiming(1, { duration: 800, easing: Easing.linear }), -1, false)
-  }, [loading, reducedMotion, spin])
+  const code = resolveCatalogCode('Button', { variant })
 
   const scaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }))
-  const spinStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${spin.value * 360}deg` }] }))
 
   const rootClassName = cn(
     'flex-row shrink-0 items-center justify-center gap-2 rounded-control',
@@ -140,9 +131,10 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   )
 
   const content = loading ? (
-    <Animated.View style={spinStyle}>
-      <Loader2 className={cn(iconSizeClass[size], pressed && !isDisabled ? pressedTextClass[variant] : restTextClass[variant])} />
-    </Animated.View>
+    <Spinner
+      size={size === 'lg' ? 'md' : 'sm'}
+      className={pressed && !isDisabled ? pressedTextClass[variant] : restTextClass[variant]}
+    />
   ) : (
     icon
   )
@@ -166,6 +158,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       }}
       className={rootClassName}
       {...rest}
+      dataSet={{ ...rest.dataSet, rendra: code }}
     >
       <Animated.View style={scaleStyle} className="flex-row items-center gap-2">
         {content}

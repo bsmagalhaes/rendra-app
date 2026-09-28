@@ -2,6 +2,8 @@ import React from 'react'
 import { render, fireEvent, waitFor } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { Button } from './button'
+import type { ButtonVariant } from './button'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 async function renderButton(props: Partial<React.ComponentProps<typeof Button>> = {}) {
   return render(
@@ -83,6 +85,20 @@ describe('Button', () => {
     expect((await queryByTestId('meu-botao'))?.props.accessibilityState).toMatchObject({ busy: true })
   })
 
+  it('loading usa o Spinner (SPIN-001), nao um icone solto (item D10/F1 da Sincronizacao 1)', async () => {
+    // Achado C18 do veredito do Opus: o Spinner do Button e decorativo (sem label), a mesma
+    // asserção de busy ja prova o carregamento a leitor de tela via accessibilityState.
+    const { container, findByRole } = await render(
+      <BrandProvider>
+        <Button onPress={() => {}} loading icon={<></>}>
+          Salvando
+        </Button>
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'SPIN-001')).toHaveLength(1)
+    expect((await findByRole('button')).props.accessibilityState.busy).toBe(true)
+  })
+
   it('loading + iconOnly: não renderiza texto', async () => {
     const { queryByText } = await render(
       <BrandProvider>
@@ -119,5 +135,26 @@ describe('Button', () => {
       expect(button.props.className.split(' ')).toContain('bg-primary-hover')
     })
     await fireEvent(button, 'pressOut')
+  })
+})
+
+describe('Button: data-rendra por variante (item D6/D12 do levantamento da Sincronizacao 1)', () => {
+  it.each([
+    ['primary', 'BTN-001'],
+    ['secondary', 'BTN-002'],
+    ['outline', 'BTN-003'],
+    ['ghost', 'BTN-004'],
+    ['destructive', 'BTN-005'],
+    ['link', 'BTN-006'],
+  ] as [ButtonVariant, string][])('variant %s carrega dataSet.rendra = %s', async (variant, codigo) => {
+    const { findByRole } = await renderButton({ variant })
+    const button = await findByRole('button')
+    expect(button.props.dataSet).toMatchObject({ rendra: codigo })
+  })
+
+  it('dataSet do consumidor nao apaga o codigo do componente (risco R13 do levantamento)', async () => {
+    const { findByRole } = await renderButton({ dataSet: { x: '1' } })
+    const button = await findByRole('button')
+    expect(button.props.dataSet).toEqual({ x: '1', rendra: 'BTN-001' })
   })
 })

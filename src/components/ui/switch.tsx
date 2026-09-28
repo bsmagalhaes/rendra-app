@@ -55,6 +55,7 @@ export function Switch({
     return (
       <Pressable
         testID={id}
+        dataSet={{ rendra: 'SWT-001' }}
         accessibilityRole={a11yPresets.switch.accessibilityRole}
         accessibilityState={{ checked, disabled }}
         aria-checked={checked}
@@ -72,6 +73,7 @@ export function Switch({
   return (
     <Pressable
       testID={id}
+      dataSet={{ rendra: 'SWT-001' }}
       accessibilityRole={a11yPresets.switch.accessibilityRole}
       accessibilityState={{ checked, disabled }}
       aria-checked={checked}

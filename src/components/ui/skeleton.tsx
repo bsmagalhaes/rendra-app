@@ -41,6 +41,7 @@ export function Skeleton({ className, testID }: SkeletonProps) {
   return (
     <View
       testID={testID}
+      dataSet={{ rendra: 'SKEL-001' }}
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"

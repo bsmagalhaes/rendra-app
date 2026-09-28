@@ -10,14 +10,14 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 
 describe('usePlaceholderColor (melhoria 2 do veredito do fechamento: sem duplicação)', () => {
-  it('resolve o mesmo valor que themeColorString(themeVars, "--muted-foreground") do tema ativo', async () => {
+  it('resolve o mesmo valor que themeColorString(themeVars, "--rendra-muted-foreground") do tema ativo', async () => {
     const { result } = await renderHook(
       () => ({ cor: usePlaceholderColor(), brand: useBrand() }),
       { wrapper },
     )
     await waitFor(() => expect(result.current.brand.hydrated).toBe(true))
     expect(result.current.cor).toBe(
-      themeColorString(result.current.brand.themeVars, '--muted-foreground'),
+      themeColorString(result.current.brand.themeVars, '--rendra-muted-foreground'),
     )
     expect(result.current.cor).toMatch(/^rgb\(/)
   })

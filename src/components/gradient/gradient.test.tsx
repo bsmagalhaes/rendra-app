@@ -11,7 +11,7 @@ describe('Gradient', () => {
   it('renderiza token brand dentro do provider, sem lançar', async () => {
     await withProvider(<Gradient token="brand" />)
   })
-  it('renderiza token soft, lendo a chave --primary-soft (bloqueadora C1)', async () => {
+  it('renderiza token soft, lendo a chave --rendra-primary-soft (bloqueadora C1)', async () => {
     await withProvider(<Gradient token="soft" />)
   })
   it('renderiza token accent', async () => {

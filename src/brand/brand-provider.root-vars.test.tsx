@@ -22,22 +22,22 @@ function wrapper({ children }: { children: ReactNode }) {
 describe('BrandProvider replica themeVars em :root (achado 1 do veredito do fechamento)', () => {
   beforeEach(() => AsyncStorage.clear())
 
-  it('document.documentElement recebe --foreground igual ao trio do modo claro, e troca para o trio do modo escuro depois de setMode("dark")', async () => {
+  it('document.documentElement recebe --rendra-foreground igual ao trio do modo claro, e troca para o trio do modo escuro depois de setMode("dark")', async () => {
     const { result } = await renderHook(() => useBrand(), { wrapper })
     await waitFor(() => expect(result.current.hydrated).toBe(true))
 
-    const lightForeground = result.current.themeVars['--foreground']
+    const lightForeground = result.current.themeVars['--rendra-foreground']
     expect(lightForeground).toBeTruthy()
     await waitFor(() =>
-      expect(document.documentElement.style.getPropertyValue('--foreground')).toBe(lightForeground),
+      expect(document.documentElement.style.getPropertyValue('--rendra-foreground')).toBe(lightForeground),
     )
 
     await act(async () => result.current.setMode('dark'))
     await waitFor(() => expect(result.current.resolvedMode).toBe('dark'))
-    const darkForeground = result.current.themeVars['--foreground']
+    const darkForeground = result.current.themeVars['--rendra-foreground']
     expect(darkForeground).not.toBe(lightForeground)
     await waitFor(() =>
-      expect(document.documentElement.style.getPropertyValue('--foreground')).toBe(darkForeground),
+      expect(document.documentElement.style.getPropertyValue('--rendra-foreground')).toBe(darkForeground),
     )
   })
 })

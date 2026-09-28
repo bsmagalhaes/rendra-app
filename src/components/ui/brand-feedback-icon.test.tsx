@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { BrandFeedbackIcon, colorClass, feedbackLabels } from './brand-feedback-icon'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('BrandFeedbackIcon', () => {
   it('feedbackLabels tem as 4 chaves em pt-BR', () => {
@@ -34,9 +35,9 @@ describe('BrandFeedbackIcon', () => {
     // O cssInterop(Svg, { className: 'style' }) (nota do próprio componente) consome a prop
     // className do Svg e a substitui por um style computado; o nó renderizado não tem mais
     // `className` para inspecionar (confirmado: symbol.props.className é undefined em runtime de
-    // teste). A resolução de cor via variável CSS (`rgb(var(--destructive) / <alpha-value>)`,
+    // teste). A resolução de cor via variável CSS (`rgb(var(--rendra-destructive) / <alpha-value>)`,
     // tailwind.config.ts) também não aparece no style resolvido sob Jest (mesma classe de risco já
-    // registrada em tailwind.config.ts para --shadow-color/--shadow-opacity-*): o style resolvido é
+    // registrada em tailwind.config.ts para --rendra-shadow-color/--rendra-shadow-opacity-*): o style resolvido é
     // idêntico entre type="error" e type="success", só a largura/altura de size-full aparece.
     // A parte observável e estável é o mapa `colorClass` que o componente usa para montar essa
     // className, exportado só para este teste; o render confirma que o tipo não quebra a montagem.
@@ -66,5 +67,14 @@ describe('BrandFeedbackIcon', () => {
       </BrandProvider>,
     )
     expect(await findByTestId('icone-glyph', { includeHiddenElements: true })).toBeTruthy()
+  })
+
+  it('carrega dataSet.rendra = BFI-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <BrandFeedbackIcon type="success" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'BFI-001')).toHaveLength(1)
   })
 })

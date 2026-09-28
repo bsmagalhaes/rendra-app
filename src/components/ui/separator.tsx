@@ -15,6 +15,7 @@ export function Separator({ orientation = 'horizontal', label, className, testID
     return (
       <View
         testID={testID}
+        dataSet={{ rendra: 'SEP-001' }}
         accessible
         role={a11yPresets.separator.role}
         accessibilityLabel={label}
@@ -29,6 +30,7 @@ export function Separator({ orientation = 'horizontal', label, className, testID
   return (
     <View
       testID={testID}
+      dataSet={{ rendra: 'SEP-001' }}
       accessible
       role={a11yPresets.separator.role}
       className={cn(

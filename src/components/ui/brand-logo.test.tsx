@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BrandContext, BrandProvider, useBrand } from '../../brand'
 import type { BrandContextValue } from '../../brand'
 import { brandConfigs } from '../../brand/brand.config'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 import { BrandLogo, tileBgClass, tileColorClass } from './brand-logo'
 
 function TrocaParaAurora() {
@@ -113,5 +114,10 @@ describe('BrandLogo', () => {
     expect(props.className?.split(' ')).toEqual(
       expect.arrayContaining(['size-full', tileColorClass.sidebar]),
     )
+  })
+
+  it('carrega dataSet.rendra = LOGO-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(<BrandProvider><BrandLogo /></BrandProvider>)
+    expect(nodesWithCode(container, 'LOGO-001')).toHaveLength(1)
   })
 })

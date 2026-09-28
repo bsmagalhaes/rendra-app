@@ -24,7 +24,7 @@ describe('showcaseGroups', () => {
     ])
   })
 
-  it('grupo feedback tem as 9 entradas na ordem da spec', () => {
+  it('grupo feedback tem as 10 entradas na ordem da spec (Spinner entra na Sincronizacao 1, Tarefa 8.1)', () => {
     const group = showcaseGroups.find((item) => item.slug === 'feedback')
     expect(group?.entries.map((entry) => entry.name)).toEqual([
       'BrandFeedbackIcon',
@@ -32,6 +32,7 @@ describe('showcaseGroups', () => {
       'Toast',
       'Progress',
       'Skeleton',
+      'Spinner',
       'EmptyState',
       'InfoHint',
       'Modal',
@@ -64,10 +65,10 @@ describe('showcaseGroups', () => {
     ])
   })
 
-  it('a vitrine tem 40 entradas reais, 4/12/9/9/6 por grupo (divergencia da spec registrada)', () => {
+  it('a vitrine tem 41 entradas reais, 4/12/10/9/6 por grupo (Spinner no feedback, Tarefa 8.1; divergencia da spec registrada)', () => {
     const total = showcaseGroups.flatMap((g) => g.entries).length
-    expect(total).toBe(40)
-    expect(showcaseGroups.map((g) => g.entries.length)).toEqual([4, 12, 9, 9, 6])
+    expect(total).toBe(41)
+    expect(showcaseGroups.map((g) => g.entries.length)).toEqual([4, 12, 10, 9, 6])
   })
 
   it.each(['acoes', 'layout', 'feedback', 'formulario', 'exibicao'])(

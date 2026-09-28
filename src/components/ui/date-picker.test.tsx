@@ -1,6 +1,7 @@
 import { render, fireEvent, waitFor } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { DatePicker } from './date-picker'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('DatePicker', () => {
   it('gatilho tem papel button e accessibilityLabel', async () => {
@@ -296,5 +297,14 @@ describe('DatePicker', () => {
     const botaoAno = await findByLabelText('Ano: 2022')
     await fireEvent.press(botaoAno)
     expect(queryByText('1900')).toBeNull()
+  })
+
+  it('carrega dataSet.rendra = DTP-001 no gatilho (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <DatePicker />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'DTP-001')).toHaveLength(1)
   })
 })

@@ -5,6 +5,10 @@ export const systemColorsLight = {
   muted: '#eaeff5', mutedForeground: '#4f5f76',
   border: '#dbe2eb', input: '#808fa4', field: '#f5f6f7',
   overlay: 'rgb(7 20 42 / 0.55)',
+  // Cor do rótulo discreto do campo (item A2 do levantamento da Sincronização 1, igual ao web
+  // `globals.css:70-72, 124-125`); vira --rendra-label-color em buildThemeVars pelo mesmo laço
+  // que converte as demais chaves camelCase deste objeto (R2_EXCEPTIONS já cobre este arquivo).
+  labelColor: '#5f6f82',
   destructive: '#b72c05', destructiveHover: '#962404', destructiveForeground: '#ffffff',
   destructiveSoft: '#fcebe6', destructiveSoftForeground: '#962404',
   success: '#157a3c', successForeground: '#ffffff',
@@ -16,6 +20,7 @@ export const systemColorsLight = {
 } as const
 
 export const systemColorsDark = {
+  labelColor: '#94a3b8',
   destructive: '#b72c05', destructiveHover: '#cf3b0e', destructiveForeground: '#ffffff',
   destructiveSoft: '#3a1a10', destructiveSoftForeground: '#f5a48c',
   success: '#4fcb80', successForeground: '#04200f',

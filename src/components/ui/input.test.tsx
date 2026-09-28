@@ -4,6 +4,7 @@ import { BrandProvider } from '../../brand/brand-provider'
 import { ThemeColorProbe } from '../../test-utils/theme-color-probe'
 import { Input, type InputProps } from './input'
 import * as useLookupModule from '../../hooks/use-lookup'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 function ControlledInput(props: Omit<InputProps, 'value' | 'onChange'> & { initial?: string; sync?: boolean }) {
   const { initial = '', sync = true, ...rest } = props
@@ -79,22 +80,22 @@ describe('Input com máscara', () => {
     expect(classes).toEqual(expect.arrayContaining(['min-h-touch', 'min-w-touch']))
   })
 
-  it('achado do Playwright (test:a11y): o placeholder usa placeholderTextColor com --muted-foreground (contraste)', async () => {
+  it('achado do Playwright (test:a11y): o placeholder usa placeholderTextColor com --rendra-muted-foreground (contraste)', async () => {
     // axe (WCAG "color-contrast") reprovava o placeholder no export web real mesmo depois de
     // uma primeira tentativa via className (`placeholder:text-muted-foreground`): o axe-core
     // clona o elemento para medir a cor do placeholder, e o clone não herda a variável CSS
-    // `--muted-foreground` (definida só no ancestral `BrandProvider`), então `var(--muted-foreground)`
+    // `--rendra-muted-foreground` (definida só no ancestral `BrandProvider`), então `var(--rendra-muted-foreground)`
     // fica inválida no clone e a regra cai para o cinza fixo do preflight do Tailwind
     // (#9ca3af), contraste 2.34 contra o fundo do campo, abaixo do mínimo de 4,5:1 (comprovado
     // por inspeção direta com @axe-core/playwright fora do Jest, script de depuração removido
     // antes do commit). Corrigido usando a prop `placeholderTextColor` (RN/react-native-web),
     // que vira um valor INLINE no próprio elemento (sobrevive ao clone do axe), resolvido a
-    // partir de `themeColorString(themeVars, '--muted-foreground')` (o mesmo valor já aplicado
+    // partir de `themeColorString(themeVars, '--rendra-muted-foreground')` (o mesmo valor já aplicado
     // como variável CSS pelo `BrandProvider`, garantido 4,5:1 por `reach(...)`/`systemColorsLight`).
     const capturado = { cor: '' }
     const { findByTestId } = await render(
       <BrandProvider>
-        <ThemeColorProbe token="--muted-foreground" onCapture={(cor) => { capturado.cor = cor }} />
+        <ThemeColorProbe token="--rendra-muted-foreground" onCapture={(cor) => { capturado.cor = cor }} />
         <Input testID="campo" mask="cpf" />
       </BrandProvider>,
     )
@@ -225,5 +226,160 @@ describe('Input com máscara', () => {
     const campo = await findByTestId('campo')
     await fireEvent.changeText(campo, '01310100')
     await waitFor(() => expect(onLookup).toHaveBeenCalledWith({ logradouro: 'Rua Teste', cidade: 'São Paulo', uf: 'SP' }))
+  })
+})
+
+describe('Input: data-rendra (item D7/B9 do levantamento da Sincronizacao 1)', () => {
+  it('carrega dataSet.rendra = CAMP-001 na raiz', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Input testID="campo" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'CAMP-001')).toHaveLength(1)
+  })
+})
+
+describe('Input: busca usa Spinner (item D10/F2 da Sincronizacao 1)', () => {
+  it('buscando (cep) usa Spinner com label "Buscando..." e o codigo SPIN-001', async () => {
+    jest.spyOn(useLookupModule, 'useLookup').mockReturnValue(
+      () => new Promise(() => {}), // nunca resolve: mantem o estado "buscando" durante a asserção
+    )
+    const { container, findByText, findByTestId } = await render(
+      <BrandProvider>
+        <Input testID="campo" mask="cep" onLookup={jest.fn()} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, '01310100')
+    expect(await findByText('Buscando...')).toBeTruthy()
+    expect(nodesWithCode(container, 'SPIN-001')).toHaveLength(1)
+  })
+})
+
+describe('Input: units (item D7 do levantamento da Sincronizacao 1)', () => {
+  const UNITS = [
+    { id: 'percent', label: '%' },
+    { id: 'currency', label: 'R$' },
+  ]
+
+  // Desvio de execucao (achado proprio): o plano original pedia `getByLabelText('R$')` para
+  // selecionar a opcao no seletor aberto, mas as opcoes do Select (select.tsx:353-385) nao
+  // recebem accessibilityLabel proprio (o nome acessivel vem so do texto visivel, conferido em
+  // node_modules/@testing-library/react-native "computeAriaLabel": nao ha fallback para texto);
+  // por isso a selecao usa findByText, no mesmo padrao ja usado pelo seletor de DDI
+  // (input.test.tsx:53-58). O gatilho da unidade, por outro lado, tem accessibilityLabel proprio
+  // (`Unidade: ...`, o mesmo padrao do gatilho do DDI), entao esse sim usa findByLabelText.
+  it('mostra o gatilho com accessibilityLabel "Unidade: %"', async () => {
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <Input units={UNITS} unit="percent" />
+      </BrandProvider>,
+    )
+    expect(await findByLabelText('Unidade: %')).toBeTruthy()
+  })
+
+  it('trocar de unidade limpa o valor na tela, nao so a chamada de onChange (achado M4 do veredito do Fable)', async () => {
+    const onUnitChange = jest.fn()
+    const { findByLabelText, findByText, findByTestId } = await render(
+      <BrandProvider>
+        <ControlledInput testID="campo" units={UNITS} unit="percent" initial="10,00 %" onUnitChange={onUnitChange} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    expect(campo.props.value).toBe('10,00 %')
+    await fireEvent.press(await findByLabelText('Unidade: %'))
+    await fireEvent.press(await findByText('R$'))
+    expect(onUnitChange).toHaveBeenCalledWith('currency')
+    // Efeito visível na tela, não só a chamada do mock: o próprio campo passa a mostrar o texto
+    // limpo sob a máscara ainda ativa (a máscara percent é `lazy: false`, mesmo padrão do teste
+    // "clearable" de moeda acima, que também espera o sufixo/prefixo fixo, não uma string vazia).
+    expect((await findByTestId('campo')).props.value).toBe(' %')
+  })
+
+  it('percentMax limita a mascara da unidade percent (teto configuravel)', async () => {
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <Input testID="campo" units={[{ id: 'percent', label: '%' }]} unit="percent" percentMax={50} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, '6')
+    await fireEvent.changeText(campo, '60')
+    // Teto 50: o digito que faria passar de 50 e rejeitado (mesmo motor de src/lib/masks.test.ts).
+    expect(campo.props.value).toBe('6,00 %')
+  })
+})
+
+describe('Input: variant secret (item D7 do levantamento da Sincronizacao 1)', () => {
+  it('sem valor salvo, mostra o texto e o botao Trocar', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <Input variant="secret" hasValue={false} onStartEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect(await findByText('Nenhum valor salvo')).toBeTruthy()
+    expect(await findByText('Trocar')).toBeTruthy()
+  })
+
+  it('com valor salvo, mostra o maskedHint e o botao Remover', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <Input variant="secret" hasValue maskedHint="••••1234" onRemove={jest.fn()} onStartEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect(await findByText('••••1234')).toBeTruthy()
+    expect(await findByText('Remover')).toBeTruthy()
+  })
+
+  it('com valor salvo mas sem onRemove, nao mostra o botao Remover', async () => {
+    const { queryByText } = await render(
+      <BrandProvider>
+        <Input variant="secret" hasValue maskedHint="••••1234" onStartEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect(queryByText('Remover')).toBeNull()
+  })
+
+  it('sem maskedHint, usa o padrao "••••••••"', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <Input variant="secret" hasValue onStartEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect(await findByText('••••••••')).toBeTruthy()
+  })
+
+  it('em edicao, campo vazio com secureTextEntry e botao Cancelar, nunca mostra o valor salvo', async () => {
+    const { getByText, getByDisplayValue } = await render(
+      <BrandProvider>
+        <Input variant="secret" isEditing onCancelEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect(getByText('Cancelar')).toBeTruthy()
+    expect(() => getByDisplayValue(/./)).toThrow()
+  })
+
+  it('em edicao, mesmo com value/defaultValue controlados pelo consumidor, nunca mostra o valor salvo (achado B2 do veredito do Fable)', async () => {
+    const { queryByDisplayValue } = await render(
+      <BrandProvider>
+        <Input variant="secret" isEditing value="segredo-salvo" onChange={jest.fn()} onCancelEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect(queryByDisplayValue('segredo-salvo')).toBeNull()
+  })
+
+  it('Trocar chama onStartEdit e Remover chama onRemove', async () => {
+    const onStartEdit = jest.fn()
+    const onRemove = jest.fn()
+    const { findByText } = await render(
+      <BrandProvider>
+        <Input variant="secret" hasValue maskedHint="••••1234" onStartEdit={onStartEdit} onRemove={onRemove} />
+      </BrandProvider>,
+    )
+    await fireEvent.press(await findByText('Trocar'))
+    expect(onStartEdit).toHaveBeenCalledTimes(1)
+    await fireEvent.press(await findByText('Remover'))
+    expect(onRemove).toHaveBeenCalledTimes(1)
   })
 })

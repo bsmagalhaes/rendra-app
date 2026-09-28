@@ -2,7 +2,52 @@ import { render } from '@testing-library/react-native'
 import { TextInput } from 'react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { fieldSpanClass } from '../layout/tokens'
-import { Field } from './field'
+import { Field, Label } from './field'
+import type { BrandConfig } from '../../brand/types'
+import { nodesWithCode } from '../../test-utils/rendra-code'
+
+// Tarefa 5.1 (Sincronizacao 1, achado B3 do veredito do Opus): marca minima com todos os campos
+// obrigatorios de BrandConfig, para o teste de labelStyle "normal" sem depender da marca de
+// demonstracao (brand.config.ts, que fica so em app/).
+const brandMinimo: BrandConfig = {
+  id: 't', productName: 'Teste', companyName: 'Teste', tagline: 'x', shape: 'square', sidebarLogo: 'dark',
+}
+
+describe('Label (Tarefa 5.1, itens D1 e D2 do levantamento)', () => {
+  it('discreto (padrao): text-label text-label-foreground uppercase', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <Label>Nome</Label>
+      </BrandProvider>,
+    )
+    const el = await findByText('Nome')
+    expect(el.props.className.split(' ')).toEqual(
+      expect.arrayContaining(['text-label', 'text-label-foreground', 'uppercase']),
+    )
+  })
+
+  it('normal (labelStyle normal): text-sm text-foreground, sem uppercase', async () => {
+    const brands = { T1: { ...brandMinimo, labelStyle: 'normal' as const } }
+    const { findByText } = await render(
+      <BrandProvider brands={brands}>
+        <Label>Nome</Label>
+      </BrandProvider>,
+    )
+    const el = await findByText('Nome')
+    const classes = el.props.className.split(' ')
+    expect(classes).toEqual(expect.arrayContaining(['text-sm', 'text-foreground']))
+    expect(classes).not.toContain('uppercase')
+  })
+
+  it('carrega dataSet.rendra = FLD-002', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <Label>Nome</Label>
+      </BrandProvider>,
+    )
+    expect((await findByText('Nome')).props.dataSet).toMatchObject({ rendra: 'FLD-002' })
+  })
+})
 
 describe('Field', () => {
   it('label com required mostra "*" em text-destructive e accessibilityLabel com (obrigatório)', async () => {
@@ -16,7 +61,7 @@ describe('Field', () => {
     expect(await findByLabelText('Nome (obrigatório)')).toBeTruthy()
   })
 
-  it('help renderiza abaixo do campo', async () => {
+  it('help renderiza abaixo do campo com text-help e text-help-foreground (item D2 do levantamento)', async () => {
     const { findByText } = await render(
       <BrandProvider>
         <Field label="Nome" help="Como aparece no documento">
@@ -25,7 +70,18 @@ describe('Field', () => {
       </BrandProvider>,
     )
     const help = await findByText('Como aparece no documento')
-    expect(help.props.className.split(' ')).toContain('text-muted-foreground')
+    expect(help.props.className.split(' ')).toEqual(expect.arrayContaining(['text-help', 'text-help-foreground']))
+  })
+
+  it('Field carrega dataSet.rendra = FLD-001 na raiz (item D2 do levantamento)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Field label="Nome" help="x">
+          <TextInput />
+        </Field>
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'FLD-001')).toHaveLength(1)
   })
 
   it('error substitui help e usa accessibilityRole alert, encontrável por findByRole', async () => {
@@ -44,7 +100,7 @@ describe('Field', () => {
     // media contraste real 2.95 no modo escuro contra o fundo comum da página, abaixo de 4,5:1;
     // `text-destructive-soft-foreground` é o par já calibrado para texto vermelho direto sobre
     // o fundo (9.25 no escuro, 7.61 no claro, comprovado com a função `contrast()` do próprio
-    // projeto), o mesmo padrão de `--primary-text` para texto de marca sobre o fundo comum.
+    // projeto), o mesmo padrão de `--rendra-primary-text` para texto de marca sobre o fundo comum.
     expect(erro.props.className.split(' ')).toContain('text-destructive-soft-foreground')
     expect(await findByRole('alert')).toBe(erro)
   })

@@ -66,6 +66,34 @@ Uma decisão por mensagem: primeiro o padrão de navegação (opções acima), d
 - Componentes de UI necessários (lista os 43 da seção de escopo do design system; marcar os que o produto usa):
 - Funcionalidade fora do escopo deste boilerplate (integração externa, backend, etc.), a especificar em spec própria:
 
+### Componentes e variantes
+
+Cada componente e cada variante tem um código próprio (catálogo em `src/catalog/components.ts`, vitrine
+[`/componentes`](https://bsmagalhaes.github.io/rendra-app/componentes)), igual em web e app. Confirmar
+qual variante o produto usa nos componentes que têm mais de uma:
+
+| Situação | Código | Componente | Variante |
+|---|---|---|---|
+| Botão primário (padrão) | `BTN-001` | `Button` | `variant="primary"` |
+| Botão secundário | `BTN-002` | `Button` | `variant="secondary"` |
+| Botão contornado | `BTN-003` | `Button` | `variant="outline"` |
+| Botão fantasma | `BTN-004` | `Button` | `variant="ghost"` |
+| Botão destrutivo | `BTN-005` | `Button` | `variant="destructive"` |
+| Botão link | `BTN-006` | `Button` | `variant="link"` |
+| Abas em linha (padrão) | `ABA-001` | `Tabs` | `variant="line"` |
+| Abas em pílula | `ABA-002` | `Tabs` | `variant="pill"` |
+| Modal de confirmação (padrão; `destructive` usa o mesmo código) | `MOD-001` | `Modal` | `type="confirm"` |
+| Modal de formulário | `MOD-002` | `Modal` | `type="form"` |
+| Modal informativo | `MOD-003` | `Modal` | `type="info"` |
+| Opções em lista (padrão) | `RDO-001` | `RadioGroup` | `variant="list"` |
+| Opções em cartões | `RDO-002` | `RadioGroup` | `variant="cards"` |
+| Avatar isolado | `AVT-001` | `Avatar` | `{}` |
+| Avatar em grupo | `AVT-002` | `AvatarGroup` | `{}` |
+| Caixa de seleção isolada | `CHK-001` | `Checkbox` | `{}` |
+| Grupo de caixas de seleção | `CHK-002` | `CheckboxGroup` | `{}` |
+| Lista (padrão, só variante hoje) | `LIST-001` | `List` | `{}` |
+| Indicador de carregamento (padrão, só variante hoje) | `SPIN-001` | `Spinner` | `{}` |
+
 ## Bloco 5: regras
 
 Confirmar que as regras de `DESIGN_RULES.md` se aplicam sem exceção (toque mínimo 44x44, cor em três camadas, nenhum valor arbitrário, `check:rules` limpo). Registrar aqui só desvio de negócio específico do produto que não é regra de design (ex.: fluxo de aprovação, papel de usuário).

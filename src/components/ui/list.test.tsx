@@ -6,6 +6,7 @@ import { BrandProvider } from '../../brand'
 import { RendraNavigationProvider } from '../../navigation/rendra-navigation'
 import { RendraRouterBridge } from '../../router-bridge'
 import { List } from './list'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 const items = [
   { id: '1', title: 'Ana Souza', description: 'ana@exemplo.com' },
@@ -228,5 +229,56 @@ describe('List', () => {
     expect(indiceTrailing).toBeGreaterThanOrEqual(0)
     expect(indiceChevron).toBeGreaterThanOrEqual(0)
     expect(indiceTrailing).toBeLessThan(indiceChevron)
+  })
+
+  it('sem onReorder, carrega dataSet.rendra = LIST-001 (padrao, item I do levantamento)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <List items={items} />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'LIST-001')).toHaveLength(1)
+  })
+
+  it.each([
+    ['success', 'Sucesso'],
+    ['warning', 'Atenção'],
+    ['error', 'Erro'],
+    ['neutral', 'Neutro'],
+  ] as const)('ListItem.tone %s mostra o selo textual %s, nunca so cor (item D8 do levantamento)', async (tone, texto) => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <List items={[{ id: '1', title: 'Item', tone }]} />
+      </BrandProvider>,
+    )
+    expect(await findByText(texto)).toBeTruthy()
+  })
+
+  it('sem tone, nao mostra nenhum dos quatro selos', async () => {
+    const { queryByText } = await render(
+      <BrandProvider>
+        <List items={[{ id: '1', title: 'Item' }]} />
+      </BrandProvider>,
+    )
+    expect(queryByText('Sucesso')).toBeNull()
+    expect(queryByText('Atenção')).toBeNull()
+    expect(queryByText('Erro')).toBeNull()
+    expect(queryByText('Neutro')).toBeNull()
+  })
+
+  it('o selo de tone vem antes do trailing na ordem da arvore', async () => {
+    const { findByText } = await render(
+      <BrandProvider>
+        <List items={[{ id: '1', title: 'Item', tone: 'success', trailing: <Text>Fim</Text> }]} />
+      </BrandProvider>,
+    )
+    const selo = await findByText('Sucesso')
+    const fim = await findByText('Fim')
+    const pai = selo.parent?.parent
+    const indiceSelo = pai?.children.indexOf(selo.parent as never) ?? -1
+    const indiceFim = pai?.children.indexOf(fim.parent as never) ?? -1
+    expect(indiceSelo).toBeGreaterThanOrEqual(0)
+    expect(indiceFim).toBeGreaterThanOrEqual(0)
+    expect(indiceSelo).toBeLessThan(indiceFim)
   })
 })

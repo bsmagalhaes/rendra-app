@@ -4,6 +4,7 @@ import { Text } from '../internal/text'
 import { cn } from '../../lib/cn'
 import { a11yPresets } from '../../lib/a11y'
 import { useControlledState } from '../../hooks/use-controlled-state'
+import { resolveCatalogCode } from '../../catalog/components'
 
 export interface RadioOption {
   value: string
@@ -58,10 +59,13 @@ export function RadioGroup({
     setValue(optionValue)
   }
 
+  const code = resolveCatalogCode('RadioGroup', { variant })
+
   return (
     <View
       accessibilityRole={a11yPresets.radiogroup.accessibilityRole}
       accessibilityLabel={accessibilityLabel}
+      dataSet={{ rendra: code }}
       className={variant === 'cards' ? 'flex-col gap-3' : orientation === 'horizontal' ? 'flex-row flex-wrap gap-x-6' : 'flex-col'}
     >
       {options.map((option) => {

@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native'
 import { Text } from 'react-native'
 import { BrandProvider } from '../../brand'
 import { StatCard, statCardLabel } from './stat-card'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('statCardLabel', () => {
   it('com change positivo, compoe rotulo de alta (pt-BR, virgula decimal)', () => {
@@ -83,5 +84,14 @@ describe('StatCard', () => {
       </BrandProvider>,
     )
     expect(await findByText('Atualizado agora')).toBeTruthy()
+  })
+
+  it('carrega dataSet.rendra = STAT-001 no Card interno (item D4 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <StatCard label="Clientes" value={42} />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'STAT-001')).toHaveLength(1)
   })
 })

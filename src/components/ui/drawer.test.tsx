@@ -4,6 +4,7 @@ import { fireGestureHandler, getByGestureTestId } from 'react-native-gesture-han
 import { BrandProvider } from '../../brand'
 import { Text } from '../internal/text'
 import { Drawer, drawerTranslateX } from './drawer'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('drawerTranslateX', () => {
   it('closed fica na largura da janela', () => {
@@ -239,5 +240,16 @@ describe('Drawer', () => {
       backHandler()
     })
     expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('aberto, carrega dataSet.rendra = GAV-001 na raiz do dialogo (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Drawer open onOpenChange={() => {}} title="Editar cliente">
+          <Text className="text-foreground">Corpo</Text>
+        </Drawer>
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'GAV-001')).toHaveLength(1)
   })
 })

@@ -23,6 +23,9 @@ export { buildThemeVars, themeColorString } from './theme/vars'
 
 export { themeCodes, colorCodes, parseModelCode, formatModelCode, defaultModelCode } from './config/presets'
 
+export { CATALOG, resolveCatalogCode, getCatalogEntry, catalogByComponent } from './catalog/components'
+export type { ComponentCatalogEntry } from './catalog/components'
+
 export { cn } from './lib/cn'
 export * from './lib/masks'
 export { isValidCpf, isValidCnpj, isValidDateBR, zBR } from './lib/validators'

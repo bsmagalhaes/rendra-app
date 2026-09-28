@@ -50,6 +50,7 @@ export function Alert({
   return (
     <View
       testID={testID}
+      dataSet={{ rendra: 'ALRT-001' }}
       accessibilityRole={isAssertive ? a11yPresets.alert.accessibilityRole : undefined}
       role={isAssertive ? undefined : a11yPresets.status.role}
       accessibilityLiveRegion={type === 'error' ? 'assertive' : 'polite'}

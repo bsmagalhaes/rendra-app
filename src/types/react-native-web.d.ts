@@ -12,5 +12,25 @@ declare module 'react-native' {
   interface ViewProps {
     /** @platform web */
     tabIndex?: number
+    /**
+     * @platform web
+     * `dataSet` chega ao DOM como atributos `data-*` (react-native-web,
+     * `modules/createDOMProps/index.js`, `hyphenateString`): `dataSet={{ rendra: 'BTN-001' }}`
+     * vira `data-rendra="BTN-001"`. Fora do web, a prop é ignorada. Nenhuma tipagem de
+     * `react-native`/`expo` a declara (grep vazio em
+     * `node_modules/react-native/Libraries/Components/View`); pré-requisito de `labelStyle`
+     * (Bloco 5) e `data-rendra` (Bloco 6, seção 3.2 do levantamento da Sincronização 1).
+     */
+    dataSet?: Record<string, string | number>
+  }
+
+  interface TextProps {
+    /**
+     * @platform web
+     * `TextProps` não estende `ViewProps` (só `TextPropsIOS`, `TextPropsAndroid`,
+     * `AccessibilityProps`), por isso precisa da própria declaração; mesmo mecanismo de
+     * `ViewProps.dataSet` acima (usado pelo `Label`, que é `Text`, Bloco 5).
+     */
+    dataSet?: Record<string, string | number>
   }
 }

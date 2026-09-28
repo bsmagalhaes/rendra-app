@@ -37,6 +37,7 @@ import {
   CardContent,
   Skeleton,
   Progress,
+  Spinner,
   Alert,
   toast,
   EmptyState,
@@ -54,11 +55,19 @@ import {
 import { Gradient } from '../components/gradient/gradient'
 import { Container, Grid, Inline, PageHeader, Section, Stack } from '../components/layout'
 import { zBR } from '../lib/validators'
+import { resolveCatalogCode } from '../catalog/components'
 
 export interface ShowcaseEntry {
   name: string
   description: string
   render: () => ReactNode
+  /** Codigos do catalogo (secao 3.3) que o exemplo demonstra; sem entrada aqui, sem selo. */
+  codes?: string[]
+}
+
+/** Resolve um ou mais codigos do catalogo pelas props reais do exemplo, nunca literal solto. */
+function codigosPara(...variantes: [string, Record<string, unknown>?][]): string[] {
+  return variantes.map(([component, props]) => resolveCatalogCode(component, props ?? {}))
 }
 
 export interface ShowcaseGroup {
@@ -221,6 +230,8 @@ function InputExample() {
       <Input mask="cpf" placeholder="000.000.000-00" value={cpf} onChange={setCpf} clearable />
       <Input mask="currency" placeholder="R$ 0,00" value={valor} onChange={setValor} clearable />
       <Input mask="phone" placeholder="(00) 00000-0000" value={telefone} onChange={setTelefone} clearable />
+      <Input units={[{ id: 'percent', label: '%' }, { id: 'currency', label: 'R$' }]} unit="percent" percentMax={50} />
+      <Input variant="secret" hasValue maskedHint="••••1234" onStartEdit={() => {}} onRemove={() => {}} />
     </Stack>
   )
 }
@@ -303,7 +314,16 @@ function SliderExample() {
 
 function OtpInputExample() {
   const [value, setValue] = useState('')
-  return <OtpInput value={value} onChange={setValue} />
+  // Risco R11 do levantamento da Sincronizacao 1: o Playwright precisa medir o caso real de
+  // 360px (OtpInput dentro de um Card, nunca solto), senao a conta de 6 caixas com gap-1 nao
+  // prova o piso de 44px por caixa que o item D3 exige.
+  return (
+    <Card>
+      <CardContent>
+        <OtpInput value={value} onChange={setValue} />
+      </CardContent>
+    </Card>
+  )
 }
 
 function DatePickerExample() {
@@ -377,6 +397,16 @@ function ProgressExample() {
       <Progress tone="brand" value={45} accessibilityLabel="Envio em andamento" />
       <Progress accessibilityLabel="Carregando" />
     </Stack>
+  )
+}
+
+function SpinnerExample() {
+  return (
+    <Inline gap="4">
+      <Spinner size="sm" label="Carregando, pequeno" />
+      <Spinner size="md" label="Carregando, médio" />
+      <Spinner size="lg" label="Carregando, grande" />
+    </Inline>
   )
 }
 
@@ -523,9 +553,9 @@ function ListExample() {
     <List
       scrollEnabled={false}
       items={[
-        { id: '1', title: 'Ana Souza', description: 'ana@exemplo.com', href: '/componentes/exibicao' },
+        { id: '1', title: 'Ana Souza', description: 'ana@exemplo.com', href: '/componentes/exibicao', tone: 'success' },
         { id: '2', title: 'Bruno Lima', description: 'bruno@exemplo.com', onPress: () => {} },
-        { id: '3', title: 'Carla Dias', description: 'carla@exemplo.com' },
+        { id: '3', title: 'Carla Dias', description: 'carla@exemplo.com', tone: 'error' },
       ]}
     />
   )
@@ -601,47 +631,77 @@ export const showcaseGroups: ShowcaseGroup[] = [
     slug: 'acoes',
     title: 'Ações',
     entries: [
-      { name: 'Button', description: 'Botão de ação principal.', render: () => <ButtonExample /> },
-      { name: 'ButtonGroup', description: 'Grupo segmentado ou grupo de botões encostados.', render: () => <ButtonGroupExample /> },
-      { name: 'ActionBar', description: 'Barra de ações de rodapé.', render: () => <ActionBarExample /> },
-      { name: 'DropdownMenu', description: 'Menu de ações em folha inferior.', render: () => <DropdownMenuExample /> },
+      { name: 'Button', description: 'Botão de ação principal.', render: () => <ButtonExample />, codes: codigosPara(['Button']) },
+      {
+        name: 'ButtonGroup',
+        description: 'Grupo segmentado ou grupo de botões encostados.',
+        render: () => <ButtonGroupExample />,
+        codes: codigosPara(['ButtonGroup']),
+      },
+      { name: 'ActionBar', description: 'Barra de ações de rodapé.', render: () => <ActionBarExample />, codes: codigosPara(['ActionBar']) },
+      {
+        name: 'DropdownMenu',
+        description: 'Menu de ações em folha inferior.',
+        render: () => <DropdownMenuExample />,
+        codes: codigosPara(['DropdownMenuContent']),
+      },
     ],
   },
   {
     slug: 'formulario',
     title: 'Formulário',
     entries: [
-      { name: 'Input', description: 'Campo de texto com máscara e adornos.', render: () => <InputExample /> },
+      { name: 'Input', description: 'Campo de texto com máscara e adornos.', render: () => <InputExample />, codes: codigosPara(['Input']) },
       {
         name: 'Textarea',
         description: 'Campo de texto multilinha com auto-crescimento.',
         render: () => <TextareaExample />,
+        codes: codigosPara(['Textarea']),
       },
-      { name: 'Select', description: 'Seletor em folha inferior com busca.', render: () => <SelectExample /> },
+      { name: 'Select', description: 'Seletor em folha inferior com busca.', render: () => <SelectExample />, codes: codigosPara(['Select']) },
       {
         name: 'Select (lista longa)',
         description: 'Mesmo Select, com lista maior que a folha, rolável até o último item.',
         render: () => <SelectListaLongaExample />,
+        codes: codigosPara(['Select']),
       },
-      { name: 'Checkbox', description: 'Caixa de marcação isolada.', render: () => <CheckboxExample /> },
-      { name: 'RadioGroup', description: 'Escolha única entre opções.', render: () => <RadioGroupExample /> },
-      { name: 'Switch', description: 'Alternância ligado/desligado.', render: () => <SwitchExample /> },
+      { name: 'Checkbox', description: 'Caixa de marcação isolada.', render: () => <CheckboxExample />, codes: codigosPara(['Checkbox']) },
+      {
+        name: 'RadioGroup',
+        description: 'Escolha única entre opções.',
+        render: () => <RadioGroupExample />,
+        codes: codigosPara(['RadioGroup']),
+      },
+      { name: 'Switch', description: 'Alternância ligado/desligado.', render: () => <SwitchExample />, codes: codigosPara(['Switch']) },
       {
         name: 'Slider',
         description: 'Seleção de valor numérico por arraste.',
         render: () => <SliderExample />,
+        codes: codigosPara(['Slider']),
       },
       {
         name: 'OtpInput',
         description: 'Código de verificação por dígitos.',
         render: () => <OtpInputExample />,
+        codes: codigosPara(['OtpInput']),
       },
-      { name: 'DatePicker', description: 'Seleção de data em calendário.', render: () => <DatePickerExample /> },
-      { name: 'Field', description: 'Rótulo, ajuda e erro ao redor de um campo.', render: () => <FieldExample /> },
+      {
+        name: 'DatePicker',
+        description: 'Seleção de data em calendário.',
+        render: () => <DatePickerExample />,
+        codes: codigosPara(['DatePicker']),
+      },
+      {
+        name: 'Field',
+        description: 'Rótulo, ajuda e erro ao redor de um campo.',
+        render: () => <FieldExample />,
+        codes: codigosPara(['Field']),
+      },
       {
         name: 'Formulário (RHF)',
         description: 'Formulário completo com react-hook-form e validação.',
         render: () => <FormularioRhfExample />,
+        codes: codigosPara(['Form'], ['FormSection']),
       },
     ],
   },
@@ -649,30 +709,96 @@ export const showcaseGroups: ShowcaseGroup[] = [
     slug: 'feedback',
     title: 'Feedback',
     entries: [
-      { name: 'BrandFeedbackIcon', description: 'Ícone de retorno com o símbolo da marca.', render: () => <BrandFeedbackIconExample /> },
-      { name: 'Alert', description: 'Aviso em linha com tom, ação e fechar.', render: () => <AlertExample /> },
-      { name: 'Toast', description: 'Notificação temporária no rodapé.', render: () => <ToastExample /> },
-      { name: 'Progress', description: 'Barra de progresso determinada ou indeterminada.', render: () => <ProgressExample /> },
-      { name: 'Skeleton', description: 'Marcador de carregamento.', render: () => <SkeletonExample /> },
-      { name: 'EmptyState', description: 'Estado vazio com ícone, texto e ações.', render: () => <EmptyStateExample /> },
-      { name: 'InfoHint', description: 'Ajuda contextual em modal.', render: () => <InfoHintExample /> },
-      { name: 'Modal', description: 'Diálogo de confirmação, exclusão, informação ou formulário.', render: () => <ModalExample /> },
-      { name: 'Drawer', description: 'Painel lateral em tela cheia com confirmação de descarte.', render: () => <DrawerExample /> },
+      {
+        name: 'BrandFeedbackIcon',
+        description: 'Ícone de retorno com o símbolo da marca.',
+        render: () => <BrandFeedbackIconExample />,
+        codes: codigosPara(['BrandFeedbackIcon']),
+      },
+      { name: 'Alert', description: 'Aviso em linha com tom, ação e fechar.', render: () => <AlertExample />, codes: codigosPara(['Alert']) },
+      { name: 'Toast', description: 'Notificação temporária no rodapé.', render: () => <ToastExample />, codes: codigosPara(['toast']) },
+      {
+        name: 'Progress',
+        description: 'Barra de progresso determinada ou indeterminada.',
+        render: () => <ProgressExample />,
+        codes: codigosPara(['Progress']),
+      },
+      { name: 'Skeleton', description: 'Marcador de carregamento.', render: () => <SkeletonExample />, codes: codigosPara(['Skeleton']) },
+      {
+        name: 'Spinner',
+        description: 'Indicador de carregamento breve, em botão, campo ou lista.',
+        render: () => <SpinnerExample />,
+        codes: codigosPara(['Spinner']),
+      },
+      {
+        name: 'EmptyState',
+        description: 'Estado vazio com ícone, texto e ações.',
+        render: () => <EmptyStateExample />,
+        codes: codigosPara(['EmptyState']),
+      },
+      { name: 'InfoHint', description: 'Ajuda contextual em modal.', render: () => <InfoHintExample />, codes: codigosPara(['InfoHint']) },
+      {
+        name: 'Modal',
+        description: 'Diálogo de confirmação, exclusão, informação ou formulário.',
+        render: () => <ModalExample />,
+        codes: codigosPara(['Modal', { type: 'form' }]),
+      },
+      {
+        name: 'Drawer',
+        description: 'Painel lateral em tela cheia com confirmação de descarte.',
+        render: () => <DrawerExample />,
+        codes: codigosPara(['Drawer']),
+      },
     ],
   },
   {
     slug: 'exibicao',
     title: 'Exibição',
     entries: [
-      { name: 'Card', description: 'Contêiner com cabeçalho, conteúdo e rodapé.', render: () => <CardExample /> },
-      { name: 'Badge', description: 'Selo de status em 7 tons.', render: () => <BadgeExample /> },
-      { name: 'Avatar', description: 'Foto ou iniciais, isolado ou em grupo.', render: () => <AvatarExample /> },
-      { name: 'List', description: 'Lista de itens com navegação, ação ou só leitura.', render: () => <ListExample /> },
-      { name: 'StatCard', description: 'Cartão de indicador com variação.', render: () => <StatCardExample /> },
-      { name: 'Accordion', description: 'Conteúdo recolhível em seções.', render: () => <AccordionExample /> },
-      { name: 'Tabs', description: 'Seções alternadas por abas ou seletor.', render: () => <TabsExample /> },
-      { name: 'Separator', description: 'Linha divisória, com ou sem rótulo.', render: () => <SeparatorExample /> },
-      { name: 'BrandLogo', description: 'Selo e nome da marca ativa.', render: () => <BrandLogoExample /> },
+      { name: 'Card', description: 'Contêiner com cabeçalho, conteúdo e rodapé.', render: () => <CardExample />, codes: codigosPara(['Card']) },
+      { name: 'Badge', description: 'Selo de status em 7 tons.', render: () => <BadgeExample />, codes: codigosPara(['Badge']) },
+      {
+        name: 'Avatar',
+        description: 'Foto ou iniciais, isolado ou em grupo.',
+        render: () => <AvatarExample />,
+        codes: codigosPara(['Avatar'], ['AvatarGroup']),
+      },
+      {
+        name: 'List',
+        description: 'Lista de itens com navegação, ação ou só leitura.',
+        render: () => <ListExample />,
+        codes: codigosPara(['List']),
+      },
+      {
+        name: 'StatCard',
+        description: 'Cartão de indicador com variação.',
+        render: () => <StatCardExample />,
+        codes: codigosPara(['StatCard']),
+      },
+      {
+        name: 'Accordion',
+        description: 'Conteúdo recolhível em seções.',
+        render: () => <AccordionExample />,
+        codes: codigosPara(['Accordion']),
+      },
+      {
+        name: 'Tabs',
+        description: 'Seções alternadas por abas ou seletor.',
+        render: () => <TabsExample />,
+        codes: codigosPara(['Tabs']),
+      },
+      {
+        name: 'Separator',
+        description: 'Linha divisória, com ou sem rótulo.',
+        render: () => <SeparatorExample />,
+        codes: codigosPara(['Separator']),
+      },
+      {
+        name: 'BrandLogo',
+        description: 'Selo e nome da marca ativa.',
+        render: () => <BrandLogoExample />,
+        codes: codigosPara(['BrandLogo']),
+      },
     ],
   },
   {

@@ -4,6 +4,9 @@ import type { Shape } from '../lib/shape'
 
 export type SvgComponent = ComponentType<SvgProps>
 export type FeedbackType = 'success' | 'error' | 'warning' | 'info'
+/** Estilo do rótulo do campo (item C1 do levantamento da Sincronização 1): "discreto" (padrão,
+ *  maiúsculas e menor) ou "normal" (tamanho de texto comum, sem transformação). */
+export type LabelStyle = 'discreto' | 'normal'
 
 export interface PaletteConfig {
   id: string
@@ -24,4 +27,6 @@ export interface BrandConfig {
   shape: Shape
   logoMode?: 'themed' | 'image'
   sidebarLogo: 'light' | 'dark' | 'auto'
+  /** Sem esta prop, `'discreto'` (padrão interno e `brand.config.ts`). */
+  labelStyle?: LabelStyle
 }

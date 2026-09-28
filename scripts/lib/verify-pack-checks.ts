@@ -147,6 +147,19 @@ export function buildWindowsShellCommand(command: string, args: string[]): strin
   return [command, ...args].map(quoteWindowsArg).join(' ')
 }
 
+/**
+ * Achado B5 do veredito do Opus (Sincronizacao 1, item H6): nenhuma cor/raio/sombra do preset
+ * instalado pode resolver `var(--x)` sem o prefixo `--rendra-` (nem `--tw-`, das utilities do
+ * proprio Tailwind). Varre o preset inteiro (`JSON.stringify`), nao so `colors`, porque
+ * `borderRadius` e `boxShadow` tambem resolvem `var(--...)`.
+ */
+export function presetVarsWithoutPrefix(theme: unknown): string[] {
+  const json = JSON.stringify(theme)
+  const nomes = [...json.matchAll(/var\(--([a-zA-Z0-9-]+)\)/g)].map((m) => m[1]!)
+  const semPrefixo = nomes.filter((nome) => !nome.startsWith('rendra-') && !nome.startsWith('tw-'))
+  return [...new Set(semPrefixo)]
+}
+
 export function changelogMissingEntryError(
   changelog: string,
   version: string,

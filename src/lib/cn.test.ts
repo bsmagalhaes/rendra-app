@@ -19,6 +19,17 @@ describe('cn', () => {
   })
 })
 
+describe('cn: grupo font-size ganha label e help (item D13 do levantamento da Sincronizacao 1)', () => {
+  it('text-label e text-help entram no grupo de conflito de tamanho de fonte', () => {
+    expect(cn('text-sm', 'text-label')).toBe('text-label')
+    expect(cn('text-label', 'text-xs')).toBe('text-xs')
+  })
+
+  it('text-label-foreground (cor) e text-label (tamanho) nao conflitam entre si', () => {
+    expect(cn('text-label-foreground', 'text-label')).toBe('text-label-foreground text-label')
+  })
+})
+
 describe('cn: grupo w-control-*', () => {
   it('a última largura de controle vence', () => {
     expect(cn('w-control-sm', 'w-control-md')).toBe('w-control-md')

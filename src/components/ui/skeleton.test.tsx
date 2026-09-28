@@ -2,6 +2,7 @@ import { render, waitFor } from '@testing-library/react-native'
 import { StyleSheet } from 'react-native'
 import { BrandProvider } from '../../brand'
 import { Skeleton } from './skeleton'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 jest.mock('../../lib/reduced-motion', () => ({ useReducedMotion: jest.fn(() => false) }))
 
@@ -41,5 +42,14 @@ describe('Skeleton', () => {
     await waitFor(() => {
       expect(StyleSheet.flatten(pulso.props.style).opacity).toBe(1)
     })
+  })
+
+  it('carrega dataSet.rendra = SKEL-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Skeleton />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'SKEL-001')).toHaveLength(1)
   })
 })

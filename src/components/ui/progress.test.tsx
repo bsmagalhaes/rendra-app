@@ -79,4 +79,14 @@ describe('Progress', () => {
     barra = await findByRole('progressbar')
     expect(barra.props.className.split(' ')).toContain('h-2')
   })
+
+  it('carrega dataSet.rendra = PROG-001 (item D9/B9 do levantamento da Sincronizacao 1)', async () => {
+    const { findByRole } = await render(
+      <BrandProvider>
+        <Progress accessibilityLabel="Envio do arquivo" />
+      </BrandProvider>,
+    )
+    const barra = await findByRole('progressbar')
+    expect(barra.props.dataSet).toMatchObject({ rendra: 'PROG-001' })
+  })
 })

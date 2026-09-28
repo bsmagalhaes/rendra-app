@@ -79,4 +79,26 @@ describe('OtpInput', () => {
     expect(grupo.props.role).toBe('group')
     expect(grupo.props.accessible).toBeUndefined()
   })
+
+  it('usa gap-1 sempre, nunca gap-2 (item D3 do levantamento)', async () => {
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <OtpInput value="" onChange={() => {}} />
+      </BrandProvider>,
+    )
+    const grupo = await findByLabelText('Código de verificação')
+    const classes = grupo.props.className.split(' ')
+    expect(classes).toContain('gap-1')
+    expect(classes).not.toContain('gap-2')
+  })
+
+  it('carrega dataSet.rendra = OTP-001 na raiz (achado B9 do veredito do Opus)', async () => {
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <OtpInput value="" onChange={() => {}} />
+      </BrandProvider>,
+    )
+    const grupo = await findByLabelText('Código de verificação')
+    expect(grupo.props.dataSet).toMatchObject({ rendra: 'OTP-001' })
+  })
 })

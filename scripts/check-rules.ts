@@ -1,4 +1,6 @@
-import { Project, SyntaxKind, Node, type JsxAttribute } from 'ts-morph'
+import { Project, SyntaxKind, Node, type JsxAttribute, type JsxOpeningElement, type JsxSelfClosingElement } from 'ts-morph'
+import { isRendraOwnVar } from './lib/var-prefix'
+import { helpLimit, PAGE_DESCRIPTION_LIMIT, INSTRUCTION_VERBS } from './lib/help-length'
 
 // `tsconfig.json` restringe `types` a `["jest"]` (desvio da Tarefa A3), então `@types/node` (embora
 // presente em node_modules) não entra no programa, e um `import ... from 'fs'` ESM não tipa. `require`
@@ -119,7 +121,8 @@ export const R3_ALLOWED_FILES = [
   'src/components/ui/badge.tsx',
   'src/components/layout/primitives.tsx',
   'src/components/ui/textarea.tsx',
-  'src/components/ui/button.tsx', // useAnimatedStyle (escala 0,98 do pressed e rotação do spinner)
+  'src/components/ui/button.tsx', // useAnimatedStyle (escala 0,98 do pressed)
+  'src/components/ui/spinner.tsx', // useAnimatedStyle (rotação)
   'src/components/ui/brand-feedback-icon.tsx', // useAnimatedStyle (pop e shake)
   // correção pós lote 1 (barra de status legível em qualquer modo): `style` aqui não é um objeto
   // de estilo React Native, é o enum de string ('light' | 'dark') do StatusBar de expo-status-bar,
@@ -148,6 +151,127 @@ function checkR3(project: Project, files: string[], violations: Violation[]) {
 export interface CheckRulesOptions {
   r4AllowFile?: boolean; r6FileNames?: string[]; r8FileNames?: string[]; r11IsRoute?: boolean
   r12IsAppFile?: boolean; r12PathOverride?: string; r13AppTestFileNames?: string[]
+  /** R15 só varre telas (`app/**`, igual ao web restringir a `src/pages/app`); `main()` passa
+   *  `true` só para o lote de `appFiles`, nunca para `srcFiles` (item H2/H3 do levantamento). */
+  r15IsScreen?: boolean
+}
+
+// R14: variável do tema referenciada sem o prefixo --rendra- (itens H2/H3 do levantamento da
+// Sincronização 1). Varre string literal ('--foo'), template sem substituição (`--foo`) e a
+// parte literal (head/middle/tail) de template com substituição (`--rendra-${nome}`, que nunca
+// acusa: o pedaço literal já é "--rendra-", e "rendra-" sozinho não é nome próprio nenhum).
+const VAR_NAME_RE = /--([a-zA-Z][a-zA-Z0-9-]*)/g
+
+function checkR14(project: Project, files: string[], violations: Violation[]) {
+  for (const path of files) {
+    const source = project.addSourceFileAtPath(path)
+    const literalNodes = [
+      ...source.getDescendantsOfKind(SyntaxKind.StringLiteral),
+      ...source.getDescendantsOfKind(SyntaxKind.NoSubstitutionTemplateLiteral),
+      ...source.getDescendantsOfKind(SyntaxKind.TemplateHead),
+      ...source.getDescendantsOfKind(SyntaxKind.TemplateMiddle),
+      ...source.getDescendantsOfKind(SyntaxKind.TemplateTail),
+    ]
+    for (const node of literalNodes) {
+      const text = node.getText()
+      VAR_NAME_RE.lastIndex = 0
+      let m: RegExpExecArray | null
+      while ((m = VAR_NAME_RE.exec(text))) {
+        const name = m[1]!
+        if (name.startsWith('rendra-')) continue
+        if (!isRendraOwnVar(name)) continue
+        violations.push({
+          rule: 'R14', file: path, line: node.getStartLineNumber(),
+          message: `Variável do tema sem prefixo --rendra-: --${name}`,
+        })
+      }
+    }
+  }
+}
+
+// R15: texto orientativo fora do limite do span, ou mais da metade dos campos de uma seção com
+// ajuda, ou description do PageHeader acima do limite, ou texto começando com verbo de
+// instrução (item H2 do levantamento). Só mede literal (`help="..."` ou `help={"..."}`),
+// nunca `help={variavel}`; escopo só telas (`options.r15IsScreen`), igual ao web restringir a
+// `src/pages/app`.
+function jsxElements(root: Node): (JsxOpeningElement | JsxSelfClosingElement)[] {
+  return [
+    ...root.getDescendantsOfKind(SyntaxKind.JsxOpeningElement),
+    ...root.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement),
+  ]
+}
+
+function literalAttrValue(el: JsxOpeningElement | JsxSelfClosingElement, name: string): string | undefined {
+  for (const attr of el.getAttributes()) {
+    if (!Node.isJsxAttribute(attr) || attr.getNameNode().getText() !== name) continue
+    const init = attr.getInitializer()
+    if (!init) return undefined
+    if (Node.isStringLiteral(init)) return init.getLiteralText()
+    if (Node.isJsxExpression(init)) {
+      const expr = init.getExpression()
+      if (expr && (Node.isStringLiteral(expr) || Node.isNoSubstitutionTemplateLiteral(expr))) {
+        return expr.getLiteralText()
+      }
+    }
+    return undefined // expressão dinâmica (variável, template com substituição etc.): não medido
+  }
+  return undefined
+}
+
+function checkR15(project: Project, files: string[], violations: Violation[], options: CheckRulesOptions) {
+  if (!options.r15IsScreen) return
+  for (const path of files) {
+    const source = project.addSourceFileAtPath(path)
+
+    for (const el of jsxElements(source)) {
+      const tag = el.getTagNameNode().getText()
+      if (tag === 'Field' || tag === 'FormField') {
+        const help = literalAttrValue(el, 'help')
+        if (help === undefined) continue
+        const span = literalAttrValue(el, 'span')
+        const limit = helpLimit(span)
+        if (help.length > limit) {
+          violations.push({
+            rule: 'R15', file: path, line: el.getStartLineNumber(),
+            message: `Texto de ajuda com ${help.length} caracteres, acima do limite de ${limit} do span.`,
+          })
+        }
+      }
+      if (tag === 'PageHeader') {
+        const description = literalAttrValue(el, 'description')
+        if (description !== undefined && description.length > PAGE_DESCRIPTION_LIMIT) {
+          violations.push({
+            rule: 'R15', file: path, line: el.getStartLineNumber(),
+            message: `description do PageHeader com ${description.length} caracteres, acima de ${PAGE_DESCRIPTION_LIMIT}.`,
+          })
+        }
+      }
+    }
+
+    for (const el of source.getDescendantsOfKind(SyntaxKind.JsxElement)) {
+      const tag = el.getOpeningElement().getTagNameNode().getText()
+      if (tag === 'FormSection') {
+        const fields = jsxElements(el).filter((f) => f.getTagNameNode().getText() === 'Field' || f.getTagNameNode().getText() === 'FormField')
+        const comHelp = fields.filter((f) => literalAttrValue(f, 'help') !== undefined)
+        if (fields.length > 0 && comHelp.length > fields.length / 2) {
+          violations.push({
+            rule: 'R15', file: path, line: el.getStartLineNumber(),
+            message: `${comHelp.length} de ${fields.length} campos da seção têm texto de ajuda, mais da metade.`,
+          })
+        }
+      }
+      if (tag === 'CardDescription') {
+        const children = el.getJsxChildren()
+        const text = children.length === 1 && Node.isJsxText(children[0]!) ? children[0]!.getText().trim() : undefined
+        if (text && INSTRUCTION_VERBS.some((verb) => text.startsWith(verb))) {
+          violations.push({
+            rule: 'R15', file: path, line: el.getStartLineNumber(),
+            message: 'Texto começa com verbo de instrução proibido.',
+          })
+        }
+      }
+    }
+  }
 }
 
 // R13: nenhum arquivo de teste dentro de app/. O Expo Router trata todo arquivo de app/ como
@@ -357,6 +481,8 @@ export function runCheckRules(files: string[], options: CheckRulesOptions = {}):
   checkR11(project, files, violations, options)
   checkR12(project, files, violations, options)
   checkR13(violations, options.r13AppTestFileNames ?? [])
+  checkR14(project, files, violations)
+  checkR15(project, files, violations, options)
   return violations
 }
 
@@ -370,7 +496,7 @@ if ((require as unknown as { main?: unknown }).main === module) {
   const srcFiles = globSync('src/**/*.{ts,tsx}', { ignore: ['src/**/*.test.{ts,tsx}', 'src/**/__canary__/**'], posix: true })
   const appTestFiles = globSync('app/**/*.test.{ts,tsx}', { posix: true })
   const violations = [
-    ...runCheckRules(appFiles, { r11IsRoute: true, r12IsAppFile: true, r13AppTestFileNames: appTestFiles }),
+    ...runCheckRules(appFiles, { r11IsRoute: true, r12IsAppFile: true, r13AppTestFileNames: appTestFiles, r15IsScreen: true }),
     ...runCheckRules(srcFiles),
     ...checkClaudeMd('CLAUDE.md', 'docs/reference/claude-md-matriz-modelos.txt'),
   ]

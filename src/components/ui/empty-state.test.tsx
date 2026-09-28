@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand'
 import { Text } from '../internal/text'
 import { EmptyState } from './empty-state'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('EmptyState', () => {
   it('mostra o titulo por accessibilityRole header e a descricao', async () => {
@@ -72,5 +73,14 @@ describe('EmptyState', () => {
       </BrandProvider>,
     )
     expect(await findByText('Adicionar')).toBeTruthy()
+  })
+
+  it('carrega dataSet.rendra = VAZ-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <EmptyState title="Vazio" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'VAZ-001')).toHaveLength(1)
   })
 })

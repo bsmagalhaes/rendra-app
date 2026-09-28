@@ -19,7 +19,7 @@ describe('tailwind.config.ts, escala zerada', () => {
     })
   })
 
-  it('theme.fontSize tem os 7 tamanhos do contrato, com lineHeight e letterSpacing', () => {
+  it('theme.fontSize tem os 7 tamanhos do contrato mais label/help (item A2 do levantamento), com lineHeight e letterSpacing', () => {
     expect(theme.extend?.fontSize).toBeUndefined()
     expect(theme.fontSize).toEqual({
       xs: ['12px', { lineHeight: '16px', letterSpacing: '0.12px' }],
@@ -29,6 +29,8 @@ describe('tailwind.config.ts, escala zerada', () => {
       xl: ['18px', { lineHeight: '26px', letterSpacing: '-0.18px' }],
       '2xl': ['21px', { lineHeight: '28px', letterSpacing: '-0.315px' }],
       '3xl': ['24px', { lineHeight: '32px', letterSpacing: '-0.48px' }],
+      label: ['11px', { lineHeight: '16px', letterSpacing: '0.88px' }],
+      help: ['12px', { lineHeight: '16px', letterSpacing: '0.12px' }],
     })
   })
 
@@ -51,8 +53,13 @@ describe('tailwind.config.ts, escala zerada', () => {
     expect(names.length).toBeGreaterThanOrEqual(58)
   })
 
+  it('theme.colors tem label-foreground e help-foreground, resolvidos por --rendra-label-color/--rendra-help-color (item A2 do levantamento)', () => {
+    expect(theme.colors['label-foreground']).toBe('rgb(var(--rendra-label-color) / <alpha-value>)')
+    expect(theme.colors['help-foreground']).toBe('rgb(var(--rendra-help-color) / <alpha-value>)')
+  })
+
   it('sidebar é cor sólida com <alpha-value>, não a variante sem alfa (sidebar-border/-accent/-active são as sem alfa)', () => {
-    expect(theme.colors.sidebar).toBe('rgb(var(--sidebar) / <alpha-value>)')
+    expect(theme.colors.sidebar).toBe('rgb(var(--rendra-sidebar) / <alpha-value>)')
   })
 
   it('theme.borderRadius tem os papeis control|item|surface|block|avatar mais full', () => {
@@ -62,11 +69,11 @@ describe('tailwind.config.ts, escala zerada', () => {
     )
   })
 
-  it('theme.boxShadow tem sm, md e lg resolvidos por --shadow-color e --shadow-opacity-*', () => {
-    expect(theme.boxShadow?.sm).toContain('--shadow-color')
-    expect(theme.boxShadow?.sm).toContain('--shadow-opacity-sm')
-    expect(theme.boxShadow?.md).toContain('--shadow-opacity-md')
-    expect(theme.boxShadow?.lg).toContain('--shadow-opacity-lg')
+  it('theme.boxShadow tem sm, md e lg resolvidos por --rendra-shadow-color e --rendra-shadow-opacity-*', () => {
+    expect(theme.boxShadow?.sm).toContain('--rendra-shadow-color')
+    expect(theme.boxShadow?.sm).toContain('--rendra-shadow-opacity-sm')
+    expect(theme.boxShadow?.md).toContain('--rendra-shadow-opacity-md')
+    expect(theme.boxShadow?.lg).toContain('--rendra-shadow-opacity-lg')
   })
 
   it('theme.flex tem 3 e 7, para o grid do futuro ActionBar (F1b)', () => {

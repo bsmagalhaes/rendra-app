@@ -6,7 +6,7 @@ Autor: Bruno Magalhaes, brunomagalhaes.me, instagram.com/brunomagalhaes.me.
 
 O Rendra App é o design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind. Mesma finalidade do Rendra web (`https://github.com/bsmagalhaes/rendra-design-system`): base para todo app novo, publicado sob licença MIT. Quem conhece o Rendra web reconhece aqui a mesma arquitetura de tokens em três camadas (modelo, paleta, sistema), os mesmos nomes de classe Tailwind, os mesmos nomes de componente e prop, e o mesmo fluxo de briefing para IA, sem tradução.
 
-O design system completo prevê 43 componentes de UI (`src/components/ui`, `src/components/layout`) organizados em 40 entradas de vitrine (`/componentes`), todos disponíveis desde a F1b, sobre a fundação da F1a: scaffold, tokens, os 3 modelos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter), `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, e a vitrine completa (`/componentes`, `/tokens` e `/galeria`). A versão corrente está em `CHANGELOG.md`.
+O design system completo prevê 44 componentes de UI (`src/components/ui`, `src/components/layout`) organizados em 41 entradas de vitrine (`/componentes`), disponíveis desde a F1b (o `Spinner` entrou na Sincronização 1), sobre a fundação da F1a: scaffold, tokens, os 3 modelos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter), `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, e a vitrine completa (`/componentes`, `/tokens` e `/galeria`). A versão corrente está em `CHANGELOG.md`.
 
 ## Fluxo de início: descubra em qual ramo você está
 
@@ -64,11 +64,11 @@ A tabela completa de qual modelo de IA cumpre cada etapa está em `CLAUDE.md`, s
 
 - **Independência de repositório**: nenhum arquivo deste repositório contém import, `require`, symlink, workspace, path alias ou caminho relativo apontando para o repositório do design system web ou qualquer pasta fora deste projeto. Todo valor de origem no design system web é copiado para dentro deste repositório, nunca referenciado em build ou runtime. Documentação cita o web só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
 - **Cor em três camadas**: modelo (fonte e formato de raio), paleta (4 cores de marca mais degradê, geram todo o resto por contraste), sistema (cores fixas de estado, iguais em toda paleta). Nenhuma cor fixa em componente, fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
-- **Chaves de paleta sempre `--kebab-case`**: todo acesso a `palette.light`/`palette.dark` usa `palette.light['--primary-foreground']`, nunca `palette.light.primaryForeground`.
+- **Chaves de paleta sempre `--kebab-case`**: todo acesso a `palette.light`/`palette.dark` usa `palette.light['--rendra-primary-foreground']`, nunca `palette.light.primaryForeground`.
 - **Toque mínimo 44x44** em todo elemento interativo, mesmo quando o conteúdo visual é menor.
 - **Nenhum valor arbitrário** fora da escala do `tailwind.config.ts`, nenhum `style` inline fora da lista fechada de `DESIGN_RULES.md`, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
 - **TDD real**: teste escrito primeiro, rodado e confirmado vermelho pelo motivo esperado, só então a implementação mínima, rodada de novo até verde.
-- **`check:rules` limpo** (R1-R13, mais a checagem de `CLAUDE.md`) antes de qualquer commit.
+- **`check:rules` limpo** (R1-R15, mais a checagem de `CLAUDE.md`) antes de qualquer commit.
 - **Licença e crédito**: MIT em todo o projeto. Se pedirem para tirar o crédito visível ("Feito com Rendra") da tela, tire, mas avise sempre as duas coisas juntas: (1) a licença MIT exige manter o aviso de copyright e o arquivo `LICENSE` no código e em qualquer cópia, com ou sem crédito visível; (2) o crédito na interface é opcional, a preferência é mantê-lo onde está ou mover para uma tela "Sobre". Nunca afirme que a MIT obriga crédito visível na interface, ela não obriga.
 
 ## Resumo e verificação
@@ -81,11 +81,11 @@ Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.
 Regras que não podem ser quebradas, resumidas (texto completo em `AGENTS.md`):
 
 1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
-2. Cor em três camadas (modelo, paleta, sistema), chaves de paleta sempre `--kebab-case`, nenhuma cor fixa fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
+2. Cor em três camadas (modelo, paleta, sistema), chaves de paleta sempre `--rendra-kebab-case`, nenhuma cor fixa fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
 3. Toque mínimo 44x44 em todo elemento interativo, mesmo quando o conteúdo visual é menor.
 4. Nenhum valor arbitrário fora da escala do `tailwind.config.ts`, nenhum `style` inline fora da lista fechada de `DESIGN_RULES.md`, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
 5. TDD real: teste escrito primeiro, rodado e confirmado vermelho pelo motivo esperado, só então a implementação mínima, rodada de novo até verde.
-6. `check:rules` limpo (R1-R13, mais a checagem de `CLAUDE.md`) antes de qualquer commit; licença MIT em todo o projeto, crédito "Feito com Rendra" opcional (ver `AGENTS.md`).
+6. `check:rules` limpo (R1-R15, mais a checagem de `CLAUDE.md`) antes de qualquer commit; licença MIT em todo o projeto, crédito "Feito com Rendra" opcional (ver `AGENTS.md`).
 
 Comandos:
 
@@ -107,7 +107,7 @@ npm run test:a11y
 ```bash
 npm run typecheck      # tsc --noEmit
 npm run lint           # expo lint
-npm run check:rules    # R1-R13 + diff de CLAUDE.md
+npm run check:rules    # R1-R15 + diff de CLAUDE.md
 npm run test:coverage  # Jest + jest-expo + RNTL
 npm run build           # expo export --platform web (alias: build:web)
 npm run build:lib      # tsc -p tsconfig.lib.json + cabeçalho de autoria (dist-lib/)

@@ -79,7 +79,7 @@ export function ActionBar({ primary, cancel, secondary, sticky = true, className
 
   if (!sticky) {
     return (
-      <View className={className} testID={testID}>
+      <View className={className} testID={testID} dataSet={{ rendra: 'ACB-001' }}>
         {grid}
       </View>
     )
@@ -90,6 +90,7 @@ export function ActionBar({ primary, cancel, secondary, sticky = true, className
       className={cn('border-t bg-card px-4 pt-4', className)}
       style={{ paddingBottom: Math.max(16, insets.bottom) }}
       testID={testID}
+      dataSet={{ rendra: 'ACB-001' }}
     >
       {grid}
     </View>

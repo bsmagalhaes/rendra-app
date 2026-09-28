@@ -74,7 +74,7 @@ export function StatCard({
   const TrendIcon = flat ? Minus : up ? ArrowUpRight : ArrowDownRight
 
   return (
-    <Card className={cn('gap-3 p-4', highlight && 'relative overflow-hidden', className)}>
+    <Card code="STAT-001" className={cn('gap-3 p-4', highlight && 'relative overflow-hidden', className)}>
       {highlight ? (
         <View
           aria-hidden

@@ -9,7 +9,7 @@ Node 22 ou mais recente (`engines` do `package.json`; o CI usa o 24).
 1. **Fork** deste repositório.
 2. **Branch** a partir de `main`, um nome descrevendo a mudança.
 3. **TDD real**: para toda mudança de comportamento, escreva o teste primeiro, rode e confirme que falha pelo motivo esperado (nunca por erro de digitação ou import quebrado), só então escreva a implementação mínima, rode de novo e confirme que passa.
-4. **`check:rules` limpo**: rode `npm run check:rules` antes de cada commit; zero violação de R1-R13 e da checagem de `CLAUDE.md`.
+4. **`check:rules` limpo**: rode `npm run check:rules` antes de cada commit; zero violação de R1-R15 e da checagem de `CLAUDE.md`.
 5. **Commit**: mensagem descrevendo a mudança, terminando com a linha de atribuição quando gerada por assistente de IA.
 6. **Pull request** contra `main`, com o CI (`.github/workflows/ci.yml`) verde em todos os passos antes do merge.
 
@@ -27,7 +27,9 @@ npm run test:a11y
 
 ## Regras de design
 
-Todo componente e toda tela seguem `DESIGN_RULES.md`: toque mínimo 44x44, cor em três camadas (modelo, paleta, sistema), chaves de paleta em `--kebab-case`, nenhum valor arbitrário, nenhum `style` inline fora da lista fechada, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
+Todo componente e toda tela seguem `DESIGN_RULES.md`: toque mínimo 44x44, cor em três camadas (modelo, paleta, sistema), chaves de paleta em `--rendra-kebab-case`, nenhum valor arbitrário, nenhum `style` inline fora da lista fechada, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
+
+Componente ou variante novo entra no catálogo (`src/catalog/components.ts`) antes do merge, com o mesmo código do design system web quando o componente existir nos dois.
 
 ## Independência de repositório
 

@@ -42,6 +42,16 @@ for (const route of ROUTES) {
       }
     }
   })
+
+  // Tarefa 6.4 (achado C5 do veredito do Opus, secao 3.2 item 4 do levantamento): a raiz do
+  // BrandProvider carrega data-rendra-root e data-label no export web em toda rota.
+  test(`${route}: [data-rendra-root] com data-label="discreto" presente na raiz`, async ({ page }, testInfo) => {
+    const codigo = (testInfo.project.metadata as { codigo?: string })?.codigo ?? 'T1-C1'
+    await page.goto(`${route.slice(1)}?codigo=${codigo}`)
+    await page.getByTestId(`rendra-${codigo}`).waitFor()
+    const raiz = page.locator('[data-rendra-root]')
+    await expect(raiz).toHaveAttribute('data-label', 'discreto')
+  })
 }
 
 test('criterio 7: trocar modelo pelo controle real da /galeria muda o testID da raiz', async ({ page }) => {
@@ -62,7 +72,7 @@ test('tokens: ?modo=escuro/claro aplica o modo sem recarregar (critério 7, via 
   // com data-testid^="rendra-" (o único que o app controla de fato), nunca o fundo do body
   // (que o app não controla) nem corre contra o efeito assíncrono do ModelCodeFromUrl.
   const bg = () => page.evaluate(() =>
-    getComputedStyle(document.querySelector('[data-testid^="rendra-"]')!).getPropertyValue('--background').trim())
+    getComputedStyle(document.querySelector('[data-testid^="rendra-"]')!).getPropertyValue('--rendra-background').trim())
   await page.goto('tokens?modo=claro')
   await page.getByTestId('rendra-T1-C1').waitFor()
   await expect.poll(bg).not.toBe('')
@@ -80,6 +90,38 @@ test('galeria: escolha de modelo via ?codigo= persiste depois de recarregar a p�
   // URL, suficiente para provar a persistência via AsyncStorage.
   await page.goto('galeria')
   await page.getByTestId('rendra-T2-C3').waitFor()
+})
+
+test('componentes/acoes: selo BTN-001 do catalogo visivel ao lado do Button (Tarefa 1.3, achado C5 do Opus)', async ({ page }) => {
+  await page.goto('componentes/acoes?codigo=T1-C1')
+  await page.getByTestId('rendra-T1-C1').waitFor()
+  await expect(page.getByText('BTN-001')).toBeVisible()
+})
+
+test('componentes/exibicao: selo ABA-001 do catalogo visivel ao lado do Tabs (Tarefa 1.3, achado C5 do Opus)', async ({ page }) => {
+  await page.goto('componentes/exibicao?codigo=T1-C1')
+  await page.getByTestId('rendra-T1-C1').waitFor()
+  await expect(page.getByText('ABA-001')).toBeVisible()
+})
+
+// Tarefa 6.4 (achado C5 do veredito do Opus, secao 3.2 do levantamento): o data-rendra chega ao
+// DOM do export web via dataSet, distinto do selo textual (Tarefa 1.3) na vitrine.
+test('componentes/acoes: [data-rendra="BTN-001"] visivel (achado C5 do Opus)', async ({ page }) => {
+  await page.goto('componentes/acoes?codigo=T1-C1')
+  await page.getByTestId('rendra-T1-C1').waitFor()
+  await expect(page.locator('[data-rendra="BTN-001"]').first()).toBeVisible()
+})
+
+test('componentes/exibicao: [data-rendra="ABA-001"] visivel (achado C5 do Opus)', async ({ page }) => {
+  await page.goto('componentes/exibicao?codigo=T1-C1')
+  await page.getByTestId('rendra-T1-C1').waitFor()
+  await expect(page.locator('[data-rendra="ABA-001"]').first()).toBeVisible()
+})
+
+test('componentes/formulario: [data-rendra="FLD-001"] visivel (achado C5 do Opus)', async ({ page }) => {
+  await page.goto('componentes/formulario?codigo=T1-C1')
+  await page.getByTestId('rendra-T1-C1').waitFor()
+  await expect(page.locator('[data-rendra="FLD-001"]').first()).toBeVisible()
 })
 
 test('formulario: Select com lista maior que a folha rola até o último item, no web (bloqueador do veredito do fechamento)', async ({ page }) => {

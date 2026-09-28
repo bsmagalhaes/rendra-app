@@ -233,3 +233,44 @@ describe('Modal', () => {
     expect(StyleSheet.flatten(card.parent?.props.style)).toMatchObject({ flexShrink: 1, maxHeight: '100%' })
   })
 })
+
+describe('Modal: data-rendra por tipo (item D5/D12 do levantamento da Sincronizacao 1)', () => {
+  // O card (role="dialog") não tem accessible=true explícito, então getByRole/findByRole (que
+  // exige isAccessibilityElement) não o encontra; findByLabelText, como o resto deste arquivo já
+  // usa (ex. Tarefa "o card tem role dialog...encontrável por findByLabelText"), acha o mesmo nó.
+  it('type confirm (padrao) carrega dataSet.rendra = MOD-001', async () => {
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <Modal open onOpenChange={() => {}} title="Excluir item?" />
+      </BrandProvider>,
+    )
+    expect((await findByLabelText('Excluir item?')).props.dataSet).toMatchObject({ rendra: 'MOD-001' })
+  })
+
+  it('type destructive tambem carrega MOD-001 (mesmo codigo de confirm, so muda a cor)', async () => {
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <Modal open onOpenChange={() => {}} title="Excluir item?" type="destructive" />
+      </BrandProvider>,
+    )
+    expect((await findByLabelText('Excluir item?')).props.dataSet).toMatchObject({ rendra: 'MOD-001' })
+  })
+
+  it('type form carrega MOD-002', async () => {
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <Modal open onOpenChange={() => {}} title="Formulário" type="form" />
+      </BrandProvider>,
+    )
+    expect((await findByLabelText('Formulário')).props.dataSet).toMatchObject({ rendra: 'MOD-002' })
+  })
+
+  it('type info carrega MOD-003', async () => {
+    const { findByLabelText } = await render(
+      <BrandProvider>
+        <Modal open onOpenChange={() => {}} title="Informação" type="info" />
+      </BrandProvider>,
+    )
+    expect((await findByLabelText('Informação')).props.dataSet).toMatchObject({ rendra: 'MOD-003' })
+  })
+})

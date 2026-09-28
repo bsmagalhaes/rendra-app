@@ -6,9 +6,11 @@ import {
   validatePackFiles,
   changelogMissingEntryError,
   pluginVersionLeakError,
+  presetVarsWithoutPrefix,
   quoteWindowsArg,
   buildWindowsShellCommand,
 } from './verify-pack-checks'
+import rendraPreset from '../../src/theme/tailwind-preset'
 
 describe('privateFieldError', () => {
   it('acusa quando private e true e a flag --publicacao pede o campo ausente', () => {
@@ -149,6 +151,24 @@ describe('pluginVersionLeakError (veredito Fable v2: dist-lib nunca carrega __pl
         'dist-lib/index.js': 'module.exports = {};',
       }),
     ).toBeNull()
+  })
+})
+
+// Achado B5 do veredito do Opus (Sincronizacao 1, item H6): nenhuma cor/raio/sombra do preset
+// instalado pode resolver var(--x) sem o prefixo --rendra- (nem --tw-).
+describe('presetVarsWithoutPrefix (achado B5/H6 do Opus, Sincronizacao 1)', () => {
+  it('acusa var(--primary) sem o prefixo rendra-', () => {
+    const theme = { colors: { a: 'rgb(var(--primary) / <alpha-value>)' } }
+    expect(presetVarsWithoutPrefix(theme)).toEqual(['primary'])
+  })
+
+  it('não acusa var(--rendra-primary) nem var(--tw-shadow-color)', () => {
+    const theme = { colors: { a: 'rgb(var(--rendra-primary) / <alpha-value>)', b: 'var(--tw-shadow-color)' } }
+    expect(presetVarsWithoutPrefix(theme)).toEqual([])
+  })
+
+  it('o preset real (rendraPreset.theme) não acusa nada', () => {
+    expect(presetVarsWithoutPrefix(rendraPreset.theme)).toEqual([])
   })
 })
 

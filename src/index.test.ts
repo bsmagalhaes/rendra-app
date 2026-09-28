@@ -14,6 +14,14 @@ describe('src/index.ts, entrada principal do pacote', () => {
     expect(typeof pacote.usePlaceholderColor).toBe('function')
     expect(typeof pacote.createPalette).toBe('function')
     expect(typeof pacote.buildThemeVars).toBe('function')
+    expect(typeof pacote.Spinner).toBe('function')
+  })
+
+  it('exporta o catalogo de codigos de componente (secao 3.3 do levantamento da Sincronizacao 1)', () => {
+    expect(Array.isArray(pacote.CATALOG)).toBe(true)
+    expect(typeof pacote.resolveCatalogCode).toBe('function')
+    expect(typeof pacote.getCatalogEntry).toBe('function')
+    expect(typeof pacote.catalogByComponent).toBe('function')
   })
 
   it('exporta RendraNavigationProvider e useRendraNavigation (lacuna 4 do veredito Fable: README.md:262, docs/PROMPT_MIGRACAO.md:43, docs/COMO_APLICAR.md:33 prometem os dois)', () => {

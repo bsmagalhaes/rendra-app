@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand'
 import { Accordion, accordionHeight } from './accordion'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('accordionHeight', () => {
   it('aberto com altura medida, devolve a altura', () => {
@@ -80,5 +81,10 @@ describe('Accordion', () => {
     expect(gatilho.props.accessibilityState.disabled).toBe(true)
     await fireEvent.press(gatilho)
     expect(queryByText('Texto interno')).toBeNull()
+  })
+
+  it('carrega dataSet.rendra = ACRN-001 na raiz (item D12 do levantamento da Sincronizacao 1)', async () => {
+    const { container } = await render(<BrandProvider><Accordion items={items} /></BrandProvider>)
+    expect(nodesWithCode(container, 'ACRN-001')).toHaveLength(1)
   })
 })

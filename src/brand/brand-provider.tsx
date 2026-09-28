@@ -18,14 +18,17 @@ const PADRAO_INTERNO: Record<ModelId, BrandConfig> = {
   T1: {
     id: models.T1.brandId, productName: models.T1.productName, companyName: models.T1.productName,
     tagline: models.T1.tagline, shape: models.T1.shape, logoMode: 'themed', sidebarLogo: 'dark', feedbackIcons: {},
+    labelStyle: 'discreto',
   },
   T2: {
     id: models.T2.brandId, productName: models.T2.productName, companyName: models.T2.productName,
     tagline: models.T2.tagline, shape: models.T2.shape, logoMode: 'themed', sidebarLogo: 'dark', feedbackIcons: {},
+    labelStyle: 'discreto',
   },
   T3: {
     id: models.T3.brandId, productName: models.T3.productName, companyName: models.T3.productName,
     tagline: models.T3.tagline, shape: models.T3.shape, logoMode: 'themed', sidebarLogo: 'dark', feedbackIcons: {},
+    labelStyle: 'discreto',
   },
 }
 
@@ -191,6 +194,7 @@ export function BrandProvider({
   ) as Partial<Record<ModelId, BrandConfig>>
   const marcas = { ...PADRAO_INTERNO, ...brandsPropDefinidos }
   const brand = marcas[modelCode]
+  const labelStyle = brand.labelStyle ?? 'discreto'
 
   const activeSeeds = customSeeds ?? paletteSeeds.find((s) => s.id === paletteId) ?? paletteSeeds[0]!
   const palette: Palette = useMemo(() => createPalette(activeSeeds), [activeSeeds])
@@ -200,7 +204,7 @@ export function BrandProvider({
   // Achado do Playwright (Tarefa 22/24): no export web, `RNModal` faz portal do conteúdo para
   // fora da árvore normal (createPortal
   // para `document.body`), então o `<View style={vars(themeVars)}>` abaixo (raiz do app) nunca é
-  // ancestral real do conteúdo de `Modal`/`BottomSheet`; toda cor baseada em `var(--foreground)`
+  // ancestral real do conteúdo de `Modal`/`BottomSheet`; toda cor baseada em `var(--rendra-foreground)`
   // etc. fica inválida (variável CSS indefinida) dentro de qualquer overlay, caindo no preto
   // padrão do CSS. Corrigido replicando as mesmas variáveis também em `:root`
   // (`document.documentElement`), que é ancestral comum de toda porta, sem depender da árvore
@@ -219,7 +223,7 @@ export function BrandProvider({
     brand, brands: Object.values(marcas), model, modelCode, setModelCode, setModelAndPalette,
     mode, resolvedMode, setMode, shape: model.shape, palette, paletteId, hydrated, themeVars,
     palettes: paletteSeeds.map((s) => ({ id: s.id, name: s.name, sidebarLogo: createPalette(s).sidebarLogo })),
-    setPaletteId, applyPalette, sidebarLogoVariant: palette.sidebarLogo,
+    setPaletteId, applyPalette, sidebarLogoVariant: palette.sidebarLogo, labelStyle,
   }
 
   return (
@@ -228,6 +232,7 @@ export function BrandProvider({
         testID={hydrated ? `rendra-${modelCode}-${codigoDaPaleta}` : undefined}
         style={vars(themeVars)}
         className="flex-1"
+        dataSet={{ rendraRoot: paletteId, brand: model.brandId, shape: model.shape, label: labelStyle, palette: paletteId }}
       >
         {children}
       </View>

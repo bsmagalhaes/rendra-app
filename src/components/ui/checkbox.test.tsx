@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { render, fireEvent } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand/brand-provider'
 import { Checkbox, CheckboxGroup, type CheckboxGroupOption } from './checkbox'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 function ControlledCheckbox() {
   const [checked, setChecked] = useState(false)
@@ -140,5 +141,26 @@ describe('CheckboxGroup', () => {
     const caixas = await findAllByRole('checkbox')
     expect(caixas[1].props.accessibilityState.checked).toBe(false)
     expect(caixas[3].props.accessibilityState.checked).toBe(false)
+  })
+})
+
+describe('Checkbox/CheckboxGroup: data-rendra (item D12 do levantamento da Sincronizacao 1)', () => {
+  it('Checkbox carrega dataSet.rendra = CHK-001', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Checkbox label="Aceito" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'CHK-001')).toHaveLength(1)
+  })
+
+  it('CheckboxGroup carrega dataSet.rendra = CHK-002', async () => {
+    const options: CheckboxGroupOption[] = [{ value: 'a', label: 'A' }]
+    const { container } = await render(
+      <BrandProvider>
+        <CheckboxGroup options={options} />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'CHK-002')).toHaveLength(1)
   })
 })

@@ -1,6 +1,8 @@
 # DESIGN_RULES.md
 
-Regras de design do Rendra App, nativo (React Native/Expo/NativeWind). Esta entrega (F1b) traz os 43 componentes de UI e a rota `/componentes` (40 entradas), sobre a fundação da F1a (tokens, `BrandProvider`, `Gradient`, `check:rules`); a versão corrente está em `CHANGELOG.md`. As regras abaixo valem para todo componente, e `check:rules` reserva a lista fechada de exceções de `style` por arquivo (seção "Lista fechada de exceções", abaixo).
+Regras de design do Rendra App, nativo (React Native/Expo/NativeWind). Esta entrega (F1b, mais o `Spinner` da Sincronização 1) traz os 44 componentes de UI e a rota `/componentes` (41 entradas), sobre a fundação da F1a (tokens, `BrandProvider`, `Gradient`, `check:rules`); a versão corrente está em `CHANGELOG.md`. As regras abaixo valem para todo componente, e `check:rules` reserva a lista fechada de exceções de `style` por arquivo (seção "Lista fechada de exceções", abaixo).
+
+A lista de referência de códigos de componente é `src/catalog/components.ts`, com selo na vitrine `/componentes`; o mesmo código significa o mesmo componente e a mesma variante em web e app.
 
 ## Regras mestras
 
@@ -19,7 +21,7 @@ Regras de design do Rendra App, nativo (React Native/Expo/NativeWind). Esta entr
 
 Trocar marca é sempre: 4 cores, degradê, modelo, nome e logotipo. Nunca mexer em componente para trocar marca.
 
-`palette.light`/`palette.dark` (saída de `createPalette`) usam chaves em `--kebab-case`: todo acesso é `palette.light['--primary-foreground']`, nunca `palette.light.primaryForeground`.
+`palette.light`/`palette.dark` (saída de `createPalette`) usam chaves em `--rendra-kebab-case`: todo acesso é `palette.light['--rendra-primary-foreground']`, nunca `palette.light.primaryForeground`.
 
 ## Tokens
 
@@ -70,6 +72,7 @@ React Native não tem `vars()`/CSS custom properties como mecanismo de estilo di
 | `src/components/ui/progress.tsx` | `style` de `useAnimatedStyle` da barra (`position`, `left`, `top`, `height` e `width` percentual calculado do valor; vaivém do indeterminado) | F1b |
 | `src/components/ui/otp-input.tsx`, `src/components/ui/badge.tsx`, `src/components/layout/primitives.tsx` (`Grid`) | larguras percentuais equivalentes a `field-sizing`/grade | F1b |
 | `src/components/ui/textarea.tsx` | `style={{ height }}` (altura calculada, 96 a 256px) | F1b |
+| `src/components/ui/spinner.tsx` | `style` de `useAnimatedStyle` da rotação | Sincronização 1 |
 
 Qualquer outro componente que precisar de um valor dinâmico fora desta lista pede alteração desta regra antes da implementação (nunca `style` "só desta vez").
 
@@ -90,6 +93,19 @@ Qualquer outro componente que precisar de um valor dinâmico fora desta lista pe
 | R11 degradê fora das regras | Mais de um `<Gradient>` por rota, ou como filho direto de `Button`/`Input`/`Badge`. |
 | R12 botão solto | `<Button>` fora de um container autorizado (`R12` ignora `src/components/**`, onde os próprios containers usam `Button` internamente). |
 | R13 teste dentro de `app/` | Arquivo `*.test.ts(x)` sob `app/` (o Expo Router trata todo arquivo de `app/` como rota candidata); testes de rota vivem em `src/__tests__/routes/`. |
+| R14 variável do tema sem prefixo | String literal `'--<nome>'` ou `var(--<nome>)` (inclusive dentro de template) com `<nome>` num nome próprio do tema (`scripts/lib/var-prefix.ts`) sem o prefixo `--rendra-`; nunca acusa `--tw-*` nem variável de terceiro. |
+| R15 texto orientativo fora do limite | `help` literal de `Field`/`FormField` acima do limite do `span` (tabela abaixo; sem `span`, `md` = 40); mais da metade dos `Field`/`FormField` de uma `FormSection` com `help`; `description` literal do `PageHeader` acima de 150; `description`/`CardDescription` literal começando com verbo de instrução (`Comece, Clique, Toque, Arraste, Preencha, Use, Escolha, Selecione, Digite, Informe, Veja, Confira`); só em `app/**` (telas), nunca `help={variável}`. |
+
+Limite do texto de ajuda por `span` (regra R15, `scripts/lib/help-length.ts`):
+
+| `span` | Limite de caracteres |
+|---|---|
+| `full` | 150 |
+| `xl` | 100 |
+| `lg` | 70 |
+| `md`/`half` (padrão sem `span`) | 40 |
+| `sm` | 30 |
+| `xs` | 20 |
 
 Regras que dependem de comportamento em tempo de execução (toque mínimo real, safe area cobrindo elemento fixo, teclado não cobrir campo ativo) ficam nos testes de Playwright, não em `check:rules`.
 
@@ -98,5 +114,5 @@ Regras que dependem de comportamento em tempo de execução (toque mínimo real,
 - [ ] Toque mínimo 44x44 em todo elemento interativo.
 - [ ] Safe area respeitada em todo elemento fixo.
 - [ ] Teclado não cobre campo ativo nem rodapé de ações.
-- [ ] `npm run check:rules` limpo (R1-R13, mais a checagem de `CLAUDE.md`).
+- [ ] `npm run check:rules` limpo (R1-R15, mais a checagem de `CLAUDE.md`).
 - [ ] Testes cobrindo o piso de cobertura da estratégia de testes (o piso está ativo, `coverageThreshold` em `jest.config.js`: 90% em `src/lib`, 80% em `src/components` e `src/theme`, além do piso por arquivo nos módulos de contrato: `src/lib/masks.ts`, `src/lib/validators.ts`, `src/brand/palette.ts`, `src/theme/vars.ts`, `src/config/presets.ts`, `src/config/showcase.tsx`).

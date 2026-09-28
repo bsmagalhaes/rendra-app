@@ -55,7 +55,12 @@ export function OtpInput({
   }
 
   return (
-    <View role={a11yPresets.group.role} accessibilityLabel={accessibilityLabel} className="flex-row gap-2">
+    <View
+      role={a11yPresets.group.role}
+      accessibilityLabel={accessibilityLabel}
+      className="flex-row gap-1"
+      dataSet={{ rendra: 'OTP-001' }}
+    >
       {Array.from({ length }).map((_, i) => {
         const filled = Boolean(value[i])
         return (

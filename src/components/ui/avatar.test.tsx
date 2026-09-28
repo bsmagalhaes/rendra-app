@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand'
 import { Avatar, AvatarGroup, initials } from './avatar'
+import { nodesWithCode } from '../../test-utils/rendra-code'
 
 describe('initials', () => {
   it('Ana Souza vira AS', () => {
@@ -110,5 +111,25 @@ describe('AvatarGroup', () => {
     expect(segundo.props.className.split(' ')).toEqual(
       expect.arrayContaining(['-ml-2', 'border-2', 'border-card']),
     )
+  })
+})
+
+describe('Avatar/AvatarGroup: data-rendra (item D12 do levantamento da Sincronizacao 1)', () => {
+  it('Avatar carrega dataSet.rendra = AVT-001', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <Avatar name="Ana Souza" />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'AVT-001')).toHaveLength(1)
+  })
+
+  it('AvatarGroup carrega dataSet.rendra = AVT-002', async () => {
+    const { container } = await render(
+      <BrandProvider>
+        <AvatarGroup people={[{ name: 'Ana Souza' }]} />
+      </BrandProvider>,
+    )
+    expect(nodesWithCode(container, 'AVT-002')).toHaveLength(1)
   })
 })

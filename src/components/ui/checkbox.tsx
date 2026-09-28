@@ -65,6 +65,7 @@ export function Checkbox({
     return (
       <Pressable
         testID={id}
+        dataSet={{ rendra: 'CHK-001' }}
         accessibilityRole={a11yPresets.checkbox.accessibilityRole}
         accessibilityState={{ checked: isIndeterminate ? 'mixed' : isChecked, disabled }}
         aria-checked={ariaChecked}
@@ -82,6 +83,7 @@ export function Checkbox({
   return (
     <Pressable
       testID={id}
+      dataSet={{ rendra: 'CHK-001' }}
       accessibilityRole={a11yPresets.checkbox.accessibilityRole}
       accessibilityState={{ checked: isIndeterminate ? 'mixed' : isChecked, disabled }}
       aria-checked={ariaChecked}
@@ -140,7 +142,7 @@ export function CheckboxGroup({
   }
 
   return (
-    <View role={a11yPresets.group.role} className="flex-col" accessibilityLabel={label}>
+    <View role={a11yPresets.group.role} className="flex-col" accessibilityLabel={label} dataSet={{ rendra: 'CHK-002' }}>
       {selectAll ? (
         <Checkbox
           label="Selecionar todos"

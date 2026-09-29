@@ -22,7 +22,7 @@ interface Captura {
   escala: number
 }
 
-// Defeito M1 do veredito Fable sobre o pacote npm: valor fixo em `/rendra-app` quebrava `npm run docs:images` em qualquer clone
+// Defeito M1 do veredito Fable sobre o pacote npm: valor fixo em `/rendra-ui-app` quebrava `npm run docs:images` em qualquer clone
 // (pages:stage/app.json do clean-clone usam `/${nome}`). Derivado de app.json aqui, no lugar de
 // escrito à mão, para funcionar sem ajuste manual.
 const appJson = JSON.parse(readFileSync(join(process.cwd(), 'app.json'), 'utf8')) as {

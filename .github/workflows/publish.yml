@@ -16,7 +16,7 @@ jobs:
   publicar:
     # Guarda de repositório (achado B15 do Opus): o workflow só roda no repositório oficial,
     # nunca num fork, mesmo que alguém empurre uma tag v* lá.
-    if: github.repository == 'bsmagalhaes/rendra-app'
+    if: github.repository == 'bsmagalhaes/rendra-ui-app'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

@@ -27,12 +27,12 @@ const CAMPOS_DE_PUBLICACAO = [
 const SCRIPTS_DE_PACOTE = ['build:lib', 'verify:pack', 'clean:clone']
 
 /**
- * Achado B16: a versão original do `pages:stage` copia para `.pages/rendra-app`; sem a troca, o
- * export estático de quem clonou continua sendo servido sob `/rendra-app/`, incompatível com o
+ * Achado B16: a versão original do `pages:stage` copia para `.pages/rendra-ui-app`; sem a troca, o
+ * export estático de quem clonou continua sendo servido sob `/rendra-ui-app/`, incompatível com o
  * `app.json` renomeado (`cleanAppJson`) e com `playwright.config.ts` (`cleanPlaywrightConfig`).
  */
 export function cleanPagesStage(script: string, nome: string): string {
-  return script.replace(/\.pages\/rendra-app/g, `.pages/${nome}`)
+  return script.replace(/\.pages\/rendra-ui-app/g, `.pages/${nome}`)
 }
 
 export function cleanPackageJson(pkg: PackageJsonLike, nome: string): PackageJsonLike {
@@ -87,9 +87,9 @@ export function cleanCiYml(texto: string): string {
     .join('\n')
 }
 
-/** Achado B16 (b): troca o prefixo `/rendra-app/` do `baseURL` pelo nome do projeto clonado. */
+/** Achado B16 (b): troca o prefixo `/rendra-ui-app/` do `baseURL` pelo nome do projeto clonado. */
 export function cleanPlaywrightConfig(texto: string, nome: string): string {
-  return texto.replace(/\/rendra-app\//g, `/${nome}/`)
+  return texto.replace(/\/rendra-ui-app\//g, `/${nome}/`)
 }
 
 /**
@@ -115,7 +115,7 @@ export function stripPackageCommands(texto: string): string {
 
 /** Achado C13: README curto do projeto clonado, com o crédito e a licença. */
 export function buildCloneReadme(nome: string): string {
-  return `# ${nome}\n\nProjeto criado a partir do [Rendra App](https://github.com/bsmagalhaes/rendra-app).\n\n## Feito com Rendra App\n\nEste projeto usa o [Rendra App](https://github.com/bsmagalhaes/rendra-app) como base (design system e boilerplate mobile em React Native/Expo, licença MIT).\n\n## Licença\n\nVer [LICENSE](LICENSE).\n`
+  return `# ${nome}\n\nProjeto criado a partir do [Rendra App](https://github.com/bsmagalhaes/rendra-ui-app).\n\n## Feito com Rendra App\n\nEste projeto usa o [Rendra App](https://github.com/bsmagalhaes/rendra-ui-app) como base (design system e boilerplate mobile em React Native/Expo, licença MIT).\n\n## Licença\n\nVer [LICENSE](LICENSE).\n`
 }
 
 /** Achado C13: `CHANGELOG.md` do clone recomeça do zero, citando a versão de origem. */
@@ -140,7 +140,7 @@ export function cleanSeoConfig(texto: string, nome: string): string {
     .replace(/productName: 'Rendra App'/, `productName: '${nome}'`)
     .replace(/tagline:\s*'[^']*',/, `tagline: 'Descreva aqui o que ${nome} faz.',`)
     .replace(/audience:\s*'[^']*',/, `audience: 'Descreva aqui para quem ${nome} serve.',`)
-    .replace(/repositoryUrl: 'https:\/\/github\.com\/bsmagalhaes\/rendra-app'/, "repositoryUrl: ''")
+    .replace(/repositoryUrl: 'https:\/\/github\.com\/bsmagalhaes\/rendra-ui-app'/, "repositoryUrl: ''")
 }
 
 export function isNomeValido(nome: string): boolean {

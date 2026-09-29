@@ -9,40 +9,40 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
 ![Jest](https://img.shields.io/badge/Jest-29-C21325?logo=jest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-1.63-2EAD33?logo=playwright&logoColor=white)
-[![CI](https://github.com/bsmagalhaes/rendra-app/actions/workflows/ci.yml/badge.svg)](https://github.com/bsmagalhaes/rendra-app/actions/workflows/ci.yml)
+[![CI](https://github.com/bsmagalhaes/rendra-ui-app/actions/workflows/ci.yml/badge.svg)](https://github.com/bsmagalhaes/rendra-ui-app/actions/workflows/ci.yml)
 
 ## Veja funcionando, sem instalar nada
 
-Vitrine publicada: [`https://bsmagalhaes.github.io/rendra-app/`](https://bsmagalhaes.github.io/rendra-app/) (atualizada a cada push em `main` com CI verde).
+Vitrine publicada: [`https://bsmagalhaes.github.io/rendra-ui-app/`](https://bsmagalhaes.github.io/rendra-ui-app/) (atualizada a cada push em `main` com CI verde).
 
-- [Componentes](https://bsmagalhaes.github.io/rendra-app/componentes) (41 entradas)
-- [Tokens](https://bsmagalhaes.github.io/rendra-app/tokens) (paleta com AA ao vivo, tipografia, espaço, raio, sombra)
-- [Galeria](https://bsmagalhaes.github.io/rendra-app/galeria) (troca ao vivo de modelo, paleta e modo pelo controle real)
-- Exemplo com modelo e modo escolhidos por URL: [`/galeria?codigo=T3-C3&modo=escuro`](https://bsmagalhaes.github.io/rendra-app/galeria?codigo=T3-C3&modo=escuro)
+- [Componentes](https://bsmagalhaes.github.io/rendra-ui-app/componentes) (41 entradas)
+- [Tokens](https://bsmagalhaes.github.io/rendra-ui-app/tokens) (paleta com AA ao vivo, tipografia, espaço, raio, sombra)
+- [Galeria](https://bsmagalhaes.github.io/rendra-ui-app/galeria) (troca ao vivo de modelo, paleta e modo pelo controle real)
+- Exemplo com modelo e modo escolhidos por URL: [`/galeria?codigo=T3-C3&modo=escuro`](https://bsmagalhaes.github.io/rendra-ui-app/galeria?codigo=T3-C3&modo=escuro)
 
 ## Prints de destaque
 
 | | |
 |---|---|
-| [![Safira, vitrine de componentes](docs/images/safira-componentes.png)](https://bsmagalhaes.github.io/rendra-app/componentes) | [![Equilíbrio, vitrine de componentes](docs/images/equilibrio-componentes.png)](https://bsmagalhaes.github.io/rendra-app/componentes) |
+| [![Safira, vitrine de componentes](docs/images/safira-componentes.png)](https://bsmagalhaes.github.io/rendra-ui-app/componentes) | [![Equilíbrio, vitrine de componentes](docs/images/equilibrio-componentes.png)](https://bsmagalhaes.github.io/rendra-ui-app/componentes) |
 
 | | |
 |---|---|
-| [![Aurora, vitrine de componentes](docs/images/aurora-componentes.png)](https://bsmagalhaes.github.io/rendra-app/componentes) | [![Safira, galeria com a paleta Ardósia](docs/images/safira-galeria.png)](https://bsmagalhaes.github.io/rendra-app/galeria) |
+| [![Aurora, vitrine de componentes](docs/images/aurora-componentes.png)](https://bsmagalhaes.github.io/rendra-ui-app/componentes) | [![Safira, galeria com a paleta Ardósia](docs/images/safira-galeria.png)](https://bsmagalhaes.github.io/rendra-ui-app/galeria) |
 
 ## O que é
 
-Mesma finalidade do [Rendra web](https://github.com/bsmagalhaes/rendra-design-system): base para todo app novo, publicado sob licença MIT. Quem conhece o Rendra web reconhece aqui a mesma arquitetura de tokens em três camadas (modelo, paleta, sistema), os mesmos nomes de classe Tailwind, os mesmos nomes de componente e prop, e o mesmo fluxo de briefing para IA, sem tradução.
+Mesma finalidade do [Rendra web](https://github.com/bsmagalhaes/rendra-ui-web): base para todo app novo, publicado sob licença MIT. Quem conhece o Rendra web reconhece aqui a mesma arquitetura de tokens em três camadas (modelo, paleta, sistema), os mesmos nomes de classe Tailwind, os mesmos nomes de componente e prop, e o mesmo fluxo de briefing para IA, sem tradução.
 
 Critério de sucesso: trocar marca continua sendo 4 cores, degradê, modelo, nome e logotipo, sem mexer em componente.
 
 ## Galeria
 
-Galeria completa, com troca ao vivo de modelo, paleta e modo pelo controle real: [`https://bsmagalhaes.github.io/rendra-app/galeria`](https://bsmagalhaes.github.io/rendra-app/galeria).
+Galeria completa, com troca ao vivo de modelo, paleta e modo pelo controle real: [`https://bsmagalhaes.github.io/rendra-ui-app/galeria`](https://bsmagalhaes.github.io/rendra-ui-app/galeria).
 
 ## Códigos de modelo e de componente
 
-Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1` é o modelo Safira com a paleta Safira; `T1-C4` é o modelo Safira com a paleta Ardósia). Os 3 modelos são `T1` Safira/Poppins, `T2` Equilíbrio/DM Sans e `T3` Aurora/Inter; as 4 paletas são `C1` Safira, `C2` Equilíbrio, `C3` Aurora e `C4` Ardósia. Cada componente e cada variante tem um código no formato `SIGLA-000` (por exemplo, `BTN-001` é o botão primário, `ABA-002` são as abas em pílula), igual em web e app: o catálogo é `src/catalog/components.ts`, com o selo do código ao lado do título de cada exemplo em [`/componentes`](https://bsmagalhaes.github.io/rendra-app/componentes).
+Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1` é o modelo Safira com a paleta Safira; `T1-C4` é o modelo Safira com a paleta Ardósia). Os 3 modelos são `T1` Safira/Poppins, `T2` Equilíbrio/DM Sans e `T3` Aurora/Inter; as 4 paletas são `C1` Safira, `C2` Equilíbrio, `C3` Aurora e `C4` Ardósia. Cada componente e cada variante tem um código no formato `SIGLA-000` (por exemplo, `BTN-001` é o botão primário, `ABA-002` são as abas em pílula), igual em web e app: o catálogo é `src/catalog/components.ts`, com o selo do código ao lado do título de cada exemplo em [`/componentes`](https://bsmagalhaes.github.io/rendra-ui-app/componentes).
 
 ## O que tem dentro
 
@@ -86,13 +86,13 @@ Cole o link deste repositório numa IA de código (Claude Code, Codex, Cursor, G
 **Projeto novo**, cole:
 
 ```text
-Clone https://github.com/bsmagalhaes/rendra-app e use como base do meu novo app. Siga o AGENTS.md do repositório.
+Clone https://github.com/bsmagalhaes/rendra-ui-app e use como base do meu novo app. Siga o AGENTS.md do repositório.
 ```
 
 **Migração de um app existente**, abra a IA na pasta do seu app e cole:
 
 ```text
-Aplique neste app o design system https://github.com/bsmagalhaes/rendra-app. Leia, nesta ordem: https://github.com/bsmagalhaes/rendra-app/blob/main/AGENTS.md, https://github.com/bsmagalhaes/rendra-app/blob/main/DESIGN_RULES.md, https://github.com/bsmagalhaes/rendra-app/blob/main/docs/PROMPT_MIGRACAO.md e https://github.com/bsmagalhaes/rendra-app/blob/main/docs/COMO_APLICAR.md, e siga o fluxo de migração, começando pelo briefing.
+Aplique neste app o design system https://github.com/bsmagalhaes/rendra-ui-app. Leia, nesta ordem: https://github.com/bsmagalhaes/rendra-ui-app/blob/main/AGENTS.md, https://github.com/bsmagalhaes/rendra-ui-app/blob/main/DESIGN_RULES.md, https://github.com/bsmagalhaes/rendra-ui-app/blob/main/docs/PROMPT_MIGRACAO.md e https://github.com/bsmagalhaes/rendra-ui-app/blob/main/docs/COMO_APLICAR.md, e siga o fluxo de migração, começando pelo briefing.
 ```
 
 O prompt completo (`docs/PROMPT_MIGRACAO.md`) escolhe entre pacote npm, cópia dos arquivos ou refazer do zero, por um critério simples, e recomenda um caminho em vez de perguntar qual dos três; abaixo do piso real dos componentes animados (React Native 0.83 ou mais recente, pela Reanimated 4), o mesmo documento explica se atualizar o React Native primeiro ou refazer.
@@ -128,7 +128,7 @@ ocupada (por exemplo, por um container Docker), passe outra porta:
 npx expo start --port 8090
 ```
 
-As rotas do app ficam na raiz do dev server, sem o prefixo `/rendra-app` (esse prefixo
+As rotas do app ficam na raiz do dev server, sem o prefixo `/rendra-ui-app` (esse prefixo
 só existe no export estático publicado no GitHub Pages, ver abaixo): com o Metro em `8090`,
 `/tokens` e `/galeria` abrem em `http://localhost:8090/tokens` e `http://localhost:8090/galeria`.
 
@@ -143,7 +143,7 @@ só existe no export estático publicado no GitHub Pages, ver abaixo): com o Met
   `npx expo start`.
 
 Export estático (o que a vitrine publicada e os testes Playwright usam) leva o prefixo
-`/rendra-app/` em todo link e asset, configurado em `experiments.baseUrl` de
+`/rendra-ui-app/` em todo link e asset, configurado em `experiments.baseUrl` de
 `app.json`; é só o `expo export --platform web` (via `npm run build`) que aplica esse prefixo,
 não o dev server do Metro.
 
@@ -167,7 +167,7 @@ npm run docs:images    # capturas do README e og-image.png (rode npm run build a
 Para começar um app novo a partir deste repositório.
 
 ```bash
-git clone https://github.com/bsmagalhaes/rendra-app.git meu-app
+git clone https://github.com/bsmagalhaes/rendra-ui-app.git meu-app
 cd meu-app
 npm install
 npm run clean:clone -- --nome meu-app
@@ -244,7 +244,7 @@ Trocar marca é sempre: 4 cores, degradê, modelo, nome e logotipo, nunca compon
 - `docs/COMO_APLICAR.md`: como trocar marca sem mexer em componente.
 - `docs/PROMPT_MIGRACAO.md`: prompt para migrar um app existente para este design system.
 - `CONTRIBUTING.md`, `CHANGELOG.md`.
-- Design system web (referência pública): [`https://github.com/bsmagalhaes/rendra-design-system`](https://github.com/bsmagalhaes/rendra-design-system).
+- Design system web (referência pública): [`https://github.com/bsmagalhaes/rendra-ui-web`](https://github.com/bsmagalhaes/rendra-ui-web).
 
 ## Perguntas frequentes
 

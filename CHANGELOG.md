@@ -2,6 +2,12 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
+## [Não lançado]
+
+### Alterado
+
+- Endereço novo: o repositório passa de `bsmagalhaes/rendra-app` para `bsmagalhaes/rendra-ui-app` e a vitrine de `https://bsmagalhaes.github.io/rendra-app/` para `https://bsmagalhaes.github.io/rendra-ui-app/` (o GitHub Pages não redireciona: links antigos da vitrine dão 404). O design system web passa a ser citado como `bsmagalhaes/rendra-ui-web`. O nome do pacote npm (`@rendra-ui/app`) não muda. Quem clonou o repositório pode atualizar com `git remote set-url origin https://github.com/bsmagalhaes/rendra-ui-app.git`. A mudança sai no próximo lançamento (a versão continua 1.0.0).
+
 ## [1.0.0] - 28/09/2026
 
 Sincronização 1 com o design system web (levantamento do Fable, web `fb19143`, app `afd6be0`; validação do plano pelo Opus). Renomear uma variável `--rendra-*` é sempre mudança major (padrão dos produtos Rendra, seção 5.6); como a 0.3.0 já está publicada no npm, a 1.0.0 é a próxima versão de verdade, com o guia de migração abaixo para quem já instalou o pacote.

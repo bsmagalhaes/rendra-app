@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Rendra App",
-    "slug": "rendra-app",
+    "slug": "rendra-ui-app",
     "scheme": "rendra",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,7 +10,7 @@
     "web": { "bundler": "metro", "output": "static" },
     "ios": { "supportsTablet": true },
     "experiments": {
-      "baseUrl": "/rendra-app"
+      "baseUrl": "/rendra-ui-app"
     }
   }
 }

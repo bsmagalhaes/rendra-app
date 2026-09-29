@@ -2,12 +2,12 @@ import { siteUrlFrom, routeUrl, distFileFor, buildSitemapXml, NOINDEX_FILES } fr
 
 describe('siteUrlFrom', () => {
   it('usa SITE_URL do env quando informado, garantindo barra final', () => {
-    expect(siteUrlFrom('/rendra-app', 'https://exemplo.com/x')).toBe('https://exemplo.com/x/')
-    expect(siteUrlFrom('/rendra-app', 'https://exemplo.com/x/')).toBe('https://exemplo.com/x/')
+    expect(siteUrlFrom('/rendra-ui-app', 'https://exemplo.com/x')).toBe('https://exemplo.com/x/')
+    expect(siteUrlFrom('/rendra-ui-app', 'https://exemplo.com/x/')).toBe('https://exemplo.com/x/')
   })
 
   it('monta a partir do baseUrl do app.json quando SITE_URL nao existe', () => {
-    expect(siteUrlFrom('/rendra-app')).toBe('https://bsmagalhaes.github.io/rendra-app/')
+    expect(siteUrlFrom('/rendra-ui-app')).toBe('https://bsmagalhaes.github.io/rendra-ui-app/')
   })
 
   it('sem SITE_URL, deriva o dominio do github a partir do homepage do package.json (achado M6, quem clonou e trocou o homepage nao herda o dominio do Rendra)', () => {
@@ -17,7 +17,7 @@ describe('siteUrlFrom', () => {
   })
 
   it('sem SITE_URL nem homepage reconhecivel, cai no dominio padrao do Rendra', () => {
-    expect(siteUrlFrom('/rendra-app', undefined, undefined)).toBe('https://bsmagalhaes.github.io/rendra-app/')
+    expect(siteUrlFrom('/rendra-ui-app', undefined, undefined)).toBe('https://bsmagalhaes.github.io/rendra-ui-app/')
     expect(siteUrlFrom('/meu-app', undefined, 'https://exemplo.com/sem-github')).toBe(
       'https://bsmagalhaes.github.io/meu-app/',
     )
@@ -25,7 +25,7 @@ describe('siteUrlFrom', () => {
 })
 
 describe('routeUrl', () => {
-  const u = 'https://bsmagalhaes.github.io/rendra-app/'
+  const u = 'https://bsmagalhaes.github.io/rendra-ui-app/'
 
   it('a raiz devolve a propria siteUrl, sem duplicar', () => {
     expect(routeUrl(u, '/')).toBe(u)
@@ -64,7 +64,7 @@ describe('distFileFor', () => {
 })
 
 describe('buildSitemapXml', () => {
-  const u = 'https://bsmagalhaes.github.io/rendra-app/'
+  const u = 'https://bsmagalhaes.github.io/rendra-ui-app/'
 
   it('contem a raiz indexavel e nao contem rota nao indexavel', () => {
     const xml = buildSitemapXml(u, [

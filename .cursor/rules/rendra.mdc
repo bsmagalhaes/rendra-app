@@ -6,14 +6,14 @@ alwaysApply: true
 
 # Rendra App
 
-Design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind, espelho do Rendra web (`https://github.com/bsmagalhaes/rendra-design-system`), publicado sob licença MIT.
+Design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind, espelho do Rendra web (`https://github.com/bsmagalhaes/rendra-ui-web`), publicado sob licença MIT.
 
 <!-- rendra:verificacao:inicio -->
 Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.
 
 Regras que não podem ser quebradas, resumidas (texto completo em `AGENTS.md`):
 
-1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
+1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-ui-web`.
 2. Cor em três camadas (modelo, paleta, sistema), chaves de paleta sempre `--rendra-kebab-case`, nenhuma cor fixa fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
 3. Toque mínimo 44x44 em todo elemento interativo, mesmo quando o conteúdo visual é menor.
 4. Nenhum valor arbitrário fora da escala do `tailwind.config.ts`, nenhum `style` inline fora da lista fechada de `DESIGN_RULES.md`, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.

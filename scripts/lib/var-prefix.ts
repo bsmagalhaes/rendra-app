@@ -2,7 +2,7 @@
  * Nomes próprios do tema Rendra (item H2/H3 do levantamento da Sincronização 1), usados pela
  * regra R14 (`check:rules`) para achar variável do tema referenciada sem o prefixo `--rendra-`.
  * Copiado em intenção do `scripts/lib/var-prefix.ts` do design system web
- * (`https://github.com/bsmagalhaes/rendra-design-system`), sem a lista `TAILWIND_NAMESPACE` (no
+ * (`https://github.com/bsmagalhaes/rendra-ui-web`), sem a lista `TAILWIND_NAMESPACE` (no
  * web ela isenta `radius-*`/`shadow-*`, que no app são nomes próprios, não do Tailwind), e com os
  * nomes específicos do app: `shape-*` (raio por papel), `shadow-opacity-*`, `label-*`/`help-*`
  * (rótulo e orientação do campo, item A2), e os nomes antigos `radius-*` (achado C17 do veredito

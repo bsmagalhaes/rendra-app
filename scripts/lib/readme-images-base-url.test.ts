@@ -1,7 +1,7 @@
 import { resolveBaseUrl } from './readme-images-base-url'
 
 describe('resolveBaseUrl (defeito M1 do veredito Fable)', () => {
-  it('deriva o caminho de experiments.baseUrl do app.json, não um valor fixo de /rendra-app', () => {
+  it('deriva o caminho de experiments.baseUrl do app.json, não um valor fixo de /rendra-ui-app', () => {
     expect(resolveBaseUrl('/teste-leigo')).toBe('http://localhost:4173/teste-leigo')
   })
 
@@ -10,6 +10,6 @@ describe('resolveBaseUrl (defeito M1 do veredito Fable)', () => {
   })
 
   it('BASE_URL do ambiente sempre vence, igual ao comportamento anterior', () => {
-    expect(resolveBaseUrl('/rendra-app', 'http://localhost:9999/outra-coisa')).toBe('http://localhost:9999/outra-coisa')
+    expect(resolveBaseUrl('/rendra-ui-app', 'http://localhost:9999/outra-coisa')).toBe('http://localhost:9999/outra-coisa')
   })
 })

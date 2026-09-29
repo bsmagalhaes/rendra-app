@@ -275,7 +275,7 @@ function main() {
   //    `npm pack`/`npm publish`). Fica em `os.tmpdir()`, ao lado do projeto temporário do
   //    consumidor, e os dois são removidos no `finally` abaixo, inclusive no caminho de erro
   //    (achado M3: `falhar` agora lança em vez de `process.exit`, então o `finally` sempre roda).
-  const packOutDir = mkdtempSync(join(tmpdir(), 'rendra-app-pack-'))
+  const packOutDir = mkdtempSync(join(tmpdir(), 'rendra-ui-app-pack-'))
   let tmpDir: string | null = null
   try {
     const packResult = run('npm', ['pack', '.', '--pack-destination', packOutDir, '--json'], {
@@ -299,7 +299,7 @@ function main() {
     const tarballPath = join(packOutDir, filename)
 
     // 5. Projeto temporário, instalação do tarball real.
-    tmpDir = mkdtempSync(join(tmpdir(), 'rendra-app-verify-pack-'))
+    tmpDir = mkdtempSync(join(tmpdir(), 'rendra-ui-app-verify-pack-'))
     writeFileSync(
       join(tmpDir, 'package.json'),
       JSON.stringify({ name: 'consumidor-temporario', version: '0.0.0', private: true }, null, 2),

@@ -1,6 +1,6 @@
 /**
  * Catalogo de codigos de componente do Rendra App, paridade com o web
- * (`https://github.com/bsmagalhaes/rendra-design-system`, `src/catalog/components.ts`).
+ * (`https://github.com/bsmagalhaes/rendra-ui-web`, `src/catalog/components.ts`).
  * O mesmo codigo significa o mesmo componente e a mesma variante em web e app (padrao dos
  * produtos Rendra, secao 4.5). `LIST-002` (lista reordenavel) fica fora daqui: entra junto do
  * `onReorder`, em rodada futura.

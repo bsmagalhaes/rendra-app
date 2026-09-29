@@ -33,7 +33,7 @@ Componente ou variante novo entra no catálogo (`src/catalog/components.ts`) ant
 
 ## Independência de repositório
 
-Nenhuma contribuição adiciona import, `require`, symlink, workspace, path alias ou caminho relativo apontando para fora deste repositório. Referência ao design system web é sempre pela URL pública [`https://github.com/bsmagalhaes/rendra-design-system`](https://github.com/bsmagalhaes/rendra-design-system), nunca por caminho local.
+Nenhuma contribuição adiciona import, `require`, symlink, workspace, path alias ou caminho relativo apontando para fora deste repositório. Referência ao design system web é sempre pela URL pública [`https://github.com/bsmagalhaes/rendra-ui-web`](https://github.com/bsmagalhaes/rendra-ui-web), nunca por caminho local.
 
 ## Licença e crédito
 

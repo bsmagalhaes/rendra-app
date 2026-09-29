@@ -7,7 +7,7 @@ Modelo de briefing para quem for usar este boilerplate como base de um app novo.
 1. Uma decisão por mensagem, sempre com opções numeradas para escolher por número e o padrão já marcado (ex.: "1. Safira (padrão) 2. Equilíbrio 3. Aurora").
 2. "não sei, sugira" é aceito em toda pergunta: a IA propõe a opção mais comum e explica em uma frase por que sugere aquela.
 3. Nunca peça um código de cor (hex), um SVG ou o código de um componente sem oferecer uma sugestão pronta antes (paleta `C1` a `C4`, símbolo genérico do `BrandLogo`, componente equivalente da vitrine).
-4. Pergunte o código de modelo (`T#-C#`) antes do fluxo guiado, com o link da galeria publicada onde cada combinação mostra o próprio código: [`https://bsmagalhaes.github.io/rendra-app/galeria`](https://bsmagalhaes.github.io/rendra-app/galeria).
+4. Pergunte o código de modelo (`T#-C#`) antes do fluxo guiado, com o link da galeria publicada onde cada combinação mostra o próprio código: [`https://bsmagalhaes.github.io/rendra-ui-app/galeria`](https://bsmagalhaes.github.io/rendra-ui-app/galeria).
 5. Nenhum passo técnico fica com a pessoa: comandos, instalação, testes e capturas de tela são sempre feitos pela IA; à pessoa cabe só decidir e aprovar.
 
 ## Tipo de trabalho
@@ -69,7 +69,7 @@ Uma decisão por mensagem: primeiro o padrão de navegação (opções acima), d
 ### Componentes e variantes
 
 Cada componente e cada variante tem um código próprio (catálogo em `src/catalog/components.ts`, vitrine
-[`/componentes`](https://bsmagalhaes.github.io/rendra-app/componentes)), igual em web e app. Confirmar
+[`/componentes`](https://bsmagalhaes.github.io/rendra-ui-app/componentes)), igual em web e app. Confirmar
 qual variante o produto usa nos componentes que têm mais de uma:
 
 | Situação | Código | Componente | Variante |

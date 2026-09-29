@@ -8,7 +8,7 @@ Prompt para orientar um assistente de IA a levar o Rendra App para dentro de um 
 
 Cole este texto completo na conversa com a IA, dentro da pasta do app-alvo. Se você já souber qual caminho quer (A pacote, B cópia, ou C refazer), diga logo no início; senão, a IA analisa o seu app e recomenda um dos três.
 
-`[LINK DO REPOSITÓRIO]` é sempre `https://github.com/bsmagalhaes/rendra-app`.
+`[LINK DO REPOSITÓRIO]` é sempre `https://github.com/bsmagalhaes/rendra-ui-app`.
 
 Tenha em mãos, se possível (a IA sugere um padrão para cada um se você não tiver): as 4 cores de marca mais o degradê, o modelo (`T1` Safira, `T2` Equilíbrio, `T3` Aurora, ou um modelo novo), o nome do produto, e um logotipo (opcional).
 
@@ -66,7 +66,7 @@ Quando a estrutura do app-alvo não recebe o pacote (Expo antigo sem NativeWind,
 
 Quando o app-alvo não vale a pena manter.
 
-1. `git clone https://github.com/bsmagalhaes/rendra-app.git <nome-da-pasta>`, apagar `.git`, `git init`.
+1. `git clone https://github.com/bsmagalhaes/rendra-ui-app.git <nome-da-pasta>`, apagar `.git`, `git init`.
 2. `npm run clean:clone -- --nome <nome>` (troca a identidade de pacote do Rendra pela do projeto novo, mantendo licença e crédito).
 3. Aplique a marca (`docs/COMO_APLICAR.md`).
 4. Recrie as telas a partir da vitrine (`/componentes`, `/galeria`), trazendo as regras de negócio do app antigo (dados, validações, integrações), nunca o código visual antigo.

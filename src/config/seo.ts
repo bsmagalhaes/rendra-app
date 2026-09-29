@@ -10,7 +10,7 @@ export const siteSeo = {
   tagline: 'Design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind.',
   audience:
     'Quem começa um app novo em React Native (Expo) e quer um design system pronto, ou quem já tem um app e quer migrar a camada visual para o Rendra.',
-  repositoryUrl: 'https://github.com/bsmagalhaes/rendra-app',
+  repositoryUrl: 'https://github.com/bsmagalhaes/rendra-ui-app',
   commands: ['npm install', 'npm start', 'npm run build', 'npm test'],
 }
 

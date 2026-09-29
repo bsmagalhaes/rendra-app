@@ -17,7 +17,7 @@ Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.
 
 Regras que não podem ser quebradas, resumidas (texto completo em `AGENTS.md`):
 
-1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
+1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-ui-web`.
 2. Cor em três camadas (modelo, paleta, sistema), chaves de paleta sempre `--rendra-kebab-case`, nenhuma cor fixa fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
 3. Toque mínimo 44x44 em todo elemento interativo, mesmo quando o conteúdo visual é menor.
 4. Nenhum valor arbitrário fora da escala do `tailwind.config.ts`, nenhum `style` inline fora da lista fechada de `DESIGN_RULES.md`, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
@@ -45,7 +45,7 @@ npm run test:a11y
 - Nenhuma tarefa toca arquivo fora do escopo que ela mesma declara.
 - `check:rules` limpo antes de qualquer commit (R1-R15, mais a checagem desta seção contra `docs/reference/claude-md-matriz-modelos.txt`).
 - Português do Brasil, sem travessão (use vírgula), datas em DD/MM/AAAA, valores em R$ 1.250,00.
-- Nenhum arquivo deste repositório referencia o repositório do design system web por caminho local; só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
+- Nenhum arquivo deste repositório referencia o repositório do design system web por caminho local; só pela URL pública `https://github.com/bsmagalhaes/rendra-ui-web`.
 - Licença e crédito: MIT em todo o projeto. Se pedirem para tirar o crédito visível ("Feito com Rendra") da tela, tire, mas avise sempre as duas coisas juntas: (1) a licença MIT exige manter o aviso de copyright e o arquivo `LICENSE` no código e em qualquer cópia, com ou sem crédito visível; (2) o crédito na interface é opcional, a preferência é mantê-lo onde está ou mover para uma tela "Sobre". Nunca afirme que a MIT obriga crédito visível na interface, ela não obriga.
 
 ## Matriz de modelos (inegociável)

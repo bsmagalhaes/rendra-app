@@ -35,13 +35,13 @@ describe('cleanPackageJson', () => {
       publishConfig: { access: 'public' },
       exports: { '.': './dist-lib/index.js' },
       peerDependencies: { react: '>=19' },
-      homepage: 'https://github.com/bsmagalhaes/rendra-app#readme',
+      homepage: 'https://github.com/bsmagalhaes/rendra-ui-app#readme',
       scripts: {
         'build:lib': 'x',
         'verify:pack': 'y',
         'clean:clone': 'z',
         'docs:images': 'w',
-        'pages:stage': "node -e \"cp('dist','.pages/rendra-app')\"",
+        'pages:stage': "node -e \"cp('dist','.pages/rendra-ui-app')\"",
         start: 'expo start',
       },
     }
@@ -75,10 +75,10 @@ describe('cleanAppJson', () => {
       {
         expo: {
           name: 'Rendra App',
-          slug: 'rendra-app',
+          slug: 'rendra-ui-app',
           scheme: 'rendra',
           version: '0.3.0',
-          experiments: { baseUrl: '/rendra-app' },
+          experiments: { baseUrl: '/rendra-ui-app' },
         },
       },
       'meu-app',
@@ -116,8 +116,8 @@ describe('cleanCiYml', () => {
 })
 
 describe('cleanPlaywrightConfig', () => {
-  it('troca o prefixo /rendra-app/ do baseURL pelo nome do projeto', () => {
-    const texto = "use: { baseURL: 'http://localhost:4173/rendra-app/' },"
+  it('troca o prefixo /rendra-ui-app/ do baseURL pelo nome do projeto', () => {
+    const texto = "use: { baseURL: 'http://localhost:4173/rendra-ui-app/' },"
     expect(cleanPlaywrightConfig(texto, 'meu-app')).toBe(
       "use: { baseURL: 'http://localhost:4173/meu-app/' },",
     )
@@ -165,7 +165,7 @@ describe('buildCloneReadme e buildCloneChangelog', () => {
     const readme = buildCloneReadme('meu-app')
     expect(readme).toContain('# meu-app')
     expect(readme).toContain('Feito com Rendra App')
-    expect(readme).toContain('https://github.com/bsmagalhaes/rendra-app')
+    expect(readme).toContain('https://github.com/bsmagalhaes/rendra-ui-app')
     expect(readme).toContain('Licença')
   })
 
@@ -178,7 +178,7 @@ describe('buildCloneReadme e buildCloneChangelog', () => {
 
 describe('cleanSeoConfig', () => {
   it('troca productName e limpa repositoryUrl herdados do template', () => {
-    const texto = "productName: 'Rendra App',\n  repositoryUrl: 'https://github.com/bsmagalhaes/rendra-app',"
+    const texto = "productName: 'Rendra App',\n  repositoryUrl: 'https://github.com/bsmagalhaes/rendra-ui-app',"
     const saida = cleanSeoConfig(texto, 'meu-app')
     expect(saida).toContain("productName: 'meu-app'")
     expect(saida).toContain("repositoryUrl: ''")

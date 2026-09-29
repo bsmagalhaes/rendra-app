@@ -1,7 +1,7 @@
 /**
  * Limites de texto orientativo (regra R14 do briefing/regra R15 do `check:rules`, item H2 do
  * levantamento da Sincronização 1), adaptados do design system web
- * (`https://github.com/bsmagalhaes/rendra-design-system`, `scripts/lib/help-length.ts`).
+ * (`https://github.com/bsmagalhaes/rendra-ui-web`, `scripts/lib/help-length.ts`).
  */
 
 export const HELP_LIMITS = {

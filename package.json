@@ -1,7 +1,7 @@
 {
   "name": "@rendra-ui/app",
   "version": "1.0.0",
-  "description": "Design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind.",
+  "description": "Rendra: design system e boilerplate mobile, em React Native (Expo) com Expo Router e NativeWind.",
   "main": "expo-router/entry",
   "author": {
     "name": "Bruno Magalhaes",
@@ -9,13 +9,13 @@
     "url": "https://www.brunomagalhaes.me"
   },
   "license": "MIT",
-  "homepage": "https://github.com/bsmagalhaes/rendra-app#readme",
+  "homepage": "https://github.com/bsmagalhaes/rendra-ui-app#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bsmagalhaes/rendra-app.git"
+    "url": "git+https://github.com/bsmagalhaes/rendra-ui-app.git"
   },
   "bugs": {
-    "url": "https://github.com/bsmagalhaes/rendra-app/issues"
+    "url": "https://github.com/bsmagalhaes/rendra-ui-app/issues"
   },
   "keywords": [
     "react-native",
@@ -29,7 +29,10 @@
     "tailwindcss",
     "typescript",
     "ui-components",
-    "pt-br"
+    "pt-br",
+    "rendra",
+    "rendra-ui",
+    "rendra-design-system"
   ],
   "publishConfig": {
     "access": "public"
@@ -159,7 +162,7 @@
     "build": "npm run build:web",
     "build:lib": "node -e \"require('fs').rmSync('dist-lib',{recursive:true,force:true})\" && tsc -p tsconfig.lib.json && tsx scripts/build-lib-worklets.ts && tsx scripts/add-banner.ts --lib",
     "verify:pack": "tsx scripts/verify-pack.ts",
-    "pages:stage": "node -e \"const fs=require('fs');fs.rmSync('.pages',{recursive:true,force:true});fs.mkdirSync('.pages/rendra-app',{recursive:true});fs.cpSync('dist','.pages/rendra-app',{recursive:true})\"",
+    "pages:stage": "node -e \"const fs=require('fs');fs.rmSync('.pages',{recursive:true,force:true});fs.mkdirSync('.pages/rendra-ui-app',{recursive:true});fs.cpSync('dist','.pages/rendra-ui-app',{recursive:true})\"",
     "test:layout": "playwright test e2e/layout.spec.ts",
     "test:a11y": "playwright test e2e/a11y.spec.ts",
     "docs:images": "npm run pages:stage && tsx scripts/readme-images.ts",

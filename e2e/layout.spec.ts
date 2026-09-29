@@ -15,7 +15,7 @@ const ROUTES = [
 // `route` mantém a barra inicial só para nomear o teste (`/tokens: ...`); a navegação usa
 // `route.slice(1)` (sem a barra inicial), porque `baseURL` termina em barra (bug confirmado na
 // Tarefa F2): um `page.goto` com barra inicial é resolvido como caminho absoluto a partir da
-// origem (RFC 3986), descartando o path `/rendra-app` do baseURL inteiro.
+// origem (RFC 3986), descartando o path `/rendra-ui-app` do baseURL inteiro.
 for (const route of ROUTES) {
   test(`${route}: sem rolagem horizontal`, async ({ page }, testInfo) => {
     const codigo = (testInfo.project.metadata as { codigo?: string })?.codigo ?? 'T1-C1'

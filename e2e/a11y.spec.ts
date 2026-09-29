@@ -49,7 +49,7 @@ for (const route of ROUTES) {
     // Sem barra inicial: baseURL termina em barra (bug confirmado na Tarefa F2: `page.goto`
     // com barra inicial é resolvido como caminho absoluto a partir da origem, RFC 3986,
     // descartando o path do baseURL inteiro); `route.slice(1)` preserva o path
-    // /rendra-app do baseURL na navegação.
+    // /rendra-ui-app do baseURL na navegação.
     await page.goto(`${route.slice(1)}?codigo=${codigo}`)
     await page.getByTestId(`rendra-${codigo}`).waitFor()
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()

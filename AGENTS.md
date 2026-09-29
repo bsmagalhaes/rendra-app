@@ -4,7 +4,7 @@ Autor: Bruno Magalhaes, brunomagalhaes.me, instagram.com/brunomagalhaes.me.
 
 ## Em um minuto
 
-O Rendra App é o design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind. Mesma finalidade do Rendra web (`https://github.com/bsmagalhaes/rendra-design-system`): base para todo app novo, publicado sob licença MIT. Quem conhece o Rendra web reconhece aqui a mesma arquitetura de tokens em três camadas (modelo, paleta, sistema), os mesmos nomes de classe Tailwind, os mesmos nomes de componente e prop, e o mesmo fluxo de briefing para IA, sem tradução.
+O Rendra App é o design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind. Mesma finalidade do Rendra web (`https://github.com/bsmagalhaes/rendra-ui-web`): base para todo app novo, publicado sob licença MIT. Quem conhece o Rendra web reconhece aqui a mesma arquitetura de tokens em três camadas (modelo, paleta, sistema), os mesmos nomes de classe Tailwind, os mesmos nomes de componente e prop, e o mesmo fluxo de briefing para IA, sem tradução.
 
 O design system completo prevê 44 componentes de UI (`src/components/ui`, `src/components/layout`) organizados em 41 entradas de vitrine (`/componentes`), disponíveis desde a F1b (o `Spinner` entrou na Sincronização 1), sobre a fundação da F1a: scaffold, tokens, os 3 modelos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter), `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, e a vitrine completa (`/componentes`, `/tokens` e `/galeria`). A versão corrente está em `CHANGELOG.md`.
 
@@ -14,7 +14,7 @@ O design system completo prevê 44 componentes de UI (`src/components/ui`, `src/
 
 **(b) Recebeu o link para começar um projeto novo.** Tudo abaixo é feito pela IA, nunca pedido à pessoa:
 
-1. `git clone https://github.com/bsmagalhaes/rendra-app.git <nome-da-pasta>`.
+1. `git clone https://github.com/bsmagalhaes/rendra-ui-app.git <nome-da-pasta>`.
 2. Apagar `.git` e `git init` (perguntar se a pessoa quer ligar a um repositório próprio no GitHub dela).
 3. Conferir a versão do Node instalada: Node 22 ou mais recente (`engines` do `package.json`; o CI usa o 24).
 4. `npm install`.
@@ -62,7 +62,7 @@ A tabela completa de qual modelo de IA cumpre cada etapa está em `CLAUDE.md`, s
 
 ## Regras que não podem ser quebradas
 
-- **Independência de repositório**: nenhum arquivo deste repositório contém import, `require`, symlink, workspace, path alias ou caminho relativo apontando para o repositório do design system web ou qualquer pasta fora deste projeto. Todo valor de origem no design system web é copiado para dentro deste repositório, nunca referenciado em build ou runtime. Documentação cita o web só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
+- **Independência de repositório**: nenhum arquivo deste repositório contém import, `require`, symlink, workspace, path alias ou caminho relativo apontando para o repositório do design system web ou qualquer pasta fora deste projeto. Todo valor de origem no design system web é copiado para dentro deste repositório, nunca referenciado em build ou runtime. Documentação cita o web só pela URL pública `https://github.com/bsmagalhaes/rendra-ui-web`.
 - **Cor em três camadas**: modelo (fonte e formato de raio), paleta (4 cores de marca mais degradê, geram todo o resto por contraste), sistema (cores fixas de estado, iguais em toda paleta). Nenhuma cor fixa em componente, fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
 - **Chaves de paleta sempre `--kebab-case`**: todo acesso a `palette.light`/`palette.dark` usa `palette.light['--rendra-primary-foreground']`, nunca `palette.light.primaryForeground`.
 - **Toque mínimo 44x44** em todo elemento interativo, mesmo quando o conteúdo visual é menor.
@@ -80,7 +80,7 @@ Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.
 
 Regras que não podem ser quebradas, resumidas (texto completo em `AGENTS.md`):
 
-1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-design-system`.
+1. Independência de repositório: nenhum import, `require`, symlink, workspace, path alias ou caminho relativo aponta para o design system web ou qualquer pasta fora deste projeto; citação só pela URL pública `https://github.com/bsmagalhaes/rendra-ui-web`.
 2. Cor em três camadas (modelo, paleta, sistema), chaves de paleta sempre `--rendra-kebab-case`, nenhuma cor fixa fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
 3. Toque mínimo 44x44 em todo elemento interativo, mesmo quando o conteúdo visual é menor.
 4. Nenhum valor arbitrário fora da escala do `tailwind.config.ts`, nenhum `style` inline fora da lista fechada de `DESIGN_RULES.md`, nenhum nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
@@ -128,7 +128,7 @@ npx expo start --web            # abre no navegador
 ```
 
 As rotas ficam na raiz do dev server, sem prefixo (`http://localhost:<porta>/tokens`,
-`http://localhost:<porta>/galeria`). O prefixo `/rendra-app/` (`app.json`,
+`http://localhost:<porta>/galeria`). O prefixo `/rendra-ui-app/` (`app.json`,
 `experiments.baseUrl`) só existe no export estático (`npm run build:web`), consumido pela vitrine
 publicada no GitHub Pages e pelos testes Playwright (`npm run test:layout`/`test:a11y`), nunca pelo
 `expo start`.

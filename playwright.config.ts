@@ -12,11 +12,11 @@ export default defineConfig({
   },
   // Barra final obrigatória: com `baseURL` sem barra final, `page.goto('/rota')` (com barra
   // inicial) é resolvido pela regra padrão de URL (RFC 3986) como caminho absoluto a partir da
-  // origem, descartando o path `/rendra-app` do baseURL inteiro (bug confirmado
+  // origem, descartando o path `/rendra-ui-app` do baseURL inteiro (bug confirmado
   // na execução da Tarefa F2).
   // Os testes (F2/F3) navegam com caminho relativo sem barra inicial (`page.goto('tokens?...')`),
   // que soma corretamente ao baseURL só quando ele termina em barra.
-  use: { baseURL: 'http://localhost:4173/rendra-app/' },
+  use: { baseURL: 'http://localhost:4173/rendra-ui-app/' },
   projects: [
     ...WIDTHS.flatMap((width) =>
       MODEL_CODES.map((codigo) => ({

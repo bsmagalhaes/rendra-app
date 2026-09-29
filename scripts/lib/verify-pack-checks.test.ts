@@ -220,4 +220,10 @@ describe('changelogMissingEntryError (achado B13 do Opus, exigirSimulacao opcion
       ),
     ).toBeNull()
   })
+
+  it('achado N1 do veredito do Fable: com exigirSimulacao, nao aceita a frase de uma entrada mais antiga para a versao pedida', () => {
+    const changelog =
+      '## [1.0.0]\nsem a frase\n\n## [0.3.0]\nSimulacao dos dois leigos aprovada em 27/09/2026.\n'
+    expect(changelogMissingEntryError(changelog, '1.0.0', true)).toMatch(/[Ss]imula/)
+  })
 })

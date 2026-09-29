@@ -351,22 +351,69 @@ describe('Input: variant secret (item D7 do levantamento da Sincronizacao 1)', (
   })
 
   it('em edicao, campo vazio com secureTextEntry e botao Cancelar, nunca mostra o valor salvo', async () => {
-    const { getByText, getByDisplayValue } = await render(
+    const { getByText, getByDisplayValue, findByTestId } = await render(
       <BrandProvider>
-        <Input variant="secret" isEditing onCancelEdit={jest.fn()} />
+        <Input testID="campo" variant="secret" isEditing onCancelEdit={jest.fn()} />
       </BrandProvider>,
     )
     expect(getByText('Cancelar')).toBeTruthy()
     expect(() => getByDisplayValue(/./)).toThrow()
+    expect((await findByTestId('campo')).props.secureTextEntry).toBe(true)
   })
 
-  it('em edicao, mesmo com value/defaultValue controlados pelo consumidor, nunca mostra o valor salvo (achado B2 do veredito do Fable)', async () => {
+  it('em edicao, mesmo com value controlado pelo consumidor, nunca mostra o valor salvo (achado B2 do veredito do Fable)', async () => {
     const { queryByDisplayValue } = await render(
       <BrandProvider>
         <Input variant="secret" isEditing value="segredo-salvo" onChange={jest.fn()} onCancelEdit={jest.fn()} />
       </BrandProvider>,
     )
     expect(queryByDisplayValue('segredo-salvo')).toBeNull()
+  })
+
+  it('em edicao, mesmo com defaultValue do consumidor, nunca mostra o valor salvo (achado B2 do veredito do Fable)', async () => {
+    const { queryByDisplayValue } = await render(
+      <BrandProvider>
+        <Input variant="secret" isEditing defaultValue="segredo-salvo" onCancelEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect(queryByDisplayValue('segredo-salvo')).toBeNull()
+  })
+
+  it('em edicao, digitar atualiza o campo na tela e chama onChange/onValueChange (achado M8 do veredito do Fable)', async () => {
+    const onChange = jest.fn()
+    const onValueChange = jest.fn()
+    const { findByTestId } = await render(
+      <BrandProvider>
+        <Input testID="campo" variant="secret" isEditing onChange={onChange} onValueChange={onValueChange} onCancelEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, 'novo-valor')
+    expect(campo.props.value).toBe('novo-valor')
+    expect(onChange).toHaveBeenCalledWith('novo-valor')
+    expect(onValueChange).toHaveBeenCalledWith('novo-valor', 'novo-valor')
+  })
+
+  it('cancelar a edicao e abrir de novo comeca vazio, mesmo depois de ter digitado antes (achado M8 do veredito do Fable)', async () => {
+    const { findByTestId, rerender } = await render(
+      <BrandProvider>
+        <Input testID="campo" variant="secret" isEditing onCancelEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    await fireEvent.changeText(campo, 'rascunho')
+    expect((await findByTestId('campo')).props.value).toBe('rascunho')
+    await rerender(
+      <BrandProvider>
+        <Input testID="campo" variant="secret" hasValue maskedHint="••••1234" onStartEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    await rerender(
+      <BrandProvider>
+        <Input testID="campo" variant="secret" isEditing onCancelEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect((await findByTestId('campo')).props.value).toBe('')
   })
 
   it('Trocar chama onStartEdit e Remover chama onRemove', async () => {

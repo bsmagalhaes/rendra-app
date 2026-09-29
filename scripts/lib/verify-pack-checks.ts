@@ -167,7 +167,13 @@ export function changelogMissingEntryError(
 ): string | null {
   if (!changelog.includes(`[${version}]`)) return `CHANGELOG.md sem a entrada [${version}].`
   if (!exigirSimulacao) return null
-  const entrada = changelog.slice(changelog.indexOf(`[${version}]`))
+  // Achado N1 do veredito do Fable (validacao da entrega da Sincronizacao 1): recortar so ate o
+  // fim do arquivo deixava a frase de uma entrada MAIS ANTIGA (ex. [0.3.0]) satisfazer a checagem
+  // de uma versao nova sem simulacao propria (ex. [1.0.0]); recorta ate o proximo cabecalho de
+  // versao (`\n## [`), ou ate o fim quando nao houver um proximo.
+  const inicio = changelog.indexOf(`[${version}]`)
+  const proximaEntrada = changelog.indexOf('\n## [', inicio)
+  const entrada = proximaEntrada === -1 ? changelog.slice(inicio) : changelog.slice(inicio, proximaEntrada)
   if (!/[Ss]imula[cç][aã]o dos dois leigos aprovada/.test(entrada)) {
     return `CHANGELOG.md, entrada [${version}], sem a frase "Simulação dos dois leigos aprovada" (padrão Regra um, item 7).`
   }

@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rendra App: design system mobile em React Native</title>
+<meta name="description" content="Design system e boilerplate mobile em React Native (Expo) com Expo Router e NativeWind: 49 componentes de UI, 3 modelos de marca, 4 paletas, telas prontas e briefing guiado para IA. Licença MIT.">
+<meta name="robots" content="index, follow">
+<meta name="robots" content="noai, noimageai">
+<meta name="author" content="Bruno Magalhaes">
+<meta name="theme-color" content="#111111">
+<link rel="canonical" href="https://bsmagalhaes.github.io/rendra-ui-app/">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Rendra App">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Rendra App: design system mobile em React Native">
+<meta property="og:description" content="49 componentes de UI, 3 modelos de marca, 4 paletas e telas prontas em React Native (Expo). Licença MIT, código completo no GitHub.">
+<meta property="og:url" content="https://bsmagalhaes.github.io/rendra-ui-app/">
+<meta property="og:image" content="https://bsmagalhaes.github.io/rendra-ui-app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rendra App: duas telas de celular, a tela inicial e a vitrine de componentes">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bsmagalhaes.github.io/rendra-ui-app/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Rendra App",
+  "description": "Design system e boilerplate mobile em React Native (Expo) com Expo Router e NativeWind: 49 componentes de UI, 3 modelos de marca, 4 paletas, telas prontas e briefing guiado para IA.",
+  "codeRepository": "https://github.com/bsmagalhaes/rendra-ui-app",
+  "url": "https://bsmagalhaes.github.io/rendra-ui-app/",
+  "image": "https://bsmagalhaes.github.io/rendra-ui-app/og-image.png",
+  "programmingLanguage": ["TypeScript"],
+  "runtimePlatform": "React Native (Expo), iOS, Android e web",
+  "license": "https://opensource.org/licenses/MIT",
+  "inLanguage": "pt-BR",
+  "author": { "@type": "Person", "name": "Bruno Magalhaes", "url": "https://www.brunomagalhaes.me" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "O que é o Rendra App?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "É um design system e boilerplate mobile em React Native (Expo), com Expo Router e NativeWind. Traz 49 componentes de UI, a navegação do app pronta, telas de exemplo, 3 modelos de marca e 4 paletas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso usar em projeto comercial?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. A licença é MIT: você pode usar, copiar, alterar e distribuir, inclusive em projetos comerciais, mantendo o aviso de copyright e o arquivo LICENSE. O crédito \"Feito com Rendra\" na tela é opcional."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como troco a marca do app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Com 4 cores, um degradê, um modelo, o nome e o logotipo, sem mexer em componente. Cada combinação de modelo e paleta tem um código, como T2-C3, que você informa no briefing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Funciona no celular de verdade e na web?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. O projeto roda no Expo Go (leia o QR code do terminal), em emuladores e no navegador. A demo desta página é o export web do próprio app, com os mesmos componentes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como uso com uma IA de código?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cole o link do repositório numa IA de código (Claude Code, Codex, Cursor, Gemini ou Copilot). O AGENTS.md é o ponto de entrada: a IA conduz o briefing, planeja em etapas e roda os testes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Os componentes são acessíveis?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Foram feitos para isso: toque mínimo de 44x44, foco visível, nada que dependa de hover e verificação automática com axe (WCAG 2.1 AA) em cada tela."
+      }
+    }
+  ]
+}
+</script>
+<link rel="stylesheet" href="phone.css">
+<style>
+  /* Identidade da família Rendra: a mesma da página do Rendra IDE (https://bsmagalhaes.github.io/rendra-ui-ide/).
+     Só modo escuro, sem fonte externa. A demo em /demo/ segue os modelos e paletas do próprio design system. */
+  :root {
+    --site-bg: #111111;
+    --site-bg-2: #171717;
+    --site-card: #1c1c1c;
+    --site-line: #2c2c2c;
+    --site-fg: #f2f2f2;
+    --site-fg-2: #c4c4c4;
+    --site-muted: #9a9a9a;
+    --site-primary: #e8650a;
+    --site-primary-text: #ff8a3d;
+    --site-on-primary: #111111;
+    --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    --sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--site-bg); color: var(--site-fg); font: 16px/1.6 var(--sans); overflow-x: hidden; }
+  a { color: var(--site-primary-text); }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--site-primary-text); outline-offset: 2px; }
+  img { max-width: 100%; height: auto; }
+  .wrap { width: 90%; margin: 0 auto; }
+  .skip { position: absolute; left: -999px; top: 8px; background: var(--site-card); color: var(--site-fg); padding: 10px 16px; border-radius: 8px; z-index: 20; }
+  .skip:focus { left: 8px; }
+  h1, h2, h3 { line-height: 1.2; margin: 0; }
+  .eyebrow { font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--site-primary-text); margin-bottom: 14px; }
+
+  .topo { padding-top: 32px; }
+  .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--site-fg); width: fit-content; }
+  .brand svg { width: 44px; height: 44px; flex: none; }
+  .brand b { font: 700 18px var(--mono); letter-spacing: .08em; }
+  .brand b span { color: var(--site-primary); }
+
+  .hero { padding: 40px 0 72px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; }
+  .hero h1 { font-size: clamp(34px, 5vw, 58px); letter-spacing: -1px; margin-bottom: 18px; }
+  .hero h1 span { color: var(--site-primary); }
+  .hero p { color: var(--site-fg-2); font-size: 19px; margin: 0 0 28px; max-width: 620px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; min-width: 44px; padding: 0 22px; border-radius: 8px; font: 600 16px var(--sans); text-decoration: none; border: 1px solid var(--site-line); color: var(--site-fg); background: var(--site-card); cursor: pointer; }
+  .btn.primary { background: var(--site-primary); border-color: var(--site-primary); color: var(--site-on-primary); }
+  .btn:hover { filter: brightness(1.1); }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; padding: 0; list-style: none; }
+  .tags li { font: 12px var(--mono); color: var(--site-fg-2); border: 1px solid var(--site-line); border-radius: 999px; padding: 4px 12px; }
+
+  .aparelho { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .phone-slot { width: 100%; display: flex; justify-content: center; }
+  .phone-link { display: block; width: 100%; max-width: 414px; }
+  .phone-link img { display: block; width: 100%; max-width: 414px; height: auto; }
+  .phone-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .phone-controls[hidden] { display: none; }
+  .phone-controls button, .phone-controls a { min-width: 44px; min-height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--site-line); background: var(--site-card); color: var(--site-fg-2); font: 14px var(--mono); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+  .phone-controls button[aria-pressed="true"] { border-color: var(--site-primary); color: var(--site-primary-text); }
+  .phone-controls a { color: var(--site-primary-text); }
+
+
+  section + section { border-top: 1px solid var(--site-line); }
+  section { padding: 72px 0; }
+  .hero { border-top: 0; }
+  h2 { font-size: clamp(26px, 3.4vw, 36px); margin-bottom: 12px; }
+  h3 { font-size: 18px; }
+  .lead { color: var(--site-fg-2); font-size: 18px; max-width: 760px; margin: 0 0 32px; }
+  code { font-family: var(--mono); font-size: .92em; color: var(--site-fg); }
+  .acao { margin: 32px 0 0; }
+  .features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .feature { background: var(--site-card); border: 1px solid var(--site-line); border-radius: 12px; padding: 24px; }
+  .feature h3 { margin-bottom: 8px; }
+  .feature p { margin: 0; color: var(--site-fg-2); font-size: 15px; }
+  .feature .ico { font: 700 14px var(--mono); color: var(--site-primary-text); margin-bottom: 12px; }
+  .matriz, .prints, .gallery { display: grid; gap: 20px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .prints { grid-template-columns: repeat(2, minmax(0, 260px)); }
+  .prints.quatro { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .gallery { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+  figure { margin: 0; background: var(--site-card); border: 1px solid var(--site-line); border-radius: 12px; overflow: hidden; }
+  figure button { all: unset; display: block; cursor: zoom-in; width: 100%; min-height: 44px; }
+  figure button:focus-visible { outline: 2px solid var(--site-primary-text); outline-offset: -2px; }
+  figure img { display: block; width: 100%; height: auto; }
+  figcaption { padding: 12px 14px; color: var(--site-fg-2); font-size: 14px; }
+  figcaption b { color: var(--site-fg); font-family: var(--mono); }
+  .duas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .duas h3, h3.sub { margin-bottom: 10px; }
+  h3.sub { margin-top: 40px; }
+  .duas p { color: var(--site-fg-2); margin: 0 0 14px; }
+  .codebox { position: relative; }
+  .code { margin: 0; background: #0b0b0b; border: 1px solid var(--site-line); border-radius: 10px; padding: 18px 20px; padding-right: 96px; font: 14px/1.7 var(--mono); color: #e6e6e6; overflow-x: auto; }
+  .code.quebra { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .copy { position: absolute; top: 8px; right: 8px; min-width: 44px; min-height: 44px; font: 12px var(--mono); background: var(--site-card); color: var(--site-fg-2); border: 1px solid var(--site-line); border-radius: 6px; padding: 0 10px; cursor: pointer; }
+  .tabela { border: 1px solid var(--site-line); border-radius: 10px; overflow: hidden; }
+  .tabela [role="row"] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 12px 18px; background: var(--site-card); }
+  .tabela [role="row"] + [role="row"] { border-top: 1px solid var(--site-line); }
+  .tabela [role="columnheader"] { font: 600 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--site-muted); }
+  .tabela [role="cell"] { overflow-wrap: anywhere; font-size: 15px; color: var(--site-fg-2); }
+  details { background: var(--site-card); border: 1px solid var(--site-line); border-radius: 10px; padding: 0 20px; margin-bottom: 12px; }
+  summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; padding: 8px 0; }
+  details p { color: var(--site-fg-2); margin: 0 0 16px; }
+  footer { border-top: 1px solid var(--site-line); padding: 48px 0 64px; color: var(--site-muted); font-size: 14px; }
+  footer .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+  footer h3 { color: var(--site-fg); font-size: 15px; margin-bottom: 10px; }
+  footer p { margin: 0 0 8px; }
+  footer a { color: var(--site-fg-2); }
+  .lightbox { position: fixed; inset: 0; background: rgba(0, 0, 0, .92); display: none; align-items: center; justify-content: center; z-index: 10; padding: 56px 64px; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-height: 100%; max-width: 100%; width: auto; height: auto; border-radius: 8px; }
+  .lightbox .cap { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: var(--site-fg-2); font-size: 14px; }
+  .lb-btn { position: absolute; background: var(--site-card); color: var(--site-fg); border: 1px solid var(--site-line); border-radius: 999px; width: 44px; height: 44px; font-size: 20px; cursor: pointer; }
+  .lb-close { top: 12px; right: 12px; }
+  .lb-prev { left: 12px; top: 50%; }
+  .lb-next { right: 12px; top: 50%; }
+  @media (max-width: 900px) {
+    .features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .matriz, .prints.quatro { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .duas, footer .cols { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 600px) {
+    section { padding: 56px 0; }
+    .features { grid-template-columns: minmax(0, 1fr); }
+    .prints { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .tabela [role="row"] { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    .lightbox { padding: 56px 8px; }
+  }
+  @media (min-width: 1100px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) 440px; gap: 64px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+<header class="topo">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="Rendra App, início">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="10" fill="#1c1c1c" stroke="#2c2c2c"/><path d="M15 31V13h9.2a5.6 5.6 0 0 1 1.6 11L31 31" fill="none" stroke="#e8650a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <b>RENDRA <span>APP</span></b>
+    </a>
+  </div>
+</header>
+
+<main id="conteudo">
+  <section class="hero" id="inicio" aria-labelledby="titulo">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Design system mobile · React Native</div>
+        <h1 id="titulo">Design system mobile em React Native, <span>pronto para usar</span>.</h1>
+        <p>A base do seu próximo app: 49 componentes de UI, 3 modelos de marca, 4 paletas e telas prontas, em React Native (Expo) com Expo Router e NativeWind. Licença MIT, código completo no GitHub, uso comercial permitido.</p>
+        <div class="cta">
+          <a class="btn primary ver-demo" href="demo/">Ver demo: o app rodando</a>
+          <a class="btn" href="https://github.com/bsmagalhaes/rendra-ui-app" target="_blank" rel="noopener">Ver no GitHub</a>
+          <a class="btn" href="#instalacao">Instalar</a>
+        </div>
+        <ul class="tags"><li>React Native</li><li>Expo</li><li>NativeWind</li><li>MIT</li></ul>
+      </div>
+      <div class="aparelho">
+        <div id="phone-slot" class="phone-slot">
+          <a class="phone-link" href="demo/"><img src="images/safira-home-mobile.png" width="414" height="868" alt="Tela inicial do Rendra App em um celular. Abrir a demo."></a>
+        </div>
+        <div class="phone-controls" role="group" aria-label="Escolher modelo" hidden>
+          <button type="button" aria-pressed="true">Modelo Safira</button>
+          <button type="button" aria-pressed="false">Modelo Equilíbrio</button>
+          <button type="button" aria-pressed="false">Modelo Aurora</button>
+          <a href="demo/">Abrir em tela cheia</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="proposta" aria-labelledby="t-proposta">
+    <div class="wrap">
+      <div class="eyebrow">Proposta</div>
+      <h2 id="t-proposta">Uma base para trocar de marca sem reescrever tela</h2>
+      <p class="lead">O Rendra App separa a marca do componente: você muda cores, modelo, nome e logotipo, e o app inteiro acompanha.</p>
+      <div class="features">
+        <div class="feature"><div class="ico" aria-hidden="true">01</div><h3>Tokens em três camadas</h3><p>Modelo, paleta e sistema. Trocar a marca são 4 cores, um degradê, um modelo, o nome e o logotipo, sem tocar em componente.</p></div>
+        <div class="feature"><div class="ico" aria-hidden="true">T×C</div><h3>3 modelos e 4 paletas</h3><p>Safira, Equilíbrio e Aurora, com as paletas Safira, Equilíbrio, Aurora e Ardósia. Cada combinação tem um código, como T2-C3.</p></div>
+        <div class="feature"><div class="ico" aria-hidden="true">49</div><h3>Componentes acessíveis</h3><p>Botões, formulários, listas, modais, gavetas, abas e o AppShell, com foco visível e toque mínimo de 44x44.</p></div>
+        <div class="feature"><div class="ico" aria-hidden="true">360</div><h3>Mobile primeiro</h3><p>Pensado para 360 px: área segura, teclado que não cobre o campo e nada que dependa de hover.</p></div>
+        <div class="feature"><div class="ico" aria-hidden="true">IA</div><h3>Briefing guiado para IA</h3><p>AGENTS.md, CLAUDE.md e um briefing conduzem uma IA de código do primeiro comando à migração do seu app.</p></div>
+        <div class="feature"><div class="ico" aria-hidden="true">OK</div><h3>Testes de layout e axe</h3><p>O Playwright confere cada tela em 360 e 390 px, nos três modelos, claro e escuro, e o axe barra violação de acessibilidade.</p></div>
+      </div>
+      <p class="acao"><a class="btn ver-demo" href="demo/tokens/">Ver demo: tokens e contraste AA ao vivo</a></p>
+    </div>
+  </section>
+
+  <section id="modelos" aria-labelledby="t-modelos">
+    <div class="wrap">
+      <div class="eyebrow">Modelos e paletas</div>
+      <h2 id="t-modelos">3 modelos por 4 paletas: 12 combinações com código</h2>
+      <p class="lead">Cada linha é um modelo (fonte e formato dos cantos) e cada coluna, uma paleta. Cole o código, como <code>T1-C4</code>, no briefing e a IA aplica a combinação.</p>
+      <div class="matriz">
+        <figure><button type="button" class="mini" data-open="matriz-safira-safira-mobile" aria-label="Ampliar: T1-C1, Safira com a paleta Safira"><img src="images/matriz-safira-safira-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Safira com a paleta Safira, código T1-C1"></button><figcaption><b>T1-C1</b> · Safira com Safira</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-safira-equilibrio-mobile" aria-label="Ampliar: T1-C2, Safira com a paleta Equilíbrio"><img src="images/matriz-safira-equilibrio-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Safira com a paleta Equilíbrio, código T1-C2"></button><figcaption><b>T1-C2</b> · Safira com Equilíbrio</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-safira-aurora-mobile" aria-label="Ampliar: T1-C3, Safira com a paleta Aurora"><img src="images/matriz-safira-aurora-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Safira com a paleta Aurora, código T1-C3"></button><figcaption><b>T1-C3</b> · Safira com Aurora</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-safira-ardosia-mobile" aria-label="Ampliar: T1-C4, Safira com a paleta Ardósia"><img src="images/matriz-safira-ardosia-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Safira com a paleta Ardósia, código T1-C4"></button><figcaption><b>T1-C4</b> · Safira com Ardósia</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-equilibrio-safira-mobile" aria-label="Ampliar: T2-C1, Equilíbrio com a paleta Safira"><img src="images/matriz-equilibrio-safira-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Equilíbrio com a paleta Safira, código T2-C1"></button><figcaption><b>T2-C1</b> · Equilíbrio com Safira</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-equilibrio-equilibrio-mobile" aria-label="Ampliar: T2-C2, Equilíbrio com a paleta Equilíbrio"><img src="images/matriz-equilibrio-equilibrio-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Equilíbrio com a paleta Equilíbrio, código T2-C2"></button><figcaption><b>T2-C2</b> · Equilíbrio com Equilíbrio</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-equilibrio-aurora-mobile" aria-label="Ampliar: T2-C3, Equilíbrio com a paleta Aurora"><img src="images/matriz-equilibrio-aurora-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Equilíbrio com a paleta Aurora, código T2-C3"></button><figcaption><b>T2-C3</b> · Equilíbrio com Aurora</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-equilibrio-ardosia-mobile" aria-label="Ampliar: T2-C4, Equilíbrio com a paleta Ardósia"><img src="images/matriz-equilibrio-ardosia-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Equilíbrio com a paleta Ardósia, código T2-C4"></button><figcaption><b>T2-C4</b> · Equilíbrio com Ardósia</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-aurora-safira-mobile" aria-label="Ampliar: T3-C1, Aurora com a paleta Safira"><img src="images/matriz-aurora-safira-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Aurora com a paleta Safira, código T3-C1"></button><figcaption><b>T3-C1</b> · Aurora com Safira</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-aurora-equilibrio-mobile" aria-label="Ampliar: T3-C2, Aurora com a paleta Equilíbrio"><img src="images/matriz-aurora-equilibrio-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Aurora com a paleta Equilíbrio, código T3-C2"></button><figcaption><b>T3-C2</b> · Aurora com Equilíbrio</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-aurora-aurora-mobile" aria-label="Ampliar: T3-C3, Aurora com a paleta Aurora"><img src="images/matriz-aurora-aurora-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Aurora com a paleta Aurora, código T3-C3"></button><figcaption><b>T3-C3</b> · Aurora com Aurora</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="matriz-aurora-ardosia-mobile" aria-label="Ampliar: T3-C4, Aurora com a paleta Ardósia"><img src="images/matriz-aurora-ardosia-mobile.png" width="414" height="868" loading="lazy" alt="Galeria no modelo Aurora com a paleta Ardósia, código T3-C4"></button><figcaption><b>T3-C4</b> · Aurora com Ardósia</figcaption></figure>
+      </div>
+      <p class="acao"><a class="btn ver-demo" href="demo/galeria/">Ver demo: galeria com troca ao vivo</a></p>
+    </div>
+  </section>
+
+  <section id="componentes" aria-labelledby="t-componentes">
+    <div class="wrap">
+      <div class="eyebrow">Componentes</div>
+      <h2 id="t-componentes">49 componentes de UI, em 5 grupos</h2>
+      <p class="lead">Ações, formulário, feedback, exibição e layout. A vitrine mostra 41 entradas com exemplos vivos e o código de cada variante.</p>
+      <div class="prints">
+        <figure><button type="button" class="mini" data-open="safira-componentes-mobile" aria-label="Ampliar: Vitrine de componentes"><img src="images/safira-componentes-mobile.png" width="414" height="868" loading="lazy" alt="Vitrine de componentes: modelo Safira, com os cinco grupos"></button><figcaption><b>Vitrine de componentes</b> · modelo Safira, com os cinco grupos</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="aurora-escuro-mobile" aria-label="Ampliar: Modo escuro"><img src="images/aurora-escuro-mobile.png" width="414" height="868" loading="lazy" alt="Modo escuro: modelo Aurora na vitrine de componentes"></button><figcaption><b>Modo escuro</b> · modelo Aurora na vitrine de componentes</figcaption></figure>
+      </div>
+      <p class="acao"><a class="btn ver-demo" href="demo/componentes/">Ver demo: vitrine de componentes</a></p>
+    </div>
+  </section>
+
+  <section id="telas" aria-labelledby="t-telas">
+    <div class="wrap">
+      <div class="eyebrow">Telas prontas</div>
+      <h2 id="t-telas">Telas de exemplo para trocar pelas do seu produto</h2>
+      <p class="lead">Início, entrada, verificação em duas etapas, painel, clientes, cadastro guiado, tarefas e configurações já vêm montados, com dados de exemplo, o menu do app, a barra inferior e o tema escolhido.</p>
+      <div class="prints quatro">
+        <figure><button type="button" class="mini" data-open="safira-home-mobile" aria-label="Ampliar: Início"><img src="images/safira-home-mobile.png" width="414" height="868" loading="lazy" alt="Início: apresenta os modelos e as paletas"></button><figcaption><b>Início</b> · apresenta os modelos e as paletas</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="safira-login-mobile" aria-label="Ampliar: Entrar"><img src="images/safira-login-mobile.png" width="414" height="868" loading="lazy" alt="Entrar: formulário com validação e crédito"></button><figcaption><b>Entrar</b> · formulário com validação e crédito</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="equilibrio-painel-mobile" aria-label="Ampliar: Painel"><img src="images/equilibrio-painel-mobile.png" width="414" height="868" loading="lazy" alt="Painel: indicadores e listas dentro do menu"></button><figcaption><b>Painel</b> · indicadores e listas dentro do menu</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="aurora-configuracoes-mobile" aria-label="Ampliar: Configurações"><img src="images/aurora-configuracoes-mobile.png" width="414" height="868" loading="lazy" alt="Configurações: aparência, layout do menu e perfil"></button><figcaption><b>Configurações</b> · aparência, layout do menu e perfil</figcaption></figure>
+      </div>
+      <div class="prints quatro">
+        <figure><button type="button" class="mini" data-open="safira-clientes-mobile" aria-label="Ampliar: Clientes"><img src="images/safira-clientes-mobile.png" width="414" height="868" loading="lazy" alt="Clientes: lista com busca, filtros e ações"></button><figcaption><b>Clientes</b> · lista com busca, filtros e ações</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="safira-cliente-mobile" aria-label="Ampliar: Detalhe do cliente"><img src="images/safira-cliente-mobile.png" width="414" height="868" loading="lazy" alt="Detalhe do cliente: abas de resumo, contratos, atividade e documentos"></button><figcaption><b>Detalhe do cliente</b> · abas de resumo, contratos e atividade</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="equilibrio-cadastro-mobile" aria-label="Ampliar: Cadastro guiado"><img src="images/equilibrio-cadastro-mobile.png" width="414" height="868" loading="lazy" alt="Cadastro guiado: quatro etapas com progresso"></button><figcaption><b>Cadastro guiado</b> · quatro etapas com progresso</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="aurora-verificacao-mobile" aria-label="Ampliar: Verificação"><img src="images/aurora-verificacao-mobile.png" width="414" height="868" loading="lazy" alt="Verificação: código de seis dígitos e reenvio"></button><figcaption><b>Verificação</b> · código de seis dígitos e reenvio</figcaption></figure>
+        <figure><button type="button" class="mini" data-open="safira-tarefas-mobile" aria-label="Ampliar: Tarefas"><img src="images/safira-tarefas-mobile.png" width="414" height="868" loading="lazy" alt="Tarefas: seleção de várias linhas e conclusão em massa"></button><figcaption><b>Tarefas</b> · seleção e conclusão em massa</figcaption></figure>
+      </div>
+      <p class="acao"><a class="btn ver-demo" href="demo/painel">Ver demo: painel de exemplo</a> <a class="btn ver-demo" href="demo/clientes/">Ver demo: clientes</a></p>
+    </div>
+  </section>
+
+  <section id="ia" aria-labelledby="t-ia">
+    <div class="wrap">
+      <div class="eyebrow">IA e briefing guiado</div>
+      <h2 id="t-ia">Cole um prompt e a IA conduz o resto</h2>
+      <p class="lead">Funciona com Claude Code, Codex, Cursor, Gemini e Copilot. A IA pergunta uma decisão por vez, grava o briefing e planeja em etapas.</p>
+      <div class="duas">
+        <div>
+          <h3>Projeto novo</h3>
+          <p>Cole na sua IA de código:</p>
+          <div class="codebox"><button class="copy" type="button" aria-label="Copiar: prompt de projeto novo">copiar</button><pre class="code quebra" tabindex="0"><code>Clone https://github.com/bsmagalhaes/rendra-ui-app e use como base do meu novo app. Siga o AGENTS.md do repositório.</code></pre></div>
+        </div>
+        <div>
+          <h3>Migrar um app existente</h3>
+          <p>Abra a IA na pasta do seu app e cole:</p>
+          <div class="codebox"><button class="copy" type="button" aria-label="Copiar: prompt de migração">copiar</button><pre class="code quebra" tabindex="0"><code>Aplique neste app o design system https://github.com/bsmagalhaes/rendra-ui-app. Leia, nesta ordem: https://github.com/bsmagalhaes/rendra-ui-app/blob/main/AGENTS.md, https://github.com/bsmagalhaes/rendra-ui-app/blob/main/DESIGN_RULES.md, https://github.com/bsmagalhaes/rendra-ui-app/blob/main/docs/PROMPT_MIGRACAO.md e https://github.com/bsmagalhaes/rendra-ui-app/blob/main/docs/COMO_APLICAR.md, e siga o fluxo de migração, começando pelo briefing.</code></pre></div>
+        </div>
+      </div>
+      <h3 class="sub">O arquivo que cada IA lê</h3>
+      <div class="tabela" role="table" aria-label="Arquivo de instruções por ferramenta">
+        <div role="row"><span role="columnheader">Arquivo</span><span role="columnheader">Ferramenta</span></div>
+        <div role="row"><code role="cell">AGENTS.md</code><span role="cell">Ponto de entrada (todas as IAs)</span></div>
+        <div role="row"><code role="cell">CLAUDE.md</code><span role="cell">Claude Code</span></div>
+        <div role="row"><code role="cell">GEMINI.md</code><span role="cell">Gemini</span></div>
+        <div role="row"><code role="cell">.github/copilot-instructions.md</code><span role="cell">GitHub Copilot</span></div>
+        <div role="row"><code role="cell">.cursor/rules/rendra.mdc</code><span role="cell">Cursor</span></div>
+        <div role="row"><code role="cell">.windsurfrules</code><span role="cell">Windsurf</span></div>
+      </div>
+      <p class="acao"><a class="btn ver-demo" href="demo/">Ver demo: o resultado, antes de pedir à IA</a></p>
+    </div>
+  </section>
+
+  <section id="instalacao" aria-labelledby="t-instalacao">
+    <div class="wrap">
+      <div class="eyebrow">Instalação</div>
+      <h2 id="t-instalacao">Rode em poucos comandos</h2>
+      <p class="lead">Pré-requisito: <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a> 22 ou mais recente. O <code>npm start</code> imprime um QR code para abrir no Expo Go.</p>
+      <div class="duas">
+        <div>
+          <h3>Clonar e rodar</h3>
+          <div class="codebox"><button class="copy" type="button" aria-label="Copiar: clonar e rodar">copiar</button><pre class="code" tabindex="0"><code>git clone https://github.com/bsmagalhaes/rendra-ui-app meu-app
+cd meu-app
+npm install
+npm start</code></pre></div>
+        </div>
+        <div>
+          <h3>Como pacote npm</h3>
+          <div class="codebox"><button class="copy" type="button" aria-label="Copiar: instalar o pacote">copiar</button><pre class="code" tabindex="0"><code>npm install @rendra-ui/app</code></pre></div>
+        </div>
+      </div>
+      <p class="acao"><a class="btn ver-demo" href="demo/">Ver demo: veja rodando antes de instalar</a></p>
+    </div>
+  </section>
+
+  <section id="galeria" aria-labelledby="t-galeria">
+    <div class="wrap">
+      <div class="eyebrow">Galeria</div>
+      <h2 id="t-galeria">As telas, em tamanho real</h2>
+      <p class="lead">Toque numa imagem para ampliar, com setas para passar e Esc para fechar. As telas usam dados de demonstração.</p>
+      <div class="gallery" id="gallery"></div>
+      <p class="acao"><a class="btn ver-demo" href="demo/galeria/">Ver demo: galeria ao vivo</a></p>
+    </div>
+  </section>
+
+  <section id="faq" aria-labelledby="t-faq">
+    <div class="wrap">
+      <div class="eyebrow">Perguntas frequentes</div>
+      <h2 id="t-faq">Dúvidas comuns</h2>
+      <details><summary>O que é o Rendra App?</summary><p>É um design system e boilerplate mobile em React Native (Expo), com Expo Router e NativeWind. Traz 49 componentes de UI, a navegação do app pronta, telas de exemplo, 3 modelos de marca e 4 paletas.</p></details>
+      <details><summary>Posso usar em projeto comercial?</summary><p>Sim. A licença é MIT: você pode usar, copiar, alterar e distribuir, inclusive em projetos comerciais, mantendo o aviso de copyright e o arquivo LICENSE. O crédito &quot;Feito com Rendra&quot; na tela é opcional.</p></details>
+      <details><summary>Como troco a marca do app?</summary><p>Com 4 cores, um degradê, um modelo, o nome e o logotipo, sem mexer em componente. Cada combinação de modelo e paleta tem um código, como T2-C3, que você informa no briefing.</p></details>
+      <details><summary>Funciona no celular de verdade e na web?</summary><p>Sim. O projeto roda no Expo Go (leia o QR code do terminal), em emuladores e no navegador. A demo desta página é o export web do próprio app, com os mesmos componentes.</p></details>
+      <details><summary>Como uso com uma IA de código?</summary><p>Cole o link do repositório numa IA de código (Claude Code, Codex, Cursor, Gemini ou Copilot). O AGENTS.md é o ponto de entrada: a IA conduz o briefing, planeja em etapas e roda os testes.</p></details>
+      <details><summary>Os componentes são acessíveis?</summary><p>Foram feitos para isso: toque mínimo de 44x44, foco visível, nada que dependa de hover e verificação automática com axe (WCAG 2.1 AA) em cada tela.</p></details>
+      <p class="acao"><a class="btn ver-demo" href="demo/">Ver demo: veja rodando antes de decidir</a></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <h3>Autor</h3>
+      <p>Criado e mantido por <b>Bruno Magalhaes</b>.</p>
+      <p><a href="https://www.brunomagalhaes.me" target="_blank" rel="noopener">www.brunomagalhaes.me</a></p>
+      <p><a href="mailto:contato@brunomagalhaes.me">contato@brunomagalhaes.me</a></p>
+      <p><a href="https://www.instagram.com/brunomagalhaes.me/" target="_blank" rel="noopener">@brunomagalhaes.me</a></p>
+    </div>
+    <div>
+      <h3>Licença</h3>
+      <p><a href="https://github.com/bsmagalhaes/rendra-ui-app/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> © 2026 Bruno Magalhaes. Pode usar, copiar, alterar e distribuir, inclusive em projetos comerciais, mantendo o aviso de copyright.</p>
+      <p><a href="https://github.com/bsmagalhaes/rendra-ui-app/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Novidades de cada versão</a></p>
+    </div>
+    <div>
+      <h3>Créditos</h3>
+      <p>Feito com <a href="https://github.com/bsmagalhaes/rendra-ui-app" target="_blank" rel="noopener">Rendra</a>. Fontes Poppins, DM Sans e Inter (licença OFL), nos modelos da demo.</p>
+      <p>React Native, Expo e NativeWind são projetos de terceiros. Projeto independente, sem afiliação.</p>
+      <p><a href="https://bsmagalhaes.github.io/" target="_blank" rel="noopener">Todos os projetos</a></p>
+    </div>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Imagem ampliada">
+  <button class="lb-btn lb-close" type="button" aria-label="Fechar">×</button>
+  <button class="lb-btn lb-prev" type="button" aria-label="Anterior">‹</button>
+  <img alt="">
+  <button class="lb-btn lb-next" type="button" aria-label="Próxima">›</button>
+  <div class="cap"></div>
+</div>
+
+<script>
+(() => {
+  const desktop = matchMedia('(min-width: 900px)');
+  const poucoDado = matchMedia('(prefers-reduced-data: reduce)').matches;
+  const slot = document.getElementById('phone-slot');
+  const controles = document.querySelector('.phone-controls');
+  const original = slot.innerHTML;
+  const codigos = ['T1-C1', 'T2-C1', 'T3-C1'];
+  let frame = null;
+  function montar() {
+    if (!desktop.matches || poucoDado || frame) return;
+    frame = Object.assign(document.createElement('iframe'), {
+      name: 'demo', loading: 'lazy', src: 'demo/?codigo=T1-C1',
+      title: 'Demonstração do Rendra App, vitrine de componentes',
+    });
+    const aparelho = document.createElement('div');
+    aparelho.className = 'phone';
+    aparelho.setAttribute('role', 'group');
+    aparelho.setAttribute('aria-label', 'Rendra App em execução');
+    aparelho.append(frame);
+    slot.replaceChildren(aparelho);
+    controles.hidden = false;
+  }
+  function desmontar() {
+    if (desktop.matches || !frame) return;
+    frame = null;
+    slot.innerHTML = original;
+    controles.hidden = true;
+  }
+  controles.querySelectorAll('button').forEach((b, i) => b.addEventListener('click', () => {
+    controles.querySelectorAll('button').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    if (frame) frame.src = `demo/?codigo=${codigos[i]}`;
+  }));
+  addEventListener('load', montar);
+  desktop.addEventListener('change', () => { montar(); desmontar(); });
+})();
+</script>
+
+<script>
+  const IMAGES = [
+    ["safira-home-mobile","Início","modelo Safira, com os modelos e as paletas"],
+    ["safira-componentes-mobile","Vitrine de componentes","modelo Safira, com os cinco grupos"],
+    ["equilibrio-tokens-mobile","Tokens","modelo Equilíbrio, paleta com contraste AA ao vivo"],
+    ["aurora-galeria-mobile","Galeria","modelo Aurora, troca ao vivo de modelo, paleta e modo"],
+    ["aurora-escuro-mobile","Modo escuro","modelo Aurora na vitrine de componentes"],
+    ["safira-login-mobile","Entrar","formulário com validação e crédito"],
+    ["equilibrio-painel-mobile","Painel","indicadores e listas dentro do menu do app"],
+    ["aurora-configuracoes-mobile","Configurações","aparência, layout do menu e perfil"],
+    ["safira-clientes-mobile","Clientes","lista com busca, filtros e ações"],
+    ["safira-cliente-mobile","Detalhe do cliente","abas de resumo, contratos e atividade"],
+    ["equilibrio-cadastro-mobile","Cadastro guiado","quatro etapas com progresso"],
+    ["aurora-verificacao-mobile","Verificação","código de seis dígitos e reenvio"],
+    ["safira-tarefas-mobile","Tarefas","seleção e conclusão em massa"],
+    ["matriz-safira-safira-mobile","Matriz T1-C1","modelo Safira com a paleta Safira"],
+    ["matriz-safira-equilibrio-mobile","Matriz T1-C2","modelo Safira com a paleta Equilíbrio"],
+    ["matriz-safira-aurora-mobile","Matriz T1-C3","modelo Safira com a paleta Aurora"],
+    ["matriz-safira-ardosia-mobile","Matriz T1-C4","modelo Safira com a paleta Ardósia"],
+    ["matriz-equilibrio-safira-mobile","Matriz T2-C1","modelo Equilíbrio com a paleta Safira"],
+    ["matriz-equilibrio-equilibrio-mobile","Matriz T2-C2","modelo Equilíbrio com a paleta Equilíbrio"],
+    ["matriz-equilibrio-aurora-mobile","Matriz T2-C3","modelo Equilíbrio com a paleta Aurora"],
+    ["matriz-equilibrio-ardosia-mobile","Matriz T2-C4","modelo Equilíbrio com a paleta Ardósia"],
+    ["matriz-aurora-safira-mobile","Matriz T3-C1","modelo Aurora com a paleta Safira"],
+    ["matriz-aurora-equilibrio-mobile","Matriz T3-C2","modelo Aurora com a paleta Equilíbrio"],
+    ["matriz-aurora-aurora-mobile","Matriz T3-C3","modelo Aurora com a paleta Aurora"],
+    ["matriz-aurora-ardosia-mobile","Matriz T3-C4","modelo Aurora com a paleta Ardósia"]
+  ];
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = IMAGES.map(([id, title, text]) =>
+    '<figure><button type="button" class="thumb" data-open="' + id + '" aria-label="Ampliar: ' + title + '"><img src="images/' + id + '.png" alt="' + title + ': ' + text + '" loading="lazy" width="414" height="868"></button><figcaption><b>' + title + '</b> · ' + text + '</figcaption></figure>'
+  ).join('');
+
+  const lb = document.getElementById('lightbox');
+  const lbImg = lb.querySelector('img');
+  const fechar = lb.querySelector('.lb-close');
+  let atual = 0;
+  let opener = null;
+  function mostrar(i, gravar = true) {
+    atual = (i + IMAGES.length) % IMAGES.length;
+    const [id, title, text] = IMAGES[atual];
+    lbImg.src = 'images/' + id + '.png';
+    lbImg.alt = title + ': ' + text;
+    lb.querySelector('.cap').textContent = title + ' · ' + text;
+    lb.classList.add('open');
+    fechar.focus();
+    if (gravar) history.replaceState(null, '', '?imagem=' + id);
+  }
+  function fecharLb() {
+    lb.classList.remove('open');
+    history.replaceState(null, '', location.pathname);
+    if (opener) opener.focus();
+    opener = null;
+  }
+  document.addEventListener('click', (e) => {
+    const alvo = e.target.closest('[data-open]');
+    if (!alvo) return;
+    opener = alvo;
+    mostrar(IMAGES.findIndex(([id]) => id === alvo.dataset.open));
+  });
+  fechar.onclick = fecharLb;
+  lb.querySelector('.lb-prev').onclick = () => mostrar(atual - 1);
+  lb.querySelector('.lb-next').onclick = () => mostrar(atual + 1);
+  lb.addEventListener('click', (e) => { if (e.target === lb) fecharLb(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') fecharLb();
+    if (e.key === 'ArrowLeft') mostrar(atual - 1);
+    if (e.key === 'ArrowRight') mostrar(atual + 1);
+    if (e.key === 'Tab') {
+      const foco = [...lb.querySelectorAll('button')];
+      const i = foco.indexOf(document.activeElement);
+      e.preventDefault();
+      foco[(i + (e.shiftKey ? -1 : 1) + foco.length) % foco.length].focus();
+    }
+  });
+  const inicio = new URLSearchParams(location.search).get('imagem');
+  if (inicio && IMAGES.some(([id]) => id === inicio)) mostrar(IMAGES.findIndex(([id]) => id === inicio), false);
+
+  document.querySelectorAll('.copy').forEach((b) => b.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(b.parentElement.querySelector('code').textContent); b.textContent = 'copiado'; } catch { b.textContent = 'selecione e copie'; }
+    setTimeout(() => { b.textContent = 'copiar'; }, 1800);
+  }));
+</script>
+</body>
+</html>

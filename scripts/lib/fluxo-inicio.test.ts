@@ -66,7 +66,7 @@ describe('fluxo de início nos cinco arquivos que resumem', () => {
 
   it('CLAUDE.md diz, acima da matriz, que ela vale só para a manutenção do próprio Rendra App', () => {
     const claude = ler('CLAUDE.md')
-    const acima = claude.slice(0, claude.indexOf('## Matriz de modelos'))
+    const acima = claude.slice(0, claude.indexOf('# REGRA INEGOCIÁVEL: MATRIZ DE MODELOS'))
     expect(acima).toContain('vale para a manutenção do próprio Rendra App')
     expect(acima).toContain("'Fluxo de desenvolvimento' do `AGENTS.md`")
   })

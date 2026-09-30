@@ -35,15 +35,15 @@ declare global {
 
 export interface Violation { rule: string; file: string; line: number; message: string }
 
-/** Compara a seção "## Matriz de modelos" de CLAUDE.md, do título até o fim do
+/** Compara a seção "# REGRA INEGOCIÁVEL: MATRIZ DE MODELOS" de CLAUDE.md, do título até o fim do
  *  arquivo, contra o arquivo de referência caractere a caractere (spec seção 16, Tarefa G2). */
 export function checkClaudeMd(claudeMdPath: string, referencePath: string): Violation[] {
   const claude = readFileText(claudeMdPath)
   const reference = readFileText(referencePath).trim()
-  const marker = '## Matriz de modelos'
+  const marker = '# REGRA INEGOCIÁVEL: MATRIZ DE MODELOS'
   const idx = claude.indexOf(marker)
   if (idx === -1) {
-    return [{ rule: 'CLAUDE.md', file: claudeMdPath, line: 1, message: 'Seção "Matriz de modelos" não encontrada.' }]
+    return [{ rule: 'CLAUDE.md', file: claudeMdPath, line: 1, message: 'Seção "REGRA INEGOCIÁVEL: MATRIZ DE MODELOS" não encontrada.' }]
   }
   const section = claude.slice(idx).trim()
   if (section !== reference) {

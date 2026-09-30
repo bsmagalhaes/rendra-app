@@ -162,10 +162,13 @@
     "build": "npm run build:web",
     "build:lib": "node -e \"require('fs').rmSync('dist-lib',{recursive:true,force:true})\" && tsc -p tsconfig.lib.json && tsx scripts/build-lib-worklets.ts && tsx scripts/add-banner.ts --lib",
     "verify:pack": "tsx scripts/verify-pack.ts",
-    "pages:stage": "node -e \"const fs=require('fs');fs.rmSync('.pages',{recursive:true,force:true});fs.mkdirSync('.pages/rendra-ui-app',{recursive:true});fs.cpSync('dist','.pages/rendra-ui-app',{recursive:true})\"",
+    "pages:stage": "tsx scripts/pages-stage.ts",
     "test:layout": "playwright test e2e/layout.spec.ts",
     "test:a11y": "playwright test e2e/a11y.spec.ts",
+    "test:site": "playwright test e2e/site.spec.ts --project=site-desktop --project=site-mobile",
+    "test:demo": "playwright test e2e/demo-subcaminho.spec.ts e2e/demo-fluxos.spec.ts --project=w390-T1-C1-light --project=w390-T1-C1-dark",
     "docs:images": "npm run pages:stage && tsx scripts/readme-images.ts",
+    "docs:images:check": "tsx scripts/verify-docs-images.ts",
     "clean:clone": "tsx scripts/clean-clone.ts"
   },
   "private": false

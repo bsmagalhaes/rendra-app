@@ -16,6 +16,15 @@ const ROUTES = [
   '/painel',
   '/configuracoes',
   '/login',
+  '/esqueci-senha',
+  '/verificacao',
+  '/nova-senha',
+  '/cadastre-se',
+  '/clientes',
+  '/clientes/1000',
+  '/clientes/novo',
+  '/cadastro',
+  '/tarefas',
 ]
 
 // Tela 404: o `serve` do Playwright só entrega o `404.html` do export dentro do prefixo
@@ -300,13 +309,29 @@ test('painel: abre dentro do shell, com a barra inferior e o item Painel ativo',
   await expect(page.locator('[data-rendra="STAT-001"]').first()).toBeVisible()
 })
 
+// P3.13 (correção D6): as seis seções de Configurações vivem em `Tabs`, que vira um `Select`
+// ("Seção") quando as abas não cabem na largura (celular estreito). O helper abre a seção pelo
+// controle que a página tiver, sem mudar a asserção dos casos.
+async function abrirSecao(page: Page, nome: string) {
+  const seletor = page.getByRole('combobox', { name: 'Seção' })
+  if ((await seletor.count()) > 0) {
+    await seletor.click()
+    // As opções da folha não têm papel próprio (ver select.tsx); a folha é um portal no fim do DOM.
+    await page.getByText(nome, { exact: true }).last().click()
+  } else {
+    await page.getByRole('tab', { name: nome, exact: true }).click()
+  }
+}
+
 test('configuracoes: escolher "Só gaveta" tira a barra inferior e escolher Aurora troca o modelo', async ({ page }) => {
   await page.goto('configuracoes?codigo=T1-C1')
   await page.getByTestId('rendra-T1-C1').waitFor()
   await semSplash(page)
   await expect(page.getByRole('navigation', { name: 'Navegação rápida' })).toBeVisible()
+  await abrirSecao(page, 'Layout')
   await page.getByRole('radiogroup', { name: 'Layout' }).getByRole('radio', { name: 'Só gaveta' }).click()
   await expect(page.getByRole('navigation', { name: 'Navegação rápida' })).toHaveCount(0)
+  await abrirSecao(page, 'Aparência')
   await page.getByRole('radiogroup', { name: 'Modelo' }).getByRole('radio', { name: 'Aurora' }).click()
   await page.getByTestId('rendra-T3-C1').waitFor()
   await semSplash(page)

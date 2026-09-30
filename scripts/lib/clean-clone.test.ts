@@ -41,7 +41,9 @@ describe('cleanPackageJson', () => {
         'verify:pack': 'y',
         'clean:clone': 'z',
         'docs:images': 'w',
-        'pages:stage': "node -e \"cp('dist','.pages/rendra-ui-app')\"",
+        'pages:stage': 'tsx scripts/pages-stage.ts',
+        'test:site': 'playwright test e2e/site.spec.ts',
+        'test:demo': 'playwright test e2e/demo-subcaminho.spec.ts',
         start: 'expo start',
       },
     }
@@ -62,10 +64,26 @@ describe('cleanPackageJson', () => {
     // quem clonou (capturas do proprio README), so os scripts do pacote saem.
     expect(saida.scripts['docs:images']).toBe('w')
     expect(saida.scripts.start).toBe('expo start')
-    expect(saida.scripts['pages:stage']).toBe("node -e \"cp('dist','.pages/meu-app')\"")
+    // A página de apresentação e o /demo/ são do Rendra: o clone volta a copiar o export direto para
+    // .pages/<nome>, sem scripts/pages-stage.ts (apagado) e sem subpasta demo (achado B5).
+    expect(saida.scripts['pages:stage']).toBe(
+      "node -e \"const fs=require('fs');fs.rmSync('.pages',{recursive:true,force:true});fs.mkdirSync('.pages/meu-app',{recursive:true});fs.cpSync('dist','.pages/meu-app',{recursive:true})\"",
+    )
+    expect(saida.scripts['pages:stage']).not.toContain('demo')
+    expect(saida.scripts['test:site']).toBeUndefined()
+    expect(saida.scripts['test:demo']).toBeUndefined()
     expect(saida.author).toEqual({ name: 'Bruno Magalhaes' })
     expect(saida.license).toBe('MIT')
     expect(saida.description).toBe('App meu-app, feito com Rendra App')
+  })
+})
+
+describe('cleanPagesStage', () => {
+  it('copia dist direto para .pages/<nome>, sem subpasta demo nem scripts/pages-stage.ts', () => {
+    const saida = cleanPagesStage('meu-app')
+    expect(saida).toContain("fs.mkdirSync('.pages/meu-app'")
+    expect(saida).toContain("fs.cpSync('dist','.pages/meu-app'")
+    expect(saida).not.toMatch(/demo|pages-stage/)
   })
 })
 
@@ -107,11 +125,27 @@ describe('cleanCiYml', () => {
       '      - run: npm run verify:pack',
       '      - run: npm run build',
     ].join('\n')
-    const saida = cleanCiYml(texto)
+    const saida = cleanCiYml(texto, 'meu-app')
     expect(saida).not.toContain('build:lib')
     expect(saida).not.toContain('verify:pack')
     expect(saida).toContain('npm run typecheck')
     expect(saida).toContain('npm run build')
+  })
+
+  it('tira os passos da página e da demo e volta o artefato para .pages/<nome> (achado B5)', () => {
+    const texto = [
+      '      - run: npm run build',
+      '      - run: npm run pages:stage',
+      '      - run: npm run docs:images:check',
+      '      - run: npm run test:a11y',
+      '      - run: npm run test:site',
+      '      - run: npm run test:demo',
+      '        with: { name: pages, path: .pages/rendra-ui-app }',
+    ].join('\n')
+    const saida = cleanCiYml(texto, 'meu-app')
+    for (const fora of ['pages:stage', 'docs:images:check', 'test:site', 'test:demo']) expect(saida).not.toContain(fora)
+    expect(saida).toContain('npm run test:a11y')
+    expect(saida).toContain('path: .pages/meu-app }')
   })
 })
 
@@ -122,6 +156,33 @@ describe('cleanPlaywrightConfig', () => {
       "use: { baseURL: 'http://localhost:4173/meu-app/' },",
     )
   })
+
+  it('o baseURL da demo (/rendra-ui-app/demo/) vira /<nome>/, sem /demo (achado B5)', () => {
+    const texto = "use: { baseURL: 'http://localhost:4173/rendra-ui-app/demo/' },"
+    expect(cleanPlaywrightConfig(texto, 'meu-app')).toBe("use: { baseURL: 'http://localhost:4173/meu-app/' },")
+  })
+
+  it('tira os projetos site-* e o testIgnore, com fim de linha LF ou CRLF', () => {
+    for (const eol of ['\n', '\r\n']) {
+      const texto = [
+        'projects: [',
+        '  { name: "w360", metadata: {},',
+        '    testIgnore: /site\\.spec\\.ts/,',
+        '  },',
+        '    // site:inicio (página de apresentação)',
+        "    { name: 'site-desktop', baseURL: 'http://localhost:4173/rendra-ui-app/' },",
+        "    { name: 'site-mobile' },",
+        '    // site:fim',
+        '  ],',
+      ].join(eol)
+      const saida = cleanPlaywrightConfig(texto, 'meu-app')
+      expect(saida).not.toContain('site-')
+      expect(saida).not.toContain('site:')
+      expect(saida).not.toContain('testIgnore')
+      expect(saida).toContain('projects: [')
+      expect(saida).toContain('  ],')
+    }
+  })
 })
 
 describe('stripPackageCommands', () => {
@@ -130,6 +191,16 @@ describe('stripPackageCommands', () => {
       '\n',
     )
     expect(stripPackageCommands(texto)).toBe('npm run typecheck\nnpm run test:coverage')
+  })
+
+  it('remove as linhas de test:site e test:demo (achado B5), preservando docs:images e test:a11y', () => {
+    const texto = [
+      'npm run test:a11y      # Playwright + axe',
+      'npm run test:site      # a página',
+      'npm run test:demo      # a demo',
+      'npm run docs:images    # capturas',
+    ].join('\n')
+    expect(stripPackageCommands(texto)).toBe('npm run test:a11y      # Playwright + axe\nnpm run docs:images    # capturas')
   })
 
   it('remove tambem a linha de npm run clean:clone (achado M1), mas preserva docs:images', () => {

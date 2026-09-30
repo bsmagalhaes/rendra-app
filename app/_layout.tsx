@@ -16,6 +16,9 @@ import '../global.css'
 
 registerIconInterop()
 
+// Erro 500: se uma rota quebrar, o Expo Router mostra este componente no lugar do layout raiz.
+export { RootErrorBoundary as ErrorBoundary } from '../src/demo/root-error-boundary'
+
 SplashScreen.preventAutoHideAsync()
 // O Expo Go não aceita `setOptions` (avisa no console); em build de desenvolvimento e de produção
 // o splash nativo sai com fade para revelar o overlay animado.

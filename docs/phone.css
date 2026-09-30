@@ -1,0 +1,7 @@
+/* docs/phone.css: moldura única, lida pelo script de imagens e linkada pela página. Sem SVG externo.
+   Cores da família (adendo de identidade): moldura #0b0b0b e contorno #2c2c2c. */
+.phone{position:relative;box-sizing:content-box;width:390px;max-width:100%;aspect-ratio: 390 / 844;border:12px solid #0b0b0b;border-radius:48px;background:#0b0b0b;box-shadow:0 0 0 2px #2c2c2c,0 24px 48px rgba(0,0,0,.35);overflow:hidden;display:flex;flex-direction:column}
+.phone .status{height:44px;flex:none}
+.phone::before{content:"";position:absolute;z-index:2;top:10px;left:50%;width:96px;height:28px;margin-left:-48px;border-radius:14px;background:#0b0b0b}
+.phone iframe,.phone img{display:block;width:100%;flex:1;min-height:0;height:auto;border:0;background:#fff}
+@media (prefers-reduced-motion:no-preference){.phone{transition:box-shadow .2s}}

@@ -1,24 +1,25 @@
-import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { View } from 'react-native'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useBrand } from '../src/brand'
-import { AuthLayout } from '../src/components/layout'
-import { ActionBar, Checkbox, Form, FormField, Input } from '../src/components/ui'
+import { ActionBar, Alert, Checkbox, Form, FormField, Input } from '../src/components/ui'
+import { AuthScreen } from '../src/demo/auth-screen'
+import { TextLink } from '../src/demo/text-link'
 import { useRendraNavigation } from '../src/navigation/rendra-navigation'
 import { useDocumentTitle } from '../src/lib/use-document-title'
 import { zBR } from '../src/lib/validators'
 
 const schema = z.object({
   email: zBR.email(),
-  senha: z.string().min(1, 'Senha é obrigatória.'),
+  senha: z.string().min(1, 'Senha é obrigatória.').min(6, 'A senha deve ter pelo menos 6 caracteres.'),
   lembrar: z.boolean(),
 })
 
 /**
- * Tela de entrada de exemplo, fora do grupo `(shell)`: tela cheia com o próprio `SafeAreaView`
- * (só o inset superior; o rodapé é do `ActionBar`). O envio de exemplo só leva ao painel: quem
+ * Tela de entrada de exemplo, fora do grupo `(shell)`: tela cheia (a casca `AuthScreen` traz o
+ * `SafeAreaView` só com o inset superior; o rodapé é do `ActionBar`). Na demonstração qualquer
+ * e-mail válido com senha de 6 ou mais caracteres segue para a verificação em duas etapas: quem
  * usa o boilerplate troca `onSubmit` pela chamada da própria API.
  */
 export default function Login() {
@@ -32,33 +33,34 @@ export default function Login() {
   })
 
   function onSubmit() {
-    navigate('/painel')
+    navigate('/verificacao')
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-background" testID="safe-area-tela">
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1">
-        <ScrollView
-          tabIndex={0}
-          className="flex-1"
-          contentContainerClassName="flex-grow"
-          keyboardShouldPersistTaps="handled"
-        >
-          <AuthLayout title="Acesse sua conta" description="Entre com seu e-mail e senha para continuar.">
-            <Form form={form} onSubmit={onSubmit} className="gap-4">
-              <FormField name="email" label="E-mail" required render={(f) => <Input {...f} />} />
-              <FormField name="senha" label="Senha" required render={(f) => <Input {...f} secureTextEntry />} />
-              <FormField
-                name="lembrar"
-                render={(f) => (
-                  <Checkbox label="Lembrar de mim" checked={Boolean(f.value)} onCheckedChange={f.onChange} />
-                )}
-              />
-            </Form>
-            <ActionBar sticky={false} primary={{ label: 'Entrar', onPress: form.handleSubmit(onSubmit) }} />
-          </AuthLayout>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <AuthScreen
+      title="Acesse sua conta"
+      description="Entre com seu e-mail e senha para continuar."
+      footer={
+        <View className="items-start">
+          <TextLink href="/esqueci-senha">Esqueci a senha</TextLink>
+          <TextLink href="/cadastre-se">Criar conta</TextLink>
+        </View>
+      }
+    >
+      <Alert
+        type="info"
+        title="Modo demonstração"
+        description="Use qualquer e-mail e uma senha com 6 ou mais caracteres."
+      />
+      <Form form={form} onSubmit={onSubmit} className="gap-4">
+        <FormField name="email" label="E-mail" required render={(f) => <Input {...f} />} />
+        <FormField name="senha" label="Senha" required render={(f) => <Input {...f} secureTextEntry />} />
+        <FormField
+          name="lembrar"
+          render={(f) => <Checkbox label="Lembrar de mim" checked={Boolean(f.value)} onCheckedChange={f.onChange} />}
+        />
+      </Form>
+      <ActionBar sticky={false} primary={{ label: 'Entrar', onPress: form.handleSubmit(onSubmit) }} />
+    </AuthScreen>
   )
 }

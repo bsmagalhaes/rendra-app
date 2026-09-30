@@ -7,7 +7,7 @@ const { readFileSync, writeFileSync, existsSync } = require('fs') as {
 }
 const { join } = require('path') as { join: (...parts: string[]) => string }
 import { applyRouteSeo } from './lib/seo-html'
-import { siteUrlFrom, routeUrl, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles } from './lib/seo-paths'
+import { siteUrlFrom, routeUrl, isDirectoryRoute, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles, clientDetailFiles } from './lib/seo-paths'
 import { buildRobotsTxt } from '../src/lib/robots'
 import { buildLlmsTxt } from '../src/lib/llms-txt'
 import { routeSeo, siteSeo } from '../src/config/seo'
@@ -30,14 +30,17 @@ function main(): void {
   const url = siteUrlFrom(readAppJsonBaseUrl(), process.env.SITE_URL, readPackageHomepage())
   const ogImageUrl = `${url}og-image.png`
 
-  for (const rota of routeSeo) {
+  // Canonical e sitemap usam a mesma URL: rota que é pasta termina em barra (no Pages, sem ela é 301).
+  const rotas = routeSeo.map((r) => ({ ...r, directory: isDirectoryRoute(distDir, r.path, existsSync) }))
+
+  for (const rota of rotas) {
     const arquivo = distFileFor(distDir, rota.path, existsSync)
     const html = readFileSync(arquivo, 'utf8')
     const saida = applyRouteSeo({
       html,
       title: rota.title,
       description: rota.description,
-      url: routeUrl(url, rota.path),
+      url: routeUrl(url, rota.path, rota.directory),
       siteName: siteSeo.productName,
       ogImageUrl,
       indexable: rota.indexable,
@@ -79,7 +82,7 @@ function main(): void {
   // Achado C8 (Opus): o export estático grava também `dist/(shell)/...`; cópias sem `index`.
   const { globSync } = require('glob') as typeof import('glob')
   const paginas = globSync('**/*.html', { cwd: distDir, posix: true })
-  for (const nome of groupVariationFiles(paginas)) {
+  for (const nome of [...groupVariationFiles(paginas), ...clientDetailFiles(paginas)]) {
     const arquivo = join(distDir, nome)
     const html = readFileSync(arquivo, 'utf8')
     const saida = applyRouteSeo({
@@ -94,7 +97,7 @@ function main(): void {
     writeFileSync(arquivo, saida, 'utf8')
   }
 
-  writeFileSync(join(distDir, 'sitemap.xml'), buildSitemapXml(url, routeSeo), 'utf8')
+  writeFileSync(join(distDir, 'sitemap.xml'), buildSitemapXml(url, rotas), 'utf8')
   writeFileSync(join(distDir, 'robots.txt'), buildRobotsTxt(url), 'utf8')
   writeFileSync(
     join(distDir, 'llms.txt'),
@@ -105,7 +108,7 @@ function main(): void {
       repositoryUrl: siteSeo.repositoryUrl,
       siteUrl: url,
       commands: siteSeo.commands,
-      routes: routeSeo.map((r) => ({ path: r.path.replace(/^\//, ''), title: r.title })),
+      routes: routeSeo.filter((r) => r.indexable).map((r) => ({ path: r.path.replace(/^\//, ''), title: r.title })),
     }),
     'utf8',
   )

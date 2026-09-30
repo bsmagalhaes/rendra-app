@@ -8,7 +8,7 @@ O Rendra App é o design system e boilerplate mobile do Rendra, em React Native 
 
 Este arquivo vale para qualquer IA de código: Codex, Claude Code, Cursor, GitHub Copilot, Gemini, Windsurf, Jules e outras.
 
-O design system completo traz 49 componentes de UI (`src/components/ui`, `src/components/layout`, `src/components/app-shell`, `src/components/splash`), 41 entradas de vitrine (`/componentes`) e telas de exemplo (home, login, painel, configurações e 404). Os 44 primeiros existem desde a F1b (o `Spinner` entrou na Sincronização 1) e os cinco da F2 (`RendraCredit`, `ErrorPage`, `AuthLayout`, `AppShell`, `RendraSplash`) chegaram na 1.1.0, sobre a fundação da F1a: scaffold, tokens, os 3 modelos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter), `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, e a vitrine completa (`/componentes`, `/tokens` e `/galeria`). A versão corrente está em `CHANGELOG.md`.
+O design system completo traz 49 componentes de UI (`src/components/ui`, `src/components/layout`, `src/components/app-shell`, `src/components/splash`), 41 entradas de vitrine (`/componentes`) e telas de exemplo (home, login com verificação em duas etapas, esqueci a senha, nova senha, criar conta, painel, clientes, detalhe, novo cliente, cadastro guiado, tarefas, configurações, 404 e erro 500). Os 44 primeiros existem desde a F1b (o `Spinner` entrou na Sincronização 1) e os cinco da F2 (`RendraCredit`, `ErrorPage`, `AuthLayout`, `AppShell`, `RendraSplash`) chegaram na 1.1.0, sobre a fundação da F1a: scaffold, tokens, os 3 modelos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter), `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, e a vitrine completa (`/componentes`, `/tokens` e `/galeria`). A versão corrente está em `CHANGELOG.md`.
 
 ## Fluxo de início: descubra em qual ramo você está
 
@@ -92,14 +92,14 @@ Ao fim de cada etapa: os comandos da seção "Comandos", capturas em 360 e 390, 
 4. **Execução**: implementar tarefa a tarefa, teste primeiro, sempre TDD real (vermelho comprovado, depois verde).
 5. **Validação da entrega**: revisar o diff e a saída dos testes, nunca confiar só na leitura do código.
 
-Se a sua ferramenta tem subagentes ou vários modelos e o trabalho é manutenção do próprio Rendra App, leia também `CLAUDE.md`, seção "Matriz de modelos" (verificada por `npm run check:rules`): cada etapa fica com o modelo indicado e nenhum modelo valida o que escreveu. Em qualquer outra ferramenta, ou em projeto novo ou migração, cumpra as mesmas etapas em sequência, sem subagentes: valide rodando os comandos e lendo o próprio diff, e nunca finja chamar outro modelo.
+Se a sua ferramenta tem subagentes ou vários modelos e o trabalho é manutenção do próprio Rendra App, leia também `CLAUDE.md`, seção "REGRA INEGOCIÁVEL: MATRIZ DE MODELOS" (verificada por `npm run check:rules`): cada etapa fica com o modelo indicado e nenhum modelo valida o que escreveu. Em qualquer outra ferramenta, ou em projeto novo ou migração, cumpra as mesmas etapas em sequência, sem subagentes: valide rodando os comandos e lendo o próprio diff, e nunca finja chamar outro modelo.
 
 ## Telas e navegação do boilerplate
 
 O clone já traz telas de exemplo, para serem trocadas pelas do produto (nunca apagadas às cegas: o teste de cada rota mostra o que ela promete):
 
-- **Dentro do `AppShell`**, em `app/(shell)/` (o grupo entre parênteses não entra na URL): `/componentes`, `/tokens`, `/galeria`, `/painel` e `/configuracoes`. O `app/(shell)/_layout.tsx` monta o `AppShell` com o menu e o usuário de exemplo de `src/config/navigation.tsx`; em projeto novo, troque esse menu pelo do produto (`title`, `to`, `icon`, `bottomNav` até 4 itens na barra inferior).
-- **Fora do shell**, em tela cheia: `/` (home), `/login` (`AuthLayout`) e `+not-found` (`ErrorPage`). Cada uma tem o próprio `SafeAreaView`, porque o inset superior do shell é do cabeçalho dele.
+- **Dentro do `AppShell`**, em `app/(shell)/` (o grupo entre parênteses não entra na URL): `/componentes`, `/tokens`, `/galeria`, `/painel`, `/clientes`, `/clientes/[id]`, `/clientes/novo`, `/cadastro`, `/tarefas` e `/configuracoes` (seis seções em abas). Os dados de exemplo vêm de `src/mocks/` e os auxiliares da demo de `src/demo/`, ambos fora do pacote. O `app/(shell)/_layout.tsx` monta o `AppShell` com o menu e o usuário de exemplo de `src/config/navigation.tsx`; em projeto novo, troque esse menu pelo do produto (`title`, `to`, `icon`, `bottomNav` até 4 itens na barra inferior).
+- **Fora do shell**, em tela cheia: `/` (home), `/login`, `/esqueci-senha`, `/verificacao`, `/nova-senha` e `/cadastre-se` (`AuthLayout`) e `+not-found` (`ErrorPage`); o erro 500 é o `ErrorBoundary` exportado por `app/_layout.tsx`. Cada uma tem o próprio `SafeAreaView`, porque o inset superior do shell é do cabeçalho dele.
 - **Layout do menu** pelo código de modelo: `N1` barra inferior com menu em gaveta (padrão), `N2` barra inferior com menu em folha, `N3` só gaveta (`?codigo=T1-C1-N2`, `useShell().applyLayout('N2')` ou a tela `/configuracoes`); a escolha fica gravada no aparelho.
 - **Crédito "Feito com Rendra"** (`RendraCredit`) vem ligado no login e na home; `credit={false}` no `AuthLayout` (ou não renderizar o `RendraCredit`) o remove, com o aviso de licença descrito abaixo.
 - **Abertura** animada (`RendraSplash`) montada em `app/_layout.tsx` junto do splash nativo (`app.json`); o pacote não depende do `expo-splash-screen`.
@@ -164,7 +164,10 @@ npm run build:lib      # tsc -p tsconfig.lib.json + cabeçalho de autoria (dist-
 npm run verify:pack    # npm pack real, instala num projeto temporário, renderiza um componente
 npm run test:layout    # Playwright, layout e toque
 npm run test:a11y      # Playwright + axe, WCAG 2.1 AA
-npm run docs:images    # capturas do README e og-image.png (rode npm run build antes)
+npm run test:site      # Playwright, a página de apresentação (raiz do Pages): SEO, iframe, links e axe
+npm run test:demo      # Playwright, a demo em /demo/: prefixo mantido ao navegar e ao voltar
+npm run docs:images    # capturas de celular do README e da página, e og-image.png (rode npm run build antes)
+npm run docs:images:check # confere que toda captura é de celular e a og-image tem 1200x630
 ```
 
 ## Rodar o app em desenvolvimento
@@ -178,10 +181,11 @@ npx expo start --web            # abre no navegador
 ```
 
 As rotas ficam na raiz do dev server, sem prefixo (`http://localhost:<porta>/tokens`,
-`http://localhost:<porta>/galeria`). O prefixo `/rendra-ui-app/` (`app.json`,
-`experiments.baseUrl`) só existe no export estático (`npm run build:web`), consumido pela vitrine
-publicada no GitHub Pages e pelos testes Playwright (`npm run test:layout`/`test:a11y`), nunca pelo
-`expo start`.
+`http://localhost:<porta>/galeria`). O prefixo `/rendra-ui-app/demo` (`app.json`,
+`experiments.baseUrl`) só existe no export estático (`npm run build:web`), consumido pela demo
+publicada no GitHub Pages (a página de apresentação fica em `/rendra-ui-app/`, a demo em
+`/rendra-ui-app/demo/`) e pelos testes Playwright (`npm run test:layout`/`test:a11y`/`test:demo`),
+nunca pelo `expo start`.
 
 ## Conduta
 

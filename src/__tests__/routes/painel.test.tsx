@@ -1,64 +1,107 @@
-import { fireEvent } from '@testing-library/react-native'
-import { renderRouter, screen } from 'expo-router/testing-library'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import RootLayout from '../../../app/_layout'
+import { act, fireEvent } from '@testing-library/react-native'
+import { screen } from 'expo-router/testing-library'
+import { Text } from 'react-native'
+import ShellLayout from '../../../app/(shell)/_layout'
 import Painel from '../../../app/(shell)/painel'
+import { toast } from '../../components/ui'
+import { restaurarClientes } from '../../demo/clients-store'
+import { formatCurrency } from '../../lib/masks'
+import { clients, resumoPeriodo } from '../../mocks/clients'
+import { notifications } from '../../mocks/notifications'
 import { nodesWithCode } from '../../test-utils/rendra-code'
+import { renderDemo } from '../../test-utils/render-demo'
 
-beforeEach(async () => {
-  await AsyncStorage.clear()
-})
-
-function abrir(url = '/painel') {
-  return renderRouter({ _layout: RootLayout, painel: Painel }, { initialUrl: url })
+const rotas = {
+  '(shell)/_layout': ShellLayout,
+  '(shell)/painel': Painel,
+  '(shell)/clientes/[id]': () => <Text>Tela do cliente</Text>,
 }
 
-describe('/painel', () => {
+afterEach(async () => {
+  await act(async () => {
+    toast.dismiss()
+  })
+})
+
+describe('painel da demonstração', () => {
+  // P3.14 (correção D7, mudança de comportamento registrada): os valores deixaram de ser fixos
+  // ("R$ 8.420,00", "128", "12") e passam a sair de `resumoPeriodo(6)`; a asserção de efeito
+  // (texto na tela e 3 STAT-001) continua.
   it('mostra a descrição e os três indicadores com valor e variação', async () => {
-    const context = await abrir()
-    expect(await screen.findByText('Resumo do mês da sua conta.')).toBeTruthy()
-    expect(await screen.findByText('Receita do mês')).toBeTruthy()
-    expect(await screen.findByText('R$ 8.420,00')).toBeTruthy()
+    const context = await renderDemo(rotas, '/painel')
+    const seis = resumoPeriodo(6)
+    expect(await screen.findByText('Resumo da sua conta no período escolhido.')).toBeTruthy()
+    expect(await screen.findByText('Receita do período')).toBeTruthy()
+    expect(await screen.findByText(formatCurrency(seis.receita))).toBeTruthy()
+    expect(await screen.findByText('Novos clientes')).toBeTruthy()
+    expect(await screen.findByText(String(seis.novosClientes))).toBeTruthy()
     expect(await screen.findByText('Clientes ativos')).toBeTruthy()
-    expect(await screen.findByText('128')).toBeTruthy()
-    expect(await screen.findByText('Chamados abertos')).toBeTruthy()
-    expect(await screen.findByText('12')).toBeTruthy()
+    expect(await screen.findByText(String(clients.filter((c) => c.situacao === 'Ativo').length))).toBeTruthy()
     expect(nodesWithCode(context.container, 'STAT-001')).toHaveLength(3)
   })
 
   it('só um indicador é destaque e a rota tem um único degradê (R11)', async () => {
-    const context = await abrir()
-    await screen.findByText('Receita do mês')
+    const context = await renderDemo(rotas, '/painel')
+    await screen.findByText('Receita do período')
     const degrades = context.container.queryAll((no) => String(no.props.testID ?? '').startsWith('gradient-'))
     expect(degrades).toHaveLength(1)
   })
 
-  it('a lista de clientes recentes tem uma linha navegável por cliente', async () => {
-    await abrir()
-    expect(await screen.findByRole('link', { name: /Marina Costa/ })).toBeTruthy()
-    expect(await screen.findByRole('link', { name: /Rafael Nunes/ })).toBeTruthy()
-    expect(await screen.findByRole('link', { name: /Beatriz Lima/ })).toBeTruthy()
+  it('a lista de clientes recentes usa os três primeiros clientes e cada linha leva ao detalhe', async () => {
+    const tela = await renderDemo(rotas, '/painel')
+    for (const cliente of clients.slice(0, 3)) {
+      expect(await screen.findByRole('link', { name: new RegExp(cliente.nome) })).toBeTruthy()
+    }
+    await fireEvent.press(await screen.findByRole('link', { name: new RegExp(clients[1]!.nome) }))
+    expect(await screen.findByText('Tela do cliente')).toBeTruthy()
+    expect(tela.getPathname()).toBe(`/clientes/${clients[1]!.id}`)
   })
 
-  it('sem cliente escolhido, a atividade diz que nenhum está em foco', async () => {
-    await abrir()
-    expect(await screen.findByText('Nenhum cliente em foco.')).toBeTruthy()
+  it('a atividade mostra as notificações recentes com a data', async () => {
+    await renderDemo(rotas, '/painel')
+    expect(await screen.findByText(notifications[0]!.titulo)).toBeTruthy()
+    expect(await screen.findByText(notifications[0]!.data)).toBeTruthy()
   })
 
-  it('tocar num cliente leva ao painel com ele em foco na atividade', async () => {
-    await abrir()
-    await fireEvent.press(await screen.findByRole('link', { name: /Rafael Nunes/ }))
-    const foco = await screen.findAllByText('Cliente em foco: Rafael Nunes')
-    expect(foco.length).toBeGreaterThanOrEqual(1)
+  it('troca os números do resumo ao mudar o período', async () => {
+    await renderDemo(rotas, '/painel')
+    expect(await screen.findByText(formatCurrency(resumoPeriodo(6).receita))).toBeTruthy()
+    await fireEvent.press(screen.getByRole('radio', { name: '12 meses' }))
+    expect(await screen.findByText(formatCurrency(resumoPeriodo(12).receita))).toBeTruthy()
+    expect(screen.queryByText(formatCurrency(resumoPeriodo(6).receita))).toBeNull()
+    expect(await screen.findByText(String(resumoPeriodo(12).novosClientes))).toBeTruthy()
   })
 
-  it('abrir com ?cliente= mostra o cliente em foco na atividade', async () => {
-    await abrir('/painel?cliente=beatriz-lima')
-    expect(await screen.findByText('Cliente em foco: Beatriz Lima')).toBeTruthy()
+  it('Novo cliente abre o drawer, salva e fecha', async () => {
+    await renderDemo(rotas, '/painel')
+    await fireEvent.press(await screen.findByRole('button', { name: 'Novo cliente' }))
+    await fireEvent.changeText(await screen.findByLabelText('Razão social'), 'Padaria Estrela Ltda')
+    await fireEvent.changeText(screen.getByLabelText('E-mail'), 'contato@exemplo.com.br')
+    await fireEvent.press(screen.getByRole('button', { name: 'Salvar' }))
+    expect(await screen.findByText('Cliente cadastrado (simulado)')).toBeTruthy()
+    expect(screen.queryByLabelText('Razão social')).toBeNull()
   })
 
-  it('um id de cliente desconhecido não quebra a tela', async () => {
-    await abrir('/painel?cliente=ninguem')
-    expect(await screen.findByText('Nenhum cliente em foco.')).toBeTruthy()
+  it('o drawer não salva com campos vazios e mostra os erros', async () => {
+    await renderDemo(rotas, '/painel')
+    await fireEvent.press(await screen.findByRole('button', { name: 'Novo cliente' }))
+    await fireEvent.press(await screen.findByRole('button', { name: 'Salvar' }))
+    expect(await screen.findByText('Informe a razão social.')).toBeTruthy()
+    expect(await screen.findByText('E-mail é obrigatório.')).toBeTruthy()
+    expect(screen.queryByText('Cliente cadastrado (simulado)')).toBeNull()
+  })
+})
+
+describe('cliente cadastrado pela gaveta do painel', () => {
+  it('entra em clientes recentes até recarregar', async () => {
+    await renderDemo(rotas, '/painel')
+    await fireEvent.press(await screen.findByRole('button', { name: 'Novo cliente' }))
+    await fireEvent.changeText(await screen.findByLabelText('Razão social'), 'Padaria Nova Ltda')
+    await fireEvent.changeText(screen.getByLabelText('E-mail'), 'nova@exemplo.com.br')
+    await fireEvent.press(screen.getByRole('button', { name: 'Salvar' }))
+    expect(await screen.findByRole('link', { name: /Padaria Nova Ltda/ })).toBeTruthy()
+    await act(async () => {
+      restaurarClientes()
+    })
   })
 })

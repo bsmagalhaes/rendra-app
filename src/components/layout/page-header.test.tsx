@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native'
-import { render, fireEvent, within } from '@testing-library/react-native'
+import { act, render, fireEvent, within } from '@testing-library/react-native'
 import * as SafeAreaContext from 'react-native-safe-area-context'
 import { BrandProvider } from '../../brand/brand-provider'
 import { RendraNavigationProvider } from '../../navigation/rendra-navigation'
@@ -160,6 +160,52 @@ describe('PageHeader dentro do AppShell', () => {
     // a rota muda para um destino sem PageHeader próprio; a tela antiga segue montada (pilha)
     await tela.rerender(arvore('/tokens'))
     expect(await noCabecalho('Tokens')).toBeTruthy()
+  })
+
+  // R2 (validação da entrega do P3): num push o roteador ainda entrega o pathname antigo no primeiro
+  // render da tela nova. Aqui a tela monta com a rota de origem (/paginas) e, antes do primeiro
+  // setTimeout, a rota passa a ser a dela (/paginas/acoes): o cabeçalho deve mostrar o título dela.
+  it('a tela recém-montada adota a rota nova quando o pathname chega atrasado no push', async () => {
+    jest.useFakeTimers()
+    try {
+      const arvore = (caminho: string) => (
+        <BrandProvider>
+          <RendraNavigationProvider value={{ navigate: jest.fn(), currentPath: caminho }}>
+            <AppShell navigation={navComPagina}>
+              <PageHeader title="Cliente Novo" />
+            </AppShell>
+          </RendraNavigationProvider>
+        </BrandProvider>
+      )
+      const tela = await render(arvore('/paginas'))
+      await tela.rerender(arvore('/paginas/acoes'))
+      expect(await within(await tela.findByTestId('shell-cabecalho')).findByText('Cliente Novo')).toBeTruthy()
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
+  it('a tela já assentada não adota a rota nova (é a que ficou por baixo na pilha)', async () => {
+    jest.useFakeTimers()
+    try {
+      const arvore = (caminho: string) => (
+        <BrandProvider>
+          <RendraNavigationProvider value={{ navigate: jest.fn(), currentPath: caminho }}>
+            <AppShell navigation={navComPagina}>
+              <PageHeader title="Cliente Antigo" />
+            </AppShell>
+          </RendraNavigationProvider>
+        </BrandProvider>
+      )
+      const tela = await render(arvore('/paginas'))
+      await act(async () => {
+        jest.advanceTimersByTime(10)
+      })
+      await tela.rerender(arvore('/paginas/acoes'))
+      expect(await within(await tela.findByTestId('shell-cabecalho')).findByText('Ações')).toBeTruthy()
+    } finally {
+      jest.useRealTimers()
+    }
   })
 
   it('descrição e ações continuam na tela', async () => {

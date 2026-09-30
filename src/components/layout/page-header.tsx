@@ -41,18 +41,27 @@ export function PageHeader({
 
   // Dentro do shell, título e ajuda em texto vão para o cabeçalho (só strings: um `ReactNode`
   // novo a cada render entraria em laço com o estado do shell).
-  // A rota é lida por ref: a tela que segue montada por baixo numa pilha não reenvia com a rota
-  // nova (o efeito só roda quando título ou ajuda mudam), então nunca reivindica a rota alheia.
+  // Cada tela reivindica uma rota para o título (ver R2 abaixo) e nunca a de outra tela.
   const { currentPath } = useRendraNavigation()
-  const pathRef = useRef(currentPath)
+  // R2 (validação da entrega do P3): num push, o roteador ainda entrega o pathname antigo no
+  // primeiro render da tela nova. A tela reivindica a rota da montagem e, se a rota mudar enquanto
+  // ela ainda está com esse valor, adota a nova, mas só enquanto a tela é recém-montada (antes do primeiro `setTimeout`). A tela
+  // que fica por baixo na pilha já passou desse ponto, então não reivindica a rota alheia.
+  const mountPath = useRef(currentPath)
+  const claimed = useRef<string | undefined>(undefined)
+  const settled = useRef(false)
   useEffect(() => {
-    pathRef.current = currentPath
-  })
+    const id = setTimeout(() => {
+      settled.current = true
+    }, 0)
+    return () => clearTimeout(id)
+  }, [])
   useEffect(() => {
     if (!setPageMeta) return
-    setPageMeta({ title: titleText, help: helpText, path: pathRef.current })
+    if (claimed.current === undefined || (!settled.current && claimed.current === mountPath.current)) claimed.current = currentPath
+    setPageMeta({ title: titleText, help: helpText, path: claimed.current })
     return () => setPageMeta(null)
-  }, [setPageMeta, titleText, helpText])
+  }, [setPageMeta, titleText, helpText, currentPath])
 
   const helpInShell = Boolean(shell) && helpText !== undefined
   const inlineHelp =

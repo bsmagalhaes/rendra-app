@@ -24,15 +24,16 @@ const CAMPOS_DE_PUBLICACAO = [
 // Achado M1/M2 da validacao da entrega (Blocos 5 e 6, Fable): `docs:images` fica de fora desta
 // lista (nao e so do pacote, e util a qualquer clone que queira capturas do proprio README); só
 // os três scripts que existem por causa do pacote npm saem do `package.json` do clone.
-const SCRIPTS_DE_PACOTE = ['build:lib', 'verify:pack', 'clean:clone']
+const SCRIPTS_DE_PACOTE = ['build:lib', 'verify:pack', 'clean:clone', 'test:site', 'test:demo']
 
 /**
- * Achado B16: a versão original do `pages:stage` copia para `.pages/rendra-ui-app`; sem a troca, o
- * export estático de quem clonou continua sendo servido sob `/rendra-ui-app/`, incompatível com o
+ * Achado B16, refeito pelo achado B5 (Opus, páginas e demo): no Rendra, `pages:stage` monta a
+ * página de apresentação na raiz e a demo em `/demo/` (`tsx scripts/pages-stage.ts`), coisas que
+ * o clone não herda. O clone volta a copiar o export direto para `.pages/${nome}`, coerente com o
  * `app.json` renomeado (`cleanAppJson`) e com `playwright.config.ts` (`cleanPlaywrightConfig`).
  */
-export function cleanPagesStage(script: string, nome: string): string {
-  return script.replace(/\.pages\/rendra-ui-app/g, `.pages/${nome}`)
+export function cleanPagesStage(nome: string): string {
+  return `node -e "const fs=require('fs');fs.rmSync('.pages',{recursive:true,force:true});fs.mkdirSync('.pages/${nome}',{recursive:true});fs.cpSync('dist','.pages/${nome}',{recursive:true})"`
 }
 
 export function cleanPackageJson(pkg: PackageJsonLike, nome: string): PackageJsonLike {
@@ -44,7 +45,7 @@ export function cleanPackageJson(pkg: PackageJsonLike, nome: string): PackageJso
   for (const campo of CAMPOS_DE_PUBLICACAO) delete saida[campo]
   const scripts = { ...(pkg.scripts ?? {}) }
   for (const script of SCRIPTS_DE_PACOTE) delete scripts[script]
-  if (scripts['pages:stage']) scripts['pages:stage'] = cleanPagesStage(scripts['pages:stage'], nome)
+  if (scripts['pages:stage']) scripts['pages:stage'] = cleanPagesStage(nome)
   saida.scripts = scripts
   return saida
 }
@@ -79,17 +80,34 @@ export function isAlreadyClean(pkg: PackageJsonLike): boolean {
   return Boolean(pkg.private) && !pkg.publishConfig
 }
 
-/** Achado B16 (a): remove só os dois passos que o clone não tem mais, mantém o resto do workflow. */
-export function cleanCiYml(texto: string): string {
+/**
+ * Achado B16 (a), estendido pelo achado B5: remove os passos que o clone não tem mais (`build:lib`,
+ * `verify:pack`, e os da página e da demo: `pages:stage`, `docs:images:check`, `test:site`,
+ * `test:demo`) e volta o artefato do Pages para `.pages/${nome}`, mantendo o resto do workflow.
+ */
+export function cleanCiYml(texto: string, nome: string): string {
   return texto
     .split('\n')
-    .filter((linha) => !/^\s*-\s*run:\s*npm run (build:lib|verify:pack)\s*$/.test(linha))
+    .filter(
+      (linha) =>
+        !/^\s*-\s*run:\s*npm run (build:lib|verify:pack|pages:stage|docs:images:check|test:site|test:demo)\s*$/.test(linha),
+    )
     .join('\n')
+    .replace(/\.pages\/rendra-ui-app/g, `.pages/${nome}`)
 }
 
-/** Achado B16 (b): troca o prefixo `/rendra-ui-app/` do `baseURL` pelo nome do projeto clonado. */
+/**
+ * Achado B16, estendido pelo achado B5: o `baseURL` da demo (`/rendra-ui-app/demo/`) vira `/${nome}/`
+ * (o clone não tem subcaminho `/demo/`), depois o prefixo simples `/rendra-ui-app/` também; tira o
+ * bloco de projetos `site-*` (entre `// site:inicio` e `// site:fim`) e os `testIgnore` que existem só por causa
+ * dele. Funciona com fim de linha LF ou CRLF.
+ */
 export function cleanPlaywrightConfig(texto: string, nome: string): string {
-  return texto.replace(/\/rendra-ui-app\//g, `/${nome}/`)
+  return texto
+    .replace(/\/rendra-ui-app\/demo\//g, `/${nome}/`)
+    .replace(/\/rendra-ui-app\//g, `/${nome}/`)
+    .replace(/[ \t]*\/\/ site:inicio[\s\S]*?\/\/ site:fim\r?\n/, '')
+    .replace(/^[ \t]*testIgnore: \/site\\\.spec\\\.ts\/,\r?\n/gm, '')
 }
 
 /**
@@ -108,7 +126,7 @@ export function cleanPlaywrightConfig(texto: string, nome: string): string {
 export function stripPackageCommands(texto: string): string {
   return texto
     .split('\n')
-    .filter((linha) => !/npm run (build:lib|verify:pack|clean:clone)\b/.test(linha))
+    .filter((linha) => !/npm run (build:lib|verify:pack|clean:clone|test:site|test:demo)\b/.test(linha))
     .filter((linha) => !/CONTRIBUTING\.md/.test(linha))
     .join('\n')
 }

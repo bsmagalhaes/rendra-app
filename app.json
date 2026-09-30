@@ -22,7 +22,7 @@
     "web": { "bundler": "metro", "output": "static" },
     "ios": { "supportsTablet": true },
     "experiments": {
-      "baseUrl": "/rendra-ui-app"
+      "baseUrl": "/rendra-ui-app/demo"
     }
   }
 }

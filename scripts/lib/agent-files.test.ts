@@ -19,7 +19,8 @@ const ARQUIVOS_QUE_RESUMEM = [
   '.windsurfrules',
 ]
 
-function extrairBlocoDeVerificacao(texto: string): string {
+function extrairBlocoDeVerificacao(bruto: string): string {
+  const texto = bruto.replace(/\r\n/g, '\n') // CRLF de árvore mista, como scripts/check-rules.ts
   const inicio = texto.indexOf(MARCADOR_INICIO)
   const fim = texto.indexOf(MARCADOR_FIM)
   if (inicio === -1 || fim === -1) {
@@ -27,6 +28,15 @@ function extrairBlocoDeVerificacao(texto: string): string {
   }
   return texto.slice(inicio + MARCADOR_INICIO.length, fim).trim()
 }
+
+describe('extrairBlocoDeVerificacao', () => {
+  it('devolve o mesmo bloco com fim de linha CRLF ou LF (árvore mista no Windows)', () => {
+    const lf = ['antes', MARCADOR_INICIO, 'linha um', 'linha dois', MARCADOR_FIM, 'depois'].join('\n')
+    const crlf = lf.replace(/\n/g, '\r\n')
+    expect(extrairBlocoDeVerificacao(crlf)).toBe(extrairBlocoDeVerificacao(lf))
+    expect(extrairBlocoDeVerificacao(crlf)).not.toContain('\r')
+  })
+})
 
 describe('arquivos de agente resumem AGENTS.md com o mesmo bloco de verificacao (Regra um, item 1)', () => {
   const agents = readFileSync(join(process.cwd(), 'AGENTS.md'), 'utf8')

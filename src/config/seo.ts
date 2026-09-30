@@ -63,7 +63,7 @@ const rotasFixas: RouteSeo[] = [
   {
     path: '/configuracoes',
     title: `Configurações · ${siteSeo.productName}`,
-    description: 'Configurações de exemplo do Rendra App: modelo, paleta, modo claro ou escuro, layout do menu e perfil.',
+    description: 'Configurações de exemplo do Rendra App, em seis seções: perfil, empresa, notificações, segurança, aparência e layout do menu.',
     indexable: true,
   },
   {
@@ -71,6 +71,54 @@ const rotasFixas: RouteSeo[] = [
     title: `Entrar · ${siteSeo.productName}`,
     description: 'Tela de entrada de exemplo do Rendra App, com painel de marca, formulário validado e o crédito Feito com Rendra.',
     indexable: true,
+  },
+  {
+    path: '/clientes',
+    title: `Clientes · ${siteSeo.productName}`,
+    description: 'Lista de clientes de exemplo do Rendra App, com busca, filtros de situação e segmento, paginação e exclusão com confirmação.',
+    indexable: true,
+  },
+  {
+    path: '/clientes/novo',
+    title: `Novo cliente · ${siteSeo.productName}`,
+    description: 'Formulário completo de novo cliente do Rendra App, com máscaras de CNPJ, CEP e telefone, validação e busca fictícia.',
+    indexable: true,
+  },
+  {
+    path: '/cadastro',
+    title: `Cadastro guiado · ${siteSeo.productName}`,
+    description: 'Cadastro guiado do Rendra App em quatro etapas, com progresso, validação por etapa e revisão antes de concluir.',
+    indexable: true,
+  },
+  {
+    path: '/tarefas',
+    title: `Tarefas · ${siteSeo.productName}`,
+    description: 'Tarefas de exemplo do Rendra App, com busca, seleção de várias linhas, prioridade, prazo e conclusão em massa.',
+    indexable: true,
+  },
+  {
+    path: '/esqueci-senha',
+    title: `Esqueci a senha · ${siteSeo.productName}`,
+    description: 'Recuperação de senha de exemplo do Rendra App: pede o e-mail e segue para a verificação em duas etapas.',
+    indexable: false,
+  },
+  {
+    path: '/verificacao',
+    title: `Verificação em duas etapas · ${siteSeo.productName}`,
+    description: 'Verificação em duas etapas de exemplo do Rendra App, com código de seis dígitos e reenvio depois de 30 segundos.',
+    indexable: false,
+  },
+  {
+    path: '/nova-senha',
+    title: `Nova senha · ${siteSeo.productName}`,
+    description: 'Nova senha de exemplo do Rendra App, com medidor de força e confirmação da senha.',
+    indexable: false,
+  },
+  {
+    path: '/cadastre-se',
+    title: `Criar conta · ${siteSeo.productName}`,
+    description: 'Criação de conta de exemplo do Rendra App, com máscara de telefone e aceite dos termos de uso.',
+    indexable: false,
   },
 ]
 

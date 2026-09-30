@@ -1,4 +1,4 @@
-import { siteUrlFrom, routeUrl, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles } from './seo-paths'
+import { siteUrlFrom, routeUrl, isDirectoryRoute, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles, clientDetailFiles } from './seo-paths'
 
 describe('siteUrlFrom', () => {
   it('usa SITE_URL do env quando informado, garantindo barra final', () => {
@@ -8,6 +8,13 @@ describe('siteUrlFrom', () => {
 
   it('monta a partir do baseUrl do app.json quando SITE_URL nao existe', () => {
     expect(siteUrlFrom('/rendra-ui-app')).toBe('https://bsmagalhaes.github.io/rendra-ui-app/')
+  })
+
+  it('aceita o baseUrl aninhado da demo (/rendra-ui-app/demo) e termina em /demo/', () => {
+    expect(siteUrlFrom('/rendra-ui-app/demo')).toBe('https://bsmagalhaes.github.io/rendra-ui-app/demo/')
+    expect(siteUrlFrom('/rendra-ui-app/demo', undefined, 'https://github.com/gabriel/meu-app#readme')).toBe(
+      'https://gabriel.github.io/rendra-ui-app/demo/',
+    )
   })
 
   it('sem SITE_URL, deriva o dominio do github a partir do homepage do package.json (achado M6, quem clonou e trocou o homepage nao herda o dominio do Rendra)', () => {
@@ -33,6 +40,24 @@ describe('routeUrl', () => {
 
   it('rota interna concatena sem barra inicial dobrada', () => {
     expect(routeUrl(u, '/componentes/acoes')).toBe(`${u}componentes/acoes`)
+  })
+
+  it('rota que é pasta com índice termina em barra (no Pages, sem ela vira 301)', () => {
+    expect(routeUrl(u, '/componentes', true)).toBe(`${u}componentes/`)
+    expect(routeUrl(u, '/', true)).toBe(u)
+  })
+})
+
+describe('isDirectoryRoute', () => {
+  const d = '/tmp/dist'
+  it('é pasta quando só existe <rota>/index.html', () => {
+    const arquivos = new Set([`${d}/tokens/index.html`])
+    expect(isDirectoryRoute(d, '/tokens', (p) => arquivos.has(p))).toBe(true)
+  })
+  it('não é pasta quando existe <rota>.html, nem para a raiz', () => {
+    const arquivos = new Set([`${d}/painel.html`, `${d}/index.html`])
+    expect(isDirectoryRoute(d, '/painel', (p) => arquivos.has(p))).toBe(false)
+    expect(isDirectoryRoute(d, '/', (p) => arquivos.has(p))).toBe(false)
   })
 })
 
@@ -74,14 +99,28 @@ describe('buildSitemapXml', () => {
     expect(xml).toContain(`<loc>${u}</loc>`)
     expect(xml).not.toContain('_sitemap')
   })
+
+  it('toda <loc> de rota que é pasta termina em barra, igual ao canonical', () => {
+    const xml = buildSitemapXml(u, [
+      { path: '/', indexable: true },
+      { path: '/componentes', indexable: true, directory: true },
+      { path: '/tokens', indexable: true, directory: true },
+      { path: '/painel', indexable: true },
+    ])
+    expect(xml).toContain(`<loc>${u}componentes/</loc>`)
+    expect(xml).toContain(`<loc>${u}tokens/</loc>`)
+    expect(xml).toContain(`<loc>${u}painel</loc>`)
+    expect(xml).not.toMatch(/<loc>[^<]*[/](componentes|tokens)<[/]loc>/)
+  })
 })
 
 describe('NOINDEX_FILES', () => {
-  it('lista tambem +not-found.html, alem de _sitemap.html e componentes/[slug].html', () => {
+  it('lista tambem +not-found.html, alem de _sitemap.html, componentes/[slug].html e o molde do detalhe do cliente', () => {
     expect(NOINDEX_FILES).toContain('+not-found.html')
     expect(NOINDEX_FILES).toContain('_sitemap.html')
     expect(NOINDEX_FILES).toContain('componentes/[slug].html')
-    expect(NOINDEX_FILES).toHaveLength(3)
+    expect(NOINDEX_FILES).toContain('clientes/[id].html')
+    expect(NOINDEX_FILES).toHaveLength(4)
   })
 })
 
@@ -105,5 +144,21 @@ describe('groupVariationFiles', () => {
 
   it('sem grupos devolve lista vazia', () => {
     expect(groupVariationFiles(['index.html', 'galeria/index.html'])).toEqual([])
+  })
+})
+
+describe('clientDetailFiles', () => {
+  it('separa só as páginas estáticas do detalhe (clientes/<id>.html), sem a lista nem o formulário', () => {
+    expect(
+      clientDetailFiles([
+        'clientes/1000.html',
+        'clientes/1047.html',
+        'clientes/novo.html',
+        'clientes/index.html',
+        'clientes/[id].html',
+        '(shell)/clientes/1000.html',
+        'tarefas.html',
+      ]),
+    ).toEqual(['clientes/1000.html', 'clientes/1047.html'])
   })
 })

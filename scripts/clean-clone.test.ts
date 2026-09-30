@@ -93,6 +93,44 @@ describe('orchestrate (scripts/clean-clone.ts), sobre uma cópia real dos arquiv
     expect(pkg.private).toBe(true)
     expect(pkg.homepage).toBeUndefined()
 
+    // Achado B5: o clone não herda a página de apresentação nem o subcaminho /demo/ do Rendra.
+    // Nomes fixos, não a variável importada.
+    for (const relativo of [
+      'docs/index.html',
+      'docs/icon.svg',
+      'docs/og-image.png',
+      'e2e/site.spec.ts',
+      'e2e/demo-subcaminho.spec.ts',
+      'scripts/pages-stage.ts',
+      'scripts/lib/pages-stage.ts',
+      'scripts/lib/pages-stage.test.ts',
+      'scripts/lib/site-tokens.test.ts',
+      'scripts/lib/site-images.test.ts',
+      'scripts/lib/icon-svg.test.ts',
+    ]) {
+      expect([relativo, existsSync(join(dir, relativo))]).toEqual([relativo, false])
+    }
+    // A moldura e a geração das imagens ficam: o docs:images do clone as usa.
+    for (const relativo of ['docs/phone.css', 'scripts/lib/phone-frame.ts', 'scripts/lib/og-html.ts', 'scripts/readme-images.ts']) {
+      expect([relativo, existsSync(join(dir, relativo))]).toEqual([relativo, true])
+    }
+    const pkgLimpo = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as { scripts: Record<string, string> }
+    expect(pkgLimpo.scripts['pages:stage']).toContain(".pages/meu-app'")
+    expect(pkgLimpo.scripts['pages:stage']).not.toContain('demo')
+    expect(pkgLimpo.scripts['pages:stage']).not.toContain('pages-stage.ts')
+    expect(pkgLimpo.scripts['test:site']).toBeUndefined()
+    expect(pkgLimpo.scripts['test:demo']).toBeUndefined()
+    expect(pkgLimpo.scripts['docs:images']).toBeDefined()
+    const app = JSON.parse(readFileSync(join(dir, 'app.json'), 'utf8')) as { expo: { experiments: { baseUrl: string } } }
+    expect(app.expo.experiments.baseUrl).toBe('/meu-app')
+    const playwright = readFileSync(join(dir, 'playwright.config.ts'), 'utf8')
+    expect(playwright).not.toMatch(/demo\/|site-desktop|site-mobile|testIgnore/)
+    expect(playwright).toContain('http://localhost:4173/meu-app/')
+    const ci = readFileSync(join(dir, '.github/workflows/ci.yml'), 'utf8')
+    expect(ci).not.toMatch(/test:site|test:demo|pages:stage|docs:images:check/)
+    expect(ci).toContain('path: .pages/meu-app')
+    expect(readFileSync(join(dir, 'AGENTS.md'), 'utf8')).not.toMatch(/npm run test:(site|demo)/)
+
     rmSync(dir, { recursive: true, force: true })
   })
 

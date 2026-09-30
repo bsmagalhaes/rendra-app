@@ -1,6 +1,8 @@
 export interface SeoPathRoute {
   path: string
   indexable: boolean
+  /** A rota é uma pasta com índice (`<rota>/index.html`): a URL pública termina em barra. */
+  directory?: boolean
 }
 
 /**
@@ -8,7 +10,16 @@ export interface SeoPathRoute {
  * desenvolvimento do Expo Router), mas que existem em `dist/` e precisam de `noindex` (achado B10
  * da validação do plano).
  */
-export const NOINDEX_FILES = ['_sitemap.html', 'componentes/[slug].html', '+not-found.html'] as const
+export const NOINDEX_FILES = ['_sitemap.html', 'componentes/[slug].html', 'clientes/[id].html', '+not-found.html'] as const
+
+/**
+ * Páginas estáticas do detalhe do cliente (`clientes/<id>.html`, uma por id de `generateStaticParams`,
+ * achado B8 do Opus). Não têm entrada em `routeSeo` (seriam 48 páginas quase iguais e sem canonical
+ * próprio), então recebem `noindex` como as demais páginas internas.
+ */
+export function clientDetailFiles(files: string[]): string[] {
+  return files.filter((arquivo) => /^clientes\/\d+\.html$/.test(arquivo))
+}
 
 /**
  * Arquivos de `dist/` (caminhos relativos, com `/`) que o `expo export` grava a mais por causa
@@ -39,8 +50,20 @@ export function siteUrlFrom(baseUrl: string, envSiteUrl?: string, homepage?: str
  * URL completa de uma rota: a raiz devolve a própria `siteUrl` (sem duplicar), as demais
  * concatenam sem barra inicial dobrada (achado B7 da validação do plano).
  */
-export function routeUrl(siteUrl: string, routePath: string): string {
-  return routePath === '/' ? siteUrl : siteUrl + routePath.replace(/^\//, '')
+export function routeUrl(siteUrl: string, routePath: string, directory = false): string {
+  if (routePath === '/') return siteUrl
+  return siteUrl + routePath.replace(/^\//, '') + (directory ? '/' : '')
+}
+
+/**
+ * A rota sai do export como pasta com índice (`<rota>/index.html`, sem `<rota>.html`)? No GitHub
+ * Pages essa URL só responde 200 com a barra final; sem ela é um 301. Rota que é arquivo
+ * (`painel.html`) faz o contrário: com barra dá 404. A raiz não conta (a `siteUrl` já termina em barra).
+ */
+export function isDirectoryRoute(distDir: string, routePath: string, exists: (path: string) => boolean): boolean {
+  if (routePath === '/') return false
+  const limpo = routePath.replace(/^\//, '')
+  return !exists(`${distDir}/${limpo}.html`) && exists(`${distDir}/${limpo}/index.html`)
 }
 
 /**
@@ -73,7 +96,7 @@ export function distFileFor(distDir: string, routePath: string, exists: (path: s
 export function buildSitemapXml(siteUrl: string, routes: SeoPathRoute[]): string {
   const entradas = routes
     .filter((r) => r.indexable)
-    .map((r) => `  <url><loc>${routeUrl(siteUrl, r.path)}</loc></url>`)
+    .map((r) => `  <url><loc>${routeUrl(siteUrl, r.path, r.directory)}</loc></url>`)
     .join('\n')
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entradas}\n</urlset>\n`
 }

@@ -62,6 +62,25 @@ export const ARQUIVOS_SO_DO_PACOTE = [
   'CONTRIBUTING.md',
 ]
 
+// Achado B5 (Opus, páginas e demo): a página de apresentação do Rendra, a montagem do Pages com `/demo/`
+// e os testes que só existem por causa dela não fazem parte do produto de quem clona. Ficam:
+// `docs/phone.css`, `scripts/lib/phone-frame.ts` e `scripts/lib/og-html.ts`, que o `docs:images` do clone usa.
+export const ARQUIVOS_DA_PAGINA = [
+  'docs/index.html',
+  'docs/icon.svg',
+  'docs/og-image.png',
+  'e2e/site.spec.ts',
+  'e2e/demo-subcaminho.spec.ts',
+  'e2e/demo-fluxos.spec.ts',
+  'scripts/pages-stage.ts',
+  'scripts/lib/pages-stage.ts',
+  'scripts/lib/pages-stage.test.ts',
+  'scripts/lib/site-tokens.test.ts',
+  'scripts/lib/site-images.test.ts',
+  'scripts/lib/readme-links.test.ts',
+  'scripts/lib/icon-svg.test.ts',
+]
+
 // Achado M8 da validação da entrega (Blocos 5 e 6, Fable): a orquestração inteira ganha `raiz`
 // como parâmetro e devolve um resultado em vez de chamar `process.exit`, para ser exercitada por
 // teste (`scripts/clean-clone.test.ts`) sobre uma cópia de verdade dos arquivos rastreados, não só
@@ -90,7 +109,7 @@ export function orchestrate(raiz: string, nome: string | undefined): { codigo: n
   fs.writeFileSync(appJsonPath, `${JSON.stringify(cleanAppJson(appJson, nome), null, 2)}\n`)
 
   const ciPath = path.join(raiz, '.github', 'workflows', 'ci.yml')
-  if (fs.existsSync(ciPath)) fs.writeFileSync(ciPath, cleanCiYml(fs.readFileSync(ciPath, 'utf8')))
+  if (fs.existsSync(ciPath)) fs.writeFileSync(ciPath, cleanCiYml(fs.readFileSync(ciPath, 'utf8'), nome))
 
   const playwrightPath = path.join(raiz, 'playwright.config.ts')
   if (fs.existsSync(playwrightPath)) {
@@ -116,7 +135,7 @@ export function orchestrate(raiz: string, nome: string | undefined): { codigo: n
   const seoPath = path.join(raiz, 'src', 'config', 'seo.ts')
   if (fs.existsSync(seoPath)) fs.writeFileSync(seoPath, cleanSeoConfig(fs.readFileSync(seoPath, 'utf8'), nome))
 
-  for (const relativo of ARQUIVOS_SO_DO_PACOTE) {
+  for (const relativo of [...ARQUIVOS_SO_DO_PACOTE, ...ARQUIVOS_DA_PAGINA]) {
     const alvo = path.join(raiz, relativo)
     if (fs.existsSync(alvo)) fs.rmSync(alvo, { recursive: true, force: true })
   }

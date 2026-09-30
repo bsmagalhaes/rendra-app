@@ -79,7 +79,7 @@ export function OtpInput({
             maxLength={i === 0 ? length : 1}
             accessibilityLabel={`Dígito ${i + 1} de ${length}`}
             className={cn(
-              'h-control-lg flex-1 rounded-control border border-input bg-field text-center text-xl text-foreground',
+              'h-control-lg min-w-0 flex-1 rounded-control border border-input bg-field text-center text-xl text-foreground',
               filled && 'border-primary',
               invalid && 'border-destructive',
               disabled && 'opacity-60',

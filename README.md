@@ -13,24 +13,25 @@
 
 ## Veja funcionando, sem instalar nada
 
-Vitrine publicada: [`https://bsmagalhaes.github.io/rendra-ui-app/`](https://bsmagalhaes.github.io/rendra-ui-app/) (atualizada a cada push em `main` com CI verde).
+Página de apresentação: [`https://bsmagalhaes.github.io/rendra-ui-app/`](https://bsmagalhaes.github.io/rendra-ui-app/), com o app rodando num celular, os 12 códigos de modelo e paleta, a galeria de telas e o passo a passo de instalação. A demo completa fica em [`/demo/`](https://bsmagalhaes.github.io/rendra-ui-app/demo/) (atualizada a cada push em `main` com CI verde).
 
-- [Início](https://bsmagalhaes.github.io/rendra-ui-app/) (home: apresenta o projeto, os 3 modelos e as 4 paletas, com troca ao vivo)
-- [Componentes](https://bsmagalhaes.github.io/rendra-ui-app/componentes) (41 entradas)
-- [Tokens](https://bsmagalhaes.github.io/rendra-ui-app/tokens) (paleta com AA ao vivo, tipografia, espaço, raio, sombra)
-- [Galeria](https://bsmagalhaes.github.io/rendra-ui-app/galeria) (troca ao vivo de modelo, paleta e modo pelo controle real)
-- Telas de exemplo: [Painel](https://bsmagalhaes.github.io/rendra-ui-app/painel) (indicadores e listas dentro do menu do app), [Configurações](https://bsmagalhaes.github.io/rendra-ui-app/configuracoes) (aparência, layout do menu e perfil) e [Entrar](https://bsmagalhaes.github.io/rendra-ui-app/login) (formulário com validação e crédito).
-- Exemplo com modelo e modo escolhidos por URL: [`/galeria?codigo=T3-C3&modo=escuro`](https://bsmagalhaes.github.io/rendra-ui-app/galeria?codigo=T3-C3&modo=escuro)
+- [Início da demo](https://bsmagalhaes.github.io/rendra-ui-app/demo/) (home: apresenta o projeto, os 3 modelos e as 4 paletas, com troca ao vivo)
+- [Componentes](https://bsmagalhaes.github.io/rendra-ui-app/demo/componentes/) (41 entradas)
+- [Tokens](https://bsmagalhaes.github.io/rendra-ui-app/demo/tokens/) (paleta com AA ao vivo, tipografia, espaço, raio, sombra)
+- [Galeria](https://bsmagalhaes.github.io/rendra-ui-app/demo/galeria/) (troca ao vivo de modelo, paleta e modo pelo controle real)
+- Telas de exemplo, com dados fictícios e fluxos que funcionam: [Entrar](https://bsmagalhaes.github.io/rendra-ui-app/demo/login) (formulário com validação e crédito, segue para a verificação em duas etapas), [Painel](https://bsmagalhaes.github.io/rendra-ui-app/demo/painel) (indicadores por período e cadastro rápido), [Clientes](https://bsmagalhaes.github.io/rendra-ui-app/demo/clientes/) (busca, filtros, paginação e exclusão), [Novo cliente](https://bsmagalhaes.github.io/rendra-ui-app/demo/clientes/novo), [Cadastro guiado](https://bsmagalhaes.github.io/rendra-ui-app/demo/cadastro) (quatro etapas), [Tarefas](https://bsmagalhaes.github.io/rendra-ui-app/demo/tarefas) e [Configurações](https://bsmagalhaes.github.io/rendra-ui-app/demo/configuracoes) (seis seções). Na tela de entrada vale qualquer e-mail com senha de 6 ou mais caracteres; na verificação vale qualquer código de 6 dígitos, menos `000000`.
+- Exemplo com modelo e modo escolhidos por URL: [`/demo/galeria/?codigo=T3-C3&modo=escuro`](https://bsmagalhaes.github.io/rendra-ui-app/demo/galeria/?codigo=T3-C3&modo=escuro)
 
 ## Prints de destaque
 
-| | |
-|---|---|
-| [![Safira, vitrine de componentes](docs/images/safira-componentes.png)](https://bsmagalhaes.github.io/rendra-ui-app/componentes) | [![Equilíbrio, vitrine de componentes](docs/images/equilibrio-componentes.png)](https://bsmagalhaes.github.io/rendra-ui-app/componentes) |
+Telas de celular (390 px, com moldura de aparelho), geradas por script a partir do app real. Toque numa imagem para vê-la ampliada na página de apresentação.
 
-| | |
-|---|---|
-| [![Aurora, vitrine de componentes](docs/images/aurora-componentes.png)](https://bsmagalhaes.github.io/rendra-ui-app/componentes) | [![Safira, galeria com a paleta Ardósia](docs/images/safira-galeria.png)](https://bsmagalhaes.github.io/rendra-ui-app/galeria) |
+<p align="center">
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-home-mobile"><img src="docs/images/safira-home-mobile.png" alt="Início, modelo Safira" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-componentes-mobile"><img src="docs/images/safira-componentes-mobile.png" alt="Vitrine de componentes, modelo Safira" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=aurora-escuro-mobile"><img src="docs/images/aurora-escuro-mobile.png" alt="Vitrine de componentes em modo escuro, modelo Aurora" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=equilibrio-painel-mobile"><img src="docs/images/equilibrio-painel-mobile.png" alt="Painel, modelo Equilíbrio" width="200"></a>
+</p>
 
 ## O que é
 
@@ -40,11 +41,11 @@ Critério de sucesso: trocar marca continua sendo 4 cores, degradê, modelo, nom
 
 ## Galeria
 
-Galeria completa, com troca ao vivo de modelo, paleta e modo pelo controle real: [`https://bsmagalhaes.github.io/rendra-ui-app/galeria`](https://bsmagalhaes.github.io/rendra-ui-app/galeria).
+Galeria de telas na página de apresentação, [`https://bsmagalhaes.github.io/rendra-ui-app/`](https://bsmagalhaes.github.io/rendra-ui-app/), e galeria ao vivo (troca de modelo, paleta e modo pelo controle real) na demo: [`https://bsmagalhaes.github.io/rendra-ui-app/demo/galeria/`](https://bsmagalhaes.github.io/rendra-ui-app/demo/galeria/).
 
 ## Códigos de modelo e de componente
 
-Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1` é o modelo Safira com a paleta Safira; `T1-C4` é o modelo Safira com a paleta Ardósia). Uma terceira parte opcional, `N1` a `N3`, escolhe o layout de navegação do `AppShell` (`T1-C1-N2`): `N1` barra inferior com menu em gaveta, `N2` barra inferior com menu em folha, `N3` só gaveta. Os 3 modelos são `T1` Safira/Poppins, `T2` Equilíbrio/DM Sans e `T3` Aurora/Inter; as 4 paletas são `C1` Safira, `C2` Equilíbrio, `C3` Aurora e `C4` Ardósia. Cada componente e cada variante tem um código no formato `SIGLA-000` (por exemplo, `BTN-001` é o botão primário, `ABA-002` são as abas em pílula), igual em web e app: o catálogo é `src/catalog/components.ts`, com o selo do código ao lado do título de cada exemplo em [`/componentes`](https://bsmagalhaes.github.io/rendra-ui-app/componentes).
+Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1` é o modelo Safira com a paleta Safira; `T1-C4` é o modelo Safira com a paleta Ardósia). Uma terceira parte opcional, `N1` a `N3`, escolhe o layout de navegação do `AppShell` (`T1-C1-N2`): `N1` barra inferior com menu em gaveta, `N2` barra inferior com menu em folha, `N3` só gaveta. Os 3 modelos são `T1` Safira/Poppins, `T2` Equilíbrio/DM Sans e `T3` Aurora/Inter; as 4 paletas são `C1` Safira, `C2` Equilíbrio, `C3` Aurora e `C4` Ardósia. Cada componente e cada variante tem um código no formato `SIGLA-000` (por exemplo, `BTN-001` é o botão primário, `ABA-002` são as abas em pílula), igual em web e app: o catálogo é `src/catalog/components.ts`, com o selo do código ao lado do título de cada exemplo em [`/componentes`](https://bsmagalhaes.github.io/rendra-ui-app/demo/componentes/).
 
 ## O que tem dentro
 
@@ -150,10 +151,11 @@ só existe no export estático publicado no GitHub Pages, ver abaixo): com o Met
 - **Navegador:** `npx expo start --web`, ou pressione `w` no terminal do Metro depois de
   `npx expo start`.
 
-Export estático (o que a vitrine publicada e os testes Playwright usam) leva o prefixo
-`/rendra-ui-app/` em todo link e asset, configurado em `experiments.baseUrl` de
+Export estático (o que a demo publicada e os testes Playwright usam) leva o prefixo
+`/rendra-ui-app/demo` em todo link e asset, configurado em `experiments.baseUrl` de
 `app.json`; é só o `expo export --platform web` (via `npm run build`) que aplica esse prefixo,
-não o dev server do Metro.
+não o dev server do Metro. A árvore do GitHub Pages é montada por `npm run pages:stage`: a página de
+apresentação (`docs/index.html`) em `/rendra-ui-app/` e a demo em `/rendra-ui-app/demo/`.
 
 ```bash
 npm run typecheck      # tsc --noEmit
@@ -165,7 +167,10 @@ npm run build:lib      # tsc -p tsconfig.lib.json + cabeçalho de autoria (dist-
 npm run verify:pack    # npm pack real, instala num projeto temporário, renderiza um componente
 npm run test:layout    # Playwright, layout e toque
 npm run test:a11y      # Playwright + axe, WCAG 2.1 AA
-npm run docs:images    # capturas do README e og-image.png (rode npm run build antes)
+npm run test:site      # Playwright, a página de apresentação (SEO, iframe, links, axe)
+npm run test:demo      # Playwright, a demo em /demo/ (prefixo mantido ao navegar e ao voltar)
+npm run docs:images    # capturas de celular do README e da página, e a og-image.png (rode npm run build antes)
+npm run docs:images:check # confere que toda captura é de celular e a og-image tem 1200x630
 ```
 
 ## Formas de uso e comandos
@@ -235,11 +240,13 @@ src/
 scripts/
   check-rules.ts        # R1-R15 (ts-morph) + checagem de CLAUDE.md
   seo-build.ts          # title/description/og por rota, sitemap, robots.txt, llms.txt, 404
-  readme-images.ts       # capturas do README e og-image.png, por script
+  readme-images.ts       # capturas de celular com moldura e og-image.png, por script
+  pages-stage.ts         # monta a árvore do Pages: página na raiz e demo em /demo/
   verify-pack.ts        # npm pack real, instala num projeto temporário, renderiza um componente
   clean-clone.ts        # troca a identidade de pacote do Rendra pela do projeto clonado
 tsconfig.lib.json       # tsconfig do build:lib (dist-lib/)
-e2e/                   # Playwright (layout e acessibilidade)
+e2e/                   # Playwright (layout, acessibilidade, página de apresentação e demo)
+docs/index.html        # página de apresentação (raiz do GitHub Pages), com docs/images/ e docs/og-image.png
 ```
 
 ## Como trocar a marca

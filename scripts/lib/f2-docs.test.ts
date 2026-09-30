@@ -46,7 +46,7 @@ suite('contagem de componentes da F2 (44 mais RendraCredit, ErrorPage, AuthLayou
 suite('README descreve as telas, o shell e a estrutura de app/', () => {
   it('lista as telas base e a home entre as rotas publicadas', () => {
     for (const rota of ['/login', '/painel', '/configuracoes']) {
-      expect(readme).toContain(`rendra-ui-app/${rota.slice(1)}`)
+      expect(readme).toContain(`rendra-ui-app/demo/${rota.slice(1)}`)
     }
     expect(readme).toMatch(/home/i)
   })

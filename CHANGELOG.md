@@ -2,6 +2,37 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
+## [Não publicado]
+
+Página de apresentação, demo em `/demo/` e prints de celular. Não muda nenhuma API do pacote nem os componentes: a versão que leva estas mudanças (1.1.1 ou junto da 1.2.0) fica para decisão do Bruno.
+
+### Adicionado
+
+- Demo do app simulado (bloco P3): login com aviso de demonstração e regra de senha, verificação em duas etapas, esqueci a senha, nova senha com medidor de força, criar conta, lista de clientes (busca, filtros, paginação, exclusão), detalhe do cliente com quatro abas, novo cliente com máscaras e buscas fictícias, cadastro guiado em quatro etapas, tarefas com seleção em massa, configurações em seis seções, painel com período e cadastro rápido em gaveta, e tela de erro 500. Dados de exemplo determinísticos em `src/mocks`, sem componente novo no pacote. O menu de exemplo ganhou Clientes, Cadastros e Tarefas, e "Sair" volta ao login.
+- Cinco capturas de celular novas (clientes, detalhe, cadastro guiado, verificação e tarefas) na página de apresentação e no README.
+- Página de apresentação do Rendra App na raiz do GitHub Pages (`https://bsmagalhaes.github.io/rendra-ui-app/`): hero com o app rodando num celular, matriz dos 12 códigos de modelo e paleta, componentes, telas, prompts para IA, instalação, galeria com ampliação e perguntas frequentes. Identidade visual da família Rendra (tema escuro), `docs/index.html` sem dependência nem fonte externa.
+- `npm run pages:stage` monta a árvore do Pages (`scripts/pages-stage.ts`): página na raiz e demo em `/demo/`, com `sitemap.xml`, `robots.txt`, `llms.txt` e um `404.html` que leva endereços antigos (fora de `/demo/`) para dentro da demo.
+- `npm run test:site` (Playwright e axe sobre a página) e `npm run test:demo` (a demo em `/demo/` mantém o prefixo ao navegar e ao voltar).
+- `npm run docs:images:check`: confere que toda captura é de celular em pé e que a `og-image.png` tem 1200x630.
+- `robots.txt` libera de forma explícita os robôs de busca e de resposta de IA (`OAI-SearchBot`, `ChatGPT-User`, `Claude-SearchBot`, `Claude-User`, `PerplexityBot`, `Perplexity-User`).
+
+### Alterado
+
+- A demo passa a viver em `https://bsmagalhaes.github.io/rendra-ui-app/demo/` (`experiments.baseUrl` = `/rendra-ui-app/demo`); os endereços antigos, como `/rendra-ui-app/componentes`, levam à demo pelo `404.html` da raiz.
+- Capturas do README e da página passam a ser de celular (390 px, escala 3, com moldura de aparelho em CSS puro), 20 imagens geradas por script, incluindo a matriz dos 12 códigos de modelo e paleta; as capturas largas de 1920x1080 saem. A `og-image.png` (1200x630) é composta por HTML com dois aparelhos.
+- `clean:clone` não herda a página de apresentação, o subcaminho `/demo/` nem os testes da página; o `docs:images` do clone continua funcionando e gera a `og-image.png` sem a marca Rendra.
+
+- O painel de exemplo deixa de aceitar `?cliente=`: as linhas de clientes recentes levam ao detalhe do cliente.
+
+### Corrigido
+
+- `OtpInput`: no web só uma das seis caixas do código cabia na tela do celular (o `<input>` de cada caixa não encolhia); a caixa ganha `min-w-0` e as seis cabem em 360 px e em 390 px.
+- `PageHeader` dentro do `AppShell`: numa tela com título dinâmico alcançada por navegação (por exemplo o detalhe de um cliente aberto pela lista), o cabeçalho mostrava o título da tela de origem; a tela passa a adotar a rota nova logo depois de montar.
+
+### Pendente
+
+- Simulação dos dois leigos aprovada para a versão que levar estas mudanças (Regra um, item 7): a demo e a página mudam o que o leigo vê. Sem essa frase, a publicação é recusada.
+
 ## [1.1.0] - 29/09/2026
 
 Segunda versão sobre a base da 1.0.0: navegação do app pronta (`AppShell`), telas base, home e abertura animada, num total de 49 componentes de UI (os 44 anteriores mais `RendraCredit`, `ErrorPage`, `AuthLayout`, `AppShell` e `RendraSplash`). Mudança aditiva: nenhuma API pública existente foi removida ou renomeada.

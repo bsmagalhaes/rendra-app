@@ -18,15 +18,19 @@ jobs:
       - run: npm run lint
       - run: npm run check:rules
       - run: npm run test:coverage
+      - run: npm run docs:images:check
       - run: npm run build:lib
       - run: npm run verify:pack
       - run: npm run build
+      - run: npm run pages:stage
       - run: npx playwright install --with-deps chromium
       - run: npm run test:layout
       - run: npm run test:a11y
+      - run: npm run test:site
+      - run: npm run test:demo
       - uses: actions/upload-artifact@v7
         if: always()
-        with: { name: dist, path: dist }
+        with: { name: pages, path: .pages/rendra-ui-app }
 
   pages:
     needs: verify
@@ -40,8 +44,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/download-artifact@v8
-        with: { name: dist, path: dist }
+        with: { name: pages, path: site }
       - uses: actions/upload-pages-artifact@v5
-        with: { path: dist }
+        with: { path: site }
       - id: deployment
         uses: actions/deploy-pages@v5

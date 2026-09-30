@@ -1,4 +1,4 @@
-import { buildRobotsTxt, TRAINING_BOTS } from './robots'
+import { buildRobotsTxt, SEARCH_BOTS, TRAINING_BOTS } from './robots'
 
 describe('buildRobotsTxt', () => {
   it('libera todo mundo por padrao e bloqueia so os 7 robos de treino', () => {
@@ -17,6 +17,16 @@ describe('buildRobotsTxt', () => {
       'PerplexityBot', 'Perplexity-User',
     ]) {
       expect(texto).not.toContain(`User-agent: ${liberado}\nDisallow: /`)
+    }
+  })
+
+  it('libera de forma explícita os 6 robôs de busca e resposta de IA', () => {
+    const texto = buildRobotsTxt('https://bsmagalhaes.github.io/rendra-ui-app/')
+    expect(SEARCH_BOTS).toEqual([
+      'OAI-SearchBot', 'ChatGPT-User', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User',
+    ])
+    for (const bot of SEARCH_BOTS) {
+      expect(texto).toContain(`User-agent: ${bot}\nAllow: /`)
     }
   })
 

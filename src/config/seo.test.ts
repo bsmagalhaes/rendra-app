@@ -68,6 +68,40 @@ describe('routeSeo', () => {
   })
 })
 
+describe('SEO das rotas da demonstração (P3.16)', () => {
+  // B7: `routeSeo` é um array, então a busca é por `.find`. O piso de `seo.ts` é 100%.
+  it.each([
+    ['/painel', /Painel/],
+    ['/clientes', /Clientes/],
+    ['/clientes/novo', /Novo cliente/],
+    ['/cadastro', /Cadastro/],
+    ['/tarefas', /Tarefas/],
+    ['/configuracoes', /Configurações/],
+  ])('%s tem título e descrição, e é indexada', (rota, titulo) => {
+    const seo = routeSeo.find((r) => r.path === rota)
+    expect(seo?.title).toMatch(titulo)
+    expect(seo?.description.length).toBeGreaterThanOrEqual(50)
+    expect(seo?.indexable).toBe(true)
+  })
+
+  // C18 e decisão do Bruno: `/login` continua indexável (é a porta da demo e já está no sitemap);
+  // as quatro telas de meio de fluxo ficam de fora dos buscadores.
+  it('/login continua indexável', () => {
+    expect(routeSeo.find((r) => r.path === '/login')?.indexable).toBe(true)
+  })
+
+  it.each(['/esqueci-senha', '/verificacao', '/nova-senha', '/cadastre-se'])('%s não é indexada', (rota) => {
+    const seo = routeSeo.find((r) => r.path === rota)
+    expect(seo).toBeDefined()
+    expect(seo?.indexable).toBe(false)
+    expect(seo?.title.length).toBeGreaterThan(0)
+  })
+
+  it('o detalhe dinâmico do cliente não tem entrada própria (fica com noindex por arquivo)', () => {
+    expect(routeSeo.some((r) => r.path.startsWith('/clientes/') && r.path !== '/clientes/novo')).toBe(false)
+  })
+})
+
 describe('siteSeo', () => {
   // Achado B2 da validacao da entrega (Blocos 5 e 6, Fable): `cleanSeoConfig`
   // (scripts/lib/clean-clone.ts) troca `productName`/`repositoryUrl` pelos do projeto clonado, e

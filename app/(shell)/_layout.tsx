@@ -1,15 +1,19 @@
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { AppShell } from '../../src/components/app-shell'
-import { exampleNavigation, exampleUser } from '../../src/config/navigation'
+import { buildNavigation, exampleUser } from '../../src/config/navigation'
+import { useClientes } from '../../src/demo/clients-store'
 
 /**
  * Rotas com o AppShell (cabeçalho, barra inferior e menu). O grupo entre parênteses não entra na
  * URL: `/componentes`, `/tokens` e `/galeria` continuam nos mesmos endereços. Home, login e
- * `+not-found` ficam fora do grupo, em tela cheia.
+ * `+not-found` ficam fora do grupo, em tela cheia. "Sair" no menu do usuário volta ao login (o
+ * `router.replace` vem do `expo-router` porque `useRendraNavigation` não tem `replace`).
  */
 export default function ShellLayout() {
+  const router = useRouter()
+  const total = useClientes().length
   return (
-    <AppShell navigation={exampleNavigation} user={exampleUser}>
+    <AppShell navigation={buildNavigation(total)} user={exampleUser} onLogout={() => router.replace('/login')}>
       <Stack screenOptions={{ headerShown: false }} />
     </AppShell>
   )

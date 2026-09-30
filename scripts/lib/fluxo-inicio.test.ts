@@ -192,10 +192,10 @@ descrever('AGENTS.md e documentos de uso conduzem o briefing', () => {
     expect(ler('docs/COMO_APLICAR.md')).toContain('BRIEFING_MODELO')
   })
 
-  it('CHANGELOG registra o briefing guiado na entrada da 1.1.0, sem mexer na pendência da simulação', () => {
+  it('CHANGELOG registra o briefing guiado e a simulação aprovada na entrada da 1.1.0', () => {
     const changelog = ler('CHANGELOG.md')
     const versao = changelog.slice(changelog.indexOf('## [1.1.0]'), changelog.indexOf('## [1.0.0]'))
     expect(versao).toContain('Briefing guiado para qualquer IA')
-    expect(versao).toMatch(/Simulação dos dois leigos: pendente/)
+    expect(versao).toContain('Simulação dos dois leigos aprovada em 30/09/2026')
   })
 })

@@ -229,7 +229,7 @@ describe('CLAUDE.md, diff contra o arquivo de referência', () => {
     const path = require('path') as { join: (...parts: string[]) => string }
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-md-'))
     try {
-      const marker = '## Matriz de modelos (inegociável)'
+      const marker = '## Matriz de modelos'
       const reference = `${marker}\n\nlinha um\nlinha dois\n`
       const claude = `# Titulo\n\nintro\n\n${reference}`.replace(/\n/g, '\r\n')
       const claudePath = path.join(dir, 'CLAUDE.md')

@@ -92,7 +92,7 @@ Ao fim de cada etapa: os comandos da seção "Comandos", capturas em 360 e 390, 
 4. **Execução**: implementar tarefa a tarefa, teste primeiro, sempre TDD real (vermelho comprovado, depois verde).
 5. **Validação da entrega**: revisar o diff e a saída dos testes, nunca confiar só na leitura do código.
 
-Se a sua ferramenta tem subagentes ou vários modelos e o trabalho é manutenção do próprio Rendra App, leia também `CLAUDE.md`, seção "Matriz de modelos (inegociável)" (verificada por `npm run check:rules`): cada etapa fica com o modelo indicado e nenhum modelo valida o que escreveu. Em qualquer outra ferramenta, ou em projeto novo ou migração, cumpra as mesmas etapas em sequência, sem subagentes: valide rodando os comandos e lendo o próprio diff, e nunca finja chamar outro modelo.
+Se a sua ferramenta tem subagentes ou vários modelos e o trabalho é manutenção do próprio Rendra App, leia também `CLAUDE.md`, seção "Matriz de modelos" (verificada por `npm run check:rules`): cada etapa fica com o modelo indicado e nenhum modelo valida o que escreveu. Em qualquer outra ferramenta, ou em projeto novo ou migração, cumpra as mesmas etapas em sequência, sem subagentes: valide rodando os comandos e lendo o próprio diff, e nunca finja chamar outro modelo.
 
 ## Telas e navegação do boilerplate
 

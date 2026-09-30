@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import type { ReactNode } from 'react'
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -6,6 +6,7 @@ import { MoreHorizontal } from 'lucide-react-native'
 import { Button } from './button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './dropdown-menu'
 import { cn } from '../../lib/cn'
+import { ShellContext } from '../app-shell/shell-context'
 
 export interface ActionBarAction {
   label: string
@@ -26,6 +27,8 @@ export interface ActionBarProps {
 
 export function ActionBar({ primary, cancel, secondary, sticky = true, className, testID }: ActionBarProps) {
   const insets = useSafeAreaInsets()
+  // Dentro do shell com barra inferior, ela já é dona do inset inferior: somar de novo dobraria o respiro.
+  const shell = useContext(ShellContext)
   const [menuOpen, setMenuOpen] = useState(false)
   const hasMenu = Boolean(secondary && secondary.length > 0)
   const sideClass = cancel || hasMenu ? 'flex-7' : 'flex-1'
@@ -88,7 +91,7 @@ export function ActionBar({ primary, cancel, secondary, sticky = true, className
   return (
     <View
       className={cn('border-t bg-card px-4 pt-4', className)}
-      style={{ paddingBottom: Math.max(16, insets.bottom) }}
+      style={{ paddingBottom: shell?.layout.bottomNav ? 16 : Math.max(16, insets.bottom) }}
       testID={testID}
       dataSet={{ rendra: 'ACB-001' }}
     >

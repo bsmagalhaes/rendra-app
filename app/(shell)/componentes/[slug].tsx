@@ -1,9 +1,9 @@
 import { ScrollView } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
-import { useDocumentTitle } from '../../src/lib/use-document-title'
-import { showcaseGroups } from '../../src/config/showcase'
-import { Container, Inline, PageHeader, Section, Stack } from '../../src/components/layout'
-import { Badge } from '../../src/components/ui'
+import { useDocumentTitle } from '../../../src/lib/use-document-title'
+import { showcaseGroups } from '../../../src/config/showcase'
+import { Container, Inline, PageHeader, Section, Stack } from '../../../src/components/layout'
+import { Badge } from '../../../src/components/ui'
 
 export function generateStaticParams() {
   return showcaseGroups.map((group) => ({ slug: group.slug }))

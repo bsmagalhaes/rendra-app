@@ -14,7 +14,7 @@ Quem já tem um app existente migra por um de três caminhos, escolhido por um c
 
 ## Pelo pacote npm
 
-Enquanto `npm view @rendra-ui/app version` não responder, o pacote ainda não foi publicado: use "cópia dos arquivos" em vez deste caminho. Quando responder, instalação e configuração, uma vez só, no app de destino:
+Instalação e configuração, uma vez só, no app de destino:
 
 ```bash
 npm install @rendra-ui/app nativewind tailwindcss@3
@@ -24,6 +24,33 @@ npx expo install react react-native react-native-reanimated react-native-gesture
 O pacote e o Tailwind vêm pelo `npm install` comum (fixando `tailwindcss@3`: a `latest` do Tailwind é a 4, e a NativeWind só suporta Tailwind CSS v3); os peers nativos vêm pelo `npx expo install`, que escolhe sozinho a versão de cada um que o SDK do app empacota, em vez da versão mais nova do npm (que pode não bater com o Expo Go). `tailwind.config.js`: `presets: [require('@rendra-ui/app/tailwind-preset')]`, `content` incluindo `./node_modules/@rendra-ui/app/dist-lib/**/*.js`. `global.css` com as três diretivas do Tailwind. `babel.config.js` com `jsxImportSource: 'nativewind'` e o preset `nativewind/babel`. `metro.config.js` com `withNativeWind`. Na raiz do app: `registerIconInterop()` uma vez (de `@rendra-ui/app`), `<BrandProvider>` envolvendo a árvore, e, com Expo Router, `<RendraRouterBridge>` de `@rendra-ui/app/router-bridge`.
 
 Componentes como `Button` usam `react-native-reanimated` (`useAnimatedStyle`), que exige o plugin `react-native-worklets/plugin` no Babel para funcionar. Em app Expo, o `babel-preset-expo` já inclui esse plugin sozinho (nenhum passo extra, `expo-status-bar` acima é peer obrigatório, não opcional). Em bare React Native sem `babel-preset-expo`, acrescente `react-native-worklets/plugin` aos `plugins` do `babel.config.js` à mão; sem ele, os componentes animados quebram no primeiro toque.
+
+## Navegação do app: `AppShell`
+
+O `AppShell` entrega cabeçalho (título da tela, seta de voltar, menu do usuário), barra inferior de navegação rápida com botão central de menu e o menu em gaveta lateral ou folha inferior. Só `navigation` é obrigatório; ele nunca importa o roteador, usa `useRendraNavigation()` (o `RendraRouterBridge` ou o seu `RendraNavigationProvider`). Com Expo Router, ponha as telas que usam o shell num grupo de rotas (por exemplo `app/(shell)/`) e monte o `AppShell` no layout do grupo:
+
+```tsx
+import { Stack } from 'expo-router'
+import { LayoutDashboard } from 'lucide-react-native'
+import { AppShell } from '@rendra-ui/app'
+
+export default function ShellLayout() {
+  return (
+    <AppShell
+      navigation={[{ title: 'Geral', items: [{ title: 'Painel', to: '/painel', icon: LayoutDashboard, bottomNav: true }] }]}
+      user={{ name: 'Ana Ribeiro', email: 'ana@exemplo.com' }}
+    >
+      <Stack screenOptions={{ headerShown: false }} />
+    </AppShell>
+  )
+}
+```
+
+`bottomNav: true` põe o item na barra inferior (até 4). O layout vem do código de modelo, terceira parte `N1` a `N3` (`N1` barra inferior com menu em gaveta, `N2` barra inferior com menu em folha, `N3` só gaveta): por `?codigo=T#-C#-N#`, por `useShell().applyLayout('N2')` ou pela tela de configurações de exemplo; a escolha fica gravada no aparelho (`userConfigurable={false}` desliga). Dentro do shell, `PageHeader` e `ActionBar` se ajustam sozinhos (o título vai para o cabeçalho e os insets não se somam). Telas públicas (login, erro 404) ficam fora do grupo, em tela cheia, cada uma com o próprio `SafeAreaView`. O menu e o usuário de exemplo da vitrine (`src/config/navigation.tsx`) não fazem parte do pacote: escreva o seu.
+
+## Crédito "Feito com Rendra"
+
+`RendraCredit` (e o `AuthLayout`, que o traz no rodapé) vem ligado por padrão. Para tirar, `credit={false}` no `AuthLayout` ou simplesmente não renderizar o `RendraCredit`; para trocar, `creditText` e `creditHref`. O crédito na tela é opcional, mas a licença MIT continua exigindo o aviso de copyright e o arquivo `LICENSE` no código e em qualquer cópia.
 
 ## Limpeza do clone
 
@@ -90,4 +117,4 @@ function TrocarMarca() {
 
 ## Verificação via seletor real ou por URL
 
-Na `/galeria`, os três `ButtonGroup` (Modelo, Paleta, Modo) trocam ao vivo pelo controle real, sem recarregar. Como alternativa (ou em qualquer outra rota), a troca de modelo/paleta/modo é verificável por parâmetro de URL: `?codigo=T#-C#` (modelo e paleta) e `?modo=claro|escuro|sistema` (modo), lidos por `ModelCodeFromUrl` dentro do `BrandProvider`. Exemplo: `/galeria?codigo=T3-C4`.
+Na `/galeria`, os três `ButtonGroup` (Modelo, Paleta, Modo) trocam ao vivo pelo controle real, sem recarregar. Como alternativa (ou em qualquer outra rota), a troca de modelo/paleta/modo é verificável por parâmetro de URL: `?codigo=T#-C#` (modelo e paleta) e `?modo=claro|escuro|sistema` (modo), lidos por `ModelCodeFromUrl` dentro do `BrandProvider`. Exemplo: `/galeria?codigo=T3-C4`. A terceira parte `N1` a `N3` (`?codigo=T3-C4-N2`) escolhe o layout do `AppShell`, aplicado depois que o layout salvo é lido. O roteiro `docs/BRIEFING_MODELO.md` é o que coleta esses códigos e as escolhas de tema, cor e navegação com a pessoa, uma decisão por mensagem.

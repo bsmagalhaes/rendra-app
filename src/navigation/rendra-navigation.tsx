@@ -8,6 +8,10 @@ export interface RendraLinkProps {
 
 export interface RendraNavigationValue {
   navigate: (href: string) => void
+  /** Volta uma tela no histórico (campo aditivo da 1.1.0). */
+  goBack?: () => void
+  /** Diz se há para onde voltar; sem provider responde `false`. */
+  canGoBack?: () => boolean
   currentPath?: string
   searchParams?: Record<string, string | undefined>
   linkComponent?: ComponentType<RendraLinkProps>
@@ -34,5 +38,12 @@ export function RendraNavigationProvider({
 export function useRendraNavigation(): RendraNavigationValue {
   const contexto = useContext(RendraNavigationContext)
   if (contexto) return contexto
-  return { navigate: navigateSemProvider, currentPath: undefined, searchParams: undefined, linkComponent: undefined }
+  return {
+    navigate: navigateSemProvider,
+    goBack: navigateSemProvider,
+    canGoBack: () => false,
+    currentPath: undefined,
+    searchParams: undefined,
+    linkComponent: undefined,
+  }
 }

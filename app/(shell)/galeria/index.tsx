@@ -1,33 +1,17 @@
 import { ScrollView, View } from 'react-native'
-import { Text } from '../../src/components/internal/text'
-import { useBrand } from '../../src/brand'
-import type { ColorMode } from '../../src/brand'
-import type { ModelId } from '../../src/theme/models'
-import { themeCodes, colorCodes } from '../../src/config/presets'
-import { useDocumentTitle } from '../../src/lib/use-document-title'
-import { PageHeader, Stack } from '../../src/components/layout'
-import { ActionBar, Badge, ButtonGroup, Card, StatCard, Tabs, toast } from '../../src/components/ui'
-
-// C10 (veredito do Opus, resolve o [verificar] da Tarefa 10): campos reais de
-// `src/config/presets.ts`: `ThemeCode { code, brand, name }`, `ColorCode { code, palette, name }`.
-// O `value` das opções usa o campo de código real (`code`/`palette`), não `ModelId`/`paletteId`
-// direto, e um guarda de tipo local decide se o valor recebido de volta é aplicável.
-const isModelId = (value: string): value is ModelId => value === 'T1' || value === 'T2' || value === 'T3'
-const isColorMode = (value: string): value is ColorMode =>
-  value === 'light' || value === 'dark' || value === 'system'
-
-const modelOptions = themeCodes.map((t) => ({ value: t.code, label: t.name }))
-const paletteOptions = colorCodes.map((c) => ({ value: c.palette, label: c.name }))
-const modeOptions = [
-  { value: 'light', label: 'Claro' },
-  { value: 'dark', label: 'Escuro' },
-  { value: 'system', label: 'Sistema' },
-]
-
-function modoAtivoLabel(mode: ColorMode): string {
-  if (mode === 'system') return 'sistema'
-  return mode === 'dark' ? 'escuro' : 'claro'
-}
+import { Text } from '../../../src/components/internal/text'
+import { useBrand } from '../../../src/brand'
+import {
+  isColorMode,
+  isModelId,
+  modeLabel,
+  modeOptions,
+  modelOptions,
+  paletteOptions,
+} from '../../../src/config/appearance'
+import { useDocumentTitle } from '../../../src/lib/use-document-title'
+import { PageHeader, Stack } from '../../../src/components/layout'
+import { ActionBar, Badge, ButtonGroup, Card, StatCard, Tabs, toast } from '../../../src/components/ui'
 
 export default function GaleriaIndex() {
   const { brand, model, modelCode, setModelCode, palette, paletteId, setPaletteId, mode, setMode } = useBrand()
@@ -72,7 +56,7 @@ export default function GaleriaIndex() {
             if (isColorMode(next)) setMode(next)
           }}
         />
-        <Text className="text-sm text-muted-foreground">{`Modo ativo: ${modoAtivoLabel(mode)}`}</Text>
+        <Text className="text-sm text-muted-foreground">{`Modo ativo: ${modeLabel(mode)}`}</Text>
       </View>
 
       <Card className="gap-4 p-4">

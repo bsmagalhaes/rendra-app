@@ -15,6 +15,34 @@ describe('src/index.ts, entrada principal do pacote', () => {
     expect(typeof pacote.createPalette).toBe('function')
     expect(typeof pacote.buildThemeVars).toBe('function')
     expect(typeof pacote.Spinner).toBe('function')
+    expect(typeof pacote.RendraCredit).toBe('function')
+    expect(typeof pacote.ErrorPage).toBe('function')
+    expect(typeof pacote.AuthLayout).toBe('function')
+    expect(typeof pacote.RendraSplash).toBe('function')
+    expect((pacote as Record<string, unknown>).splashSeloStyle).toBeUndefined()
+    expect(pacote.RENDRA_CREDIT_TEXT).toBe('Feito com Rendra')
+  })
+
+  it('exporta o AppShell e a superficie publica de navegacao, sem o menu de exemplo', () => {
+    expect(typeof pacote.AppShell).toBe('function')
+    expect(typeof pacote.ShellProvider).toBe('function')
+    expect(typeof pacote.useShell).toBe('function')
+    expect(pacote.ShellContext).toBeTruthy()
+    expect(pacote.defaultShellLayout).toEqual({ bottomNav: true, menu: 'drawer' })
+    expect(Object.keys(pacote.layoutOptions)).toEqual(['N1', 'N2', 'N3'])
+    expect(typeof pacote.getBottomNavItems).toBe('function')
+    expect(typeof pacote.getNavigationTargets).toBe('function')
+    expect(typeof pacote.resolveActiveTo).toBe('function')
+    expect(typeof pacote.getBackTarget).toBe('function')
+    // `src/config/navigation.tsx` é só o exemplo da vitrine, como `brand.config.ts`.
+    expect((pacote as Record<string, unknown>).exampleNavigation).toBeUndefined()
+    expect((pacote as Record<string, unknown>).exampleUser).toBeUndefined()
+  })
+
+  it('exporta os codigos de navegacao N1 a N3', () => {
+    expect(Array.isArray(pacote.navCodes)).toBe(true)
+    expect(pacote.navCodes.map((n) => n.code)).toEqual(['N1', 'N2', 'N3'])
+    expect(pacote.defaultModelCode).toBe('T1-C1-N1')
   })
 
   it('exporta o catalogo de codigos de componente (secao 3.3 do levantamento da Sincronizacao 1)', () => {

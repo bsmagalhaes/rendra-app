@@ -1,8 +1,8 @@
 import { View, ScrollView } from 'react-native'
-import { Text } from '../../src/components/internal/text'
-import { useBrand } from '../../src/brand'
-import { contrast } from '../../src/brand/palette'
-import { useDocumentTitle } from '../../src/lib/use-document-title'
+import { Text } from '../../../src/components/internal/text'
+import { useBrand } from '../../../src/brand'
+import { contrast } from '../../../src/brand/palette'
+import { useDocumentTitle } from '../../../src/lib/use-document-title'
 
 const TEXT_SIZE_CLASSES: Record<string, string> = {
   xs: 'text-xs', sm: 'text-sm', base: 'text-base', lg: 'text-lg',

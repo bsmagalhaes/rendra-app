@@ -4,6 +4,9 @@
  */
 export * from './components/ui'
 export * from './components/layout'
+export * from './components/app-shell'
+export { RendraSplash } from './components/splash/rendra-splash'
+export type { RendraSplashProps } from './components/splash/rendra-splash'
 export { Gradient, gradientStops } from './components/gradient/gradient'
 export type { GradientProps } from './components/gradient/gradient'
 
@@ -21,7 +24,8 @@ export type { Model, ModelId } from './theme/models'
 export { systemColorsLight, systemColorsDark } from './theme/tokens'
 export { buildThemeVars, themeColorString } from './theme/vars'
 
-export { themeCodes, colorCodes, parseModelCode, formatModelCode, defaultModelCode } from './config/presets'
+export { themeCodes, colorCodes, navCodes, parseModelCode, formatModelCode, defaultModelCode } from './config/presets'
+export type { NavCode } from './config/presets'
 
 export { CATALOG, resolveCatalogCode, getCatalogEntry, catalogByComponent } from './catalog/components'
 export type { ComponentCatalogEntry } from './catalog/components'

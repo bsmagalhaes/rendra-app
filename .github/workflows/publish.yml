@@ -1,7 +1,11 @@
-# Publica @rendra-ui/app no npm quando uma tag v* é empurrada (ex.: v0.3.0). A tag precisa
+# Publica @rendra-ui/app no npm quando uma tag v* é empurrada (ex.: v1.1.0). A tag precisa
 # bater com "version" do package.json, checado abaixo antes de publicar. Nada é publicado sem
-# uma tag: nenhuma tarefa deste lote cria tag, e a primeira publicação de cada pacote é manual,
-# feita pelo Bruno num terminal interativo (padrão dos produtos Rendra, seção 1, item 5).
+# uma tag: só o autor cria a tag, depois do CI verde e da revisão da entrega.
+#
+# A publicação usa o trusted publishing do npm (o pacote tem este repositório e este workflow
+# cadastrados como "Trusted Publisher"): não há segredo NPM_TOKEN nem NODE_AUTH_TOKEN; o
+# id-token do GitHub autentica e assina o atestado de proveniência (padrão dos produtos
+# Rendra, o mesmo do Rendra web).
 name: Publicar pacote (npm)
 
 on:
@@ -37,6 +41,18 @@ jobs:
           node-version: 24
           cache: npm
           registry-url: https://registry.npmjs.org
+      # O trusted publishing exige npm 11.5.1 ou mais recente. O Node 24 do runner costuma
+      # trazer uma 11.x recente, mas nem toda 24.x: se vier menor, atualiza; sempre imprime a
+      # versão usada, para o log da publicação provar qual npm assinou.
+      - name: npm com suporte a trusted publishing (11.5.1 ou mais recente)
+        run: |
+          NPM_ATUAL="$(npm --version)"
+          MENOR="$(printf '%s\n%s\n' 11.5.1 "$NPM_ATUAL" | sort -V | head -n1)"
+          if [ "$MENOR" != "11.5.1" ]; then
+            echo "npm $NPM_ATUAL é anterior à 11.5.1; atualizando."
+            npm install -g npm@^11.5.1
+          fi
+          echo "npm em uso: $(npm --version)"
       - run: npm ci
       # Achado M4: os mesmos portões do ci.yml, para uma tag empurrada sobre um commit fora de
       # main (que não passa pelo job "verify" do ci.yml) não publicar sem eles.
@@ -46,8 +62,7 @@ jobs:
       - run: npm run test:coverage
       - run: npm run build:lib
       - run: npm run verify:pack -- --publicacao
-      # O trusted publishing do npm (registro configurado para este repositório e este
-      # workflow) dispensa o segredo NPM_TOKEN; sem ele configurado, o publish usa o token.
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # Trusted publishing: sem NODE_AUTH_TOKEN. O npm troca o id-token do GitHub por uma
+      # credencial de publicação de curta duração e grava a proveniência.
+      - name: Publicar pelo trusted publishing
+        run: npm publish --provenance --access public

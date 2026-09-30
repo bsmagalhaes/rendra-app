@@ -112,7 +112,8 @@ export function BrandProvider({
 
   useEffect(() => {
     let active = true
-    AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
+    // Leitura que rejeita: segue com o padrão, sem deixar `hydrated` preso em falso.
+    AsyncStorage.getItem(STORAGE_KEY).catch(() => null).then((raw) => {
       if (!active) return
       if (raw) {
         const stored = parseStoredBrand(raw)

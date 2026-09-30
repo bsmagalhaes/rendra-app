@@ -2,11 +2,42 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
-## [Não lançado]
+## [1.1.0] - 29/09/2026
+
+Segunda versão sobre a base da 1.0.0: navegação do app pronta (`AppShell`), telas base, home e abertura animada, num total de 49 componentes de UI (os 44 anteriores mais `RendraCredit`, `ErrorPage`, `AuthLayout`, `AppShell` e `RendraSplash`). Mudança aditiva: nenhuma API pública existente foi removida ou renomeada.
+
+### Adicionado
+
+- `RendraCredit` (`CRED-001`): crédito discreto "Feito com Rendra", ligado por padrão e removível com `credit={false}`; texto e link substituíveis; exportado pela entrada principal do pacote e registrado no catálogo de códigos.
+- Códigos de navegação `N1` a `N3` (`navCodes`, tipo `NavCode`): terceira parte do código de modelo (`T#-C#-N#`), lida por `parseModelCode` e devolvida por `formatModelCode`. `N1` barra inferior com menu em gaveta, `N2` barra inferior com menu em folha, `N3` só gaveta.
+- `RendraNavigationValue` ganha `goBack?` e `canGoBack?` (campos opcionais); `RendraRouterBridge` os alimenta com `router.back()` e `router.canGoBack()`. Sem provider, `goBack` lança o mesmo erro de `navigate` e `canGoBack` responde `false`.
+- `AppShell` (`src/components/app-shell`, exportado com `ShellProvider`, `ShellContext`, `useShell`, `defaultShellLayout`, `layoutOptions` e as funções puras de navegação): cabeçalho com título da tela, seta de voltar e menu do usuário; barra inferior de navegação rápida com botão central de menu; menu em gaveta lateral (`N1`, `N3`) ou folha inferior (`N2`); layout escolhido pelo código `?codigo=T#-C#-N#` ou pelo `applyLayout`, gravado em `AsyncStorage` (`rendra:shell-layout`, desligável por `userConfigurable={false}`). Só `navigation` é obrigatório; nunca importa o roteador, usa `useRendraNavigation()`.
+- `AuthLayout` (`src/components/layout`): moldura pública de entrada, com painel de marca (único degradê), título, descrição, link de voltar (`back`), rodapé e o crédito `RendraCredit` ligado por padrão (`credit`, `creditText`, `creditHref`).
+- `ErrorPage` (`ERRO-001`): página de erro `404` ou `500`, com títulos e textos em pt-BR, botão de voltar (sem histórico, leva à raiz) e `fullScreen` para ocupar a tela; registrada no catálogo de códigos.
+- `RendraSplash`: overlay animado de abertura (Reanimated), que respeita "reduzir movimento", some sozinho por `onFinished` e é exportado pela entrada principal do pacote; o boilerplate o liga ao splash nativo em `app/_layout.tsx` (o pacote não depende de `expo-splash-screen`).
+- Telas de exemplo do boilerplate: home (`/`, apresenta o projeto, os 3 modelos e as 4 paletas, com troca ao vivo), `/login` (formulário com validação e crédito), `/painel` (indicadores, lista de clientes e atividade, dentro do shell), `/configuracoes` (aparência, layout do menu e perfil, dentro do shell) e a página 404 (`+not-found`). As três primeiras entram no SEO (título, descrição, canonical, `sitemap.xml`).
+- Splash nativo neutro em `app.json` (`expo-splash-screen`, fundo claro e escuro) para o Expo Go e as builds, sem quadro em branco antes do overlay.
 
 ### Alterado
 
-- Endereço novo: o repositório passa de `bsmagalhaes/rendra-app` para `bsmagalhaes/rendra-ui-app` e a vitrine de `https://bsmagalhaes.github.io/rendra-app/` para `https://bsmagalhaes.github.io/rendra-ui-app/` (o GitHub Pages não redireciona: links antigos da vitrine dão 404). O design system web passa a ser citado como `bsmagalhaes/rendra-ui-web`. O nome do pacote npm (`@rendra-ui/app`) não muda. Quem clonou o repositório pode atualizar com `git remote set-url origin https://github.com/bsmagalhaes/rendra-ui-app.git`. A mudança sai no próximo lançamento (a versão continua 1.0.0).
+- Briefing guiado para qualquer IA: modelo reescrito, `AGENTS.md` com condução e ramo sem terminal, teste que amarra o briefing ao catálogo, aos modelos e às paletas.
+- `PageHeader` e `ActionBar` reconhecem o `AppShell` (dentro dele o `PageHeader` não soma o inset superior e leva título e ajuda em texto ao cabeçalho; o `ActionBar` fixo não soma o inset inferior quando há barra inferior). Fora do shell o comportamento é o de sempre.
+- Rotas da vitrine (`/componentes`, `/tokens`, `/galeria`) agora ficam no grupo `app/(shell)/`, sem mudar as URLs; a raiz de rotas deixou de ter `SafeAreaView` (o inset superior é do cabeçalho do shell). O export estático grava também cópias em `dist/(shell)/`, marcadas `noindex`.
+- `defaultModelCode` passa de `'T1-C1'` para `'T1-C1-N1'`; `parseModelCode('T1-C1')` continua válido (a parte `N` é opcional).
+- `Input variant="secret"` com `clearable`: o botão "Limpar campo" passa a olhar o que foi digitado nesta edição (antes aparecia com base no `value` do consumidor, o valor salvo) e esvazia o campo; o valor salvo continua nunca chegando ao campo.
+- A rota `/` deixa de redirecionar para `/componentes` e passa a ser a home; home, login e a página 404 ficam fora do `AppShell`, em tela cheia, cada uma com o próprio `SafeAreaView`.
+- Publicação por trusted publishing do npm (`publish.yml` sem `NPM_TOKEN`, com `id-token`, `--provenance` e conferência do npm 11.5.1 ou mais recente no runner), o mesmo modelo do Rendra web; os portões antes de publicar continuam.
+- Divergência registrada com o design system web: o catálogo do app acusa colisão de código de componente com `[TCMN]\d+` (o web para em `[TCM]\d+`), porque o `N` é exclusivo do app.
+- Endereço novo: o repositório passa de `bsmagalhaes/rendra-app` para `bsmagalhaes/rendra-ui-app` e a vitrine de `https://bsmagalhaes.github.io/rendra-app/` para `https://bsmagalhaes.github.io/rendra-ui-app/` (o GitHub Pages não redireciona: links antigos da vitrine dão 404). O design system web passa a ser citado como `bsmagalhaes/rendra-ui-web`. O nome do pacote npm (`@rendra-ui/app`) não muda. Quem clonou o repositório pode atualizar com `git remote set-url origin https://github.com/bsmagalhaes/rendra-ui-app.git`.
+
+### Conhecido
+
+- Com o `AppShell` e a barra inferior ligada, o `Toaster` (montado na raiz, fora do shell) aparece sobre a barra inferior; ele soma só o inset inferior do aparelho. Quem precisar do toast acima da barra deve envolvê-lo com o próprio deslocamento.
+- `?codigo=T#-C#-N#` não vale na página 404: o Expo Router não entrega a busca à rota `+not-found`. Nas demais rotas o código continua lido normalmente.
+
+### Validação
+
+- Simulação dos dois leigos aprovada em 30/09/2026 (Regra um, item 7): começar um app novo e migrar um app existente, nos três perfis de IA (com terminal e agentes, com terminal sem agentes, chat sem terminal), sem lacuna bloqueadora.
 
 ## [1.0.0] - 28/09/2026
 
@@ -14,7 +45,7 @@ Sincronização 1 com o design system web (levantamento do Fable, web `fb19143`,
 
 ### Adicionado
 
-- Catálogo de códigos de componente (`src/catalog/components.ts`), com a mesma interface e as mesmas funções do design system web: 47 entradas (os 35 componentes catalogáveis do app, incluindo `SPIN-001`/`Spinner`; `LIST-002`, lista reordenável, fica para quando `onReorder` entrar), exportado pela entrada principal do pacote (`CATALOG`, `resolveCatalogCode`, `getCatalogEntry`, `catalogByComponent`, tipo `ComponentCatalogEntry`).
+- Catálogo de códigos de componente (`src/catalog/components.ts`), com a mesma interface e as mesmas funções do design system web: 47 entradas (os 34 componentes catalogáveis do app, incluindo `SPIN-001`/`Spinner`; `LIST-002`, lista reordenável, fica para quando `onReorder` entrar), exportado pela entrada principal do pacote (`CATALOG`, `resolveCatalogCode`, `getCatalogEntry`, `catalogByComponent`, tipo `ComponentCatalogEntry`).
 - `Spinner` (`SPIN-001`): indicador de carregamento único do sistema, giro por Reanimated parado no reduce motion, decorativo sem `label` e anunciado (`role="status"`) com `label`; extraído do giro que antes vivia solto dentro de `Button`. Entrada de vitrine no grupo Feedback de `/componentes`.
 - `Input` ganha unidades embutidas (`units`, `unit`, `onUnitChange`, `percentMax`): seletor à direita no mesmo padrão do seletor de DDI; trocar de unidade sempre limpa o valor; `percentMask(max)` em `src/lib/masks.ts` (teto configurável, padrão 100).
 - `Input` ganha `variant="secret"` (`hasValue`, `maskedHint`, `isEditing`, `onStartEdit`, `onCancelEdit`, `onRemove`, `removing`): modo leitura com texto mascarado e botões "Trocar"/"Remover"; modo edição sempre com campo vazio (o valor salvo nunca chega a existir no campo).
@@ -39,7 +70,7 @@ Sincronização 1 com o design system web (levantamento do Fable, web `fb19143`,
 - `themeColorString(vars, '--muted-foreground')` vira `themeColorString(vars, '--rendra-muted-foreground')`: o segundo argumento (a chave) também precisa do prefixo.
 - O preset do Tailwind/NativeWind (`@rendra-ui/app/tailwind-preset`) passa a resolver `var(--rendra-*)`; CSS próprio de quem consome o pacote e lia `var(--primary)` direto no seu próprio stylesheet precisa acrescentar o prefixo.
 - Classes JSX (`bg-primary`, `rounded-control`, `text-muted-foreground`) **não mudam**: a tradução para o nome prefixado acontece só dentro do preset, nunca no código de quem consome.
-- `npm run check:rules` (regra R14, a partir do Bloco 7 desta sincronização) passa a acusar toda variável própria do tema citada sem o prefixo `--rendra-`, para quem esquecer algum lugar.
+- `npm run check:rules` (regra R14) passa a acusar toda variável própria do tema citada sem o prefixo `--rendra-`, para quem esquecer algum lugar.
 - Nota: `--radius-control`/`-item`/`-surface`/`-block`/`-avatar` foram renomeadas para `--rendra-shape-control`/`-item`/`-surface`/`-block`/`-avatar` (mesmo nome do design system web), no mesmo commit do prefixo; as fórmulas por papel não mudaram, só o nome.
 - `resolveCatalogCode(component, props)` passa a lançar (`throw`) quando o componente não tem nenhuma entrada no catálogo, igual ao design system web, em vez de devolver `undefined`; o tipo de retorno muda de `string | undefined` para `string`. Quem chamava a função esperando `undefined` como valor de erro precisa envolver a chamada num `try/catch` (ou conferir o componente antes, com `catalogByComponent(component).length > 0`).
 

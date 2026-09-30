@@ -45,6 +45,14 @@ describe('useBrand', () => {
     expect(result.current.paletteId).toBe('safira')
   })
 
+  it('se a leitura do armazenamento rejeitar, hidrata mesmo assim com o padrão T1/safira', async () => {
+    jest.spyOn(AsyncStorage, 'getItem').mockRejectedValueOnce(new Error('storage indisponível'))
+    const { result } = await renderHook(() => useBrand(), { wrapper })
+    await waitFor(() => expect(result.current.hydrated).toBe(true))
+    expect(result.current.modelCode).toBe('T1')
+    expect(result.current.paletteId).toBe('safira')
+  })
+
   it('trocar modelo muda themeVars[--rendra-shape-control] de verdade, 0px -> 28px (Review Focus 3)', async () => {
     const { result } = await renderHook(() => useBrand(), { wrapper })
     await waitFor(() => expect(result.current.hydrated).toBe(true))

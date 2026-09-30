@@ -2,7 +2,7 @@ import { fireEvent, within } from '@testing-library/react-native'
 import { renderRouter } from 'expo-router/testing-library'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import RootLayout from '../../../app/_layout'
-import GaleriaIndex from '../../../app/galeria/index'
+import GaleriaIndex from '../../../app/(shell)/galeria/index'
 
 type Contexto = Awaited<ReturnType<typeof renderRouter>>
 

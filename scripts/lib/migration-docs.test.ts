@@ -4,7 +4,15 @@
 // (babel-preset-expo), metro.config.js (expo/metro-config) e jest.config.js (jest-expo) tal
 // qual, que não existem num app bare. Esta suíte lê os documentos reais (nunca uma cópia) e
 // falha se o piso real e o que fazer abaixo dele não estiverem escritos por extenso.
-const { readFileSync } = require('fs') as { readFileSync: (path: string, encoding: 'utf8') => string }
+const { readFileSync, existsSync } = require('fs') as {
+  readFileSync: (path: string, encoding: 'utf8') => string
+  existsSync: (path: string) => boolean
+}
+
+// No clone limpo o `README.md` é o do projeto novo (`buildCloneReadme`), sem o piso real nem as
+// instruções de instalação do pacote: os casos que o leem só valem no pacote, como `f2-docs.test.ts`.
+const ehPacote = existsSync('src/__tests__/pack-consumer.test.tsx')
+const doPacote = ehPacote ? it : it.skip
 
 const promptMigracao = readFileSync('docs/PROMPT_MIGRACAO.md', 'utf8')
 const agentsMd = readFileSync('AGENTS.md', 'utf8')
@@ -49,7 +57,7 @@ describe('docs/COMO_APLICAR.md alinhado ao mesmo piso', () => {
 })
 
 describe('README.md alinhado ao mesmo piso', () => {
-  it('menciona o piso real de React Native 0.83 ao descrever o critério dos três caminhos', () => {
+  doPacote('menciona o piso real de React Native 0.83 ao descrever o critério dos três caminhos', () => {
     expect(readmeMd).toMatch(/React Native 0\.83/)
   })
 })
@@ -60,13 +68,13 @@ describe('README.md alinhado ao mesmo piso', () => {
 // install" puro trazia 4.7.0/0.13.0 hoje) e quebrar o Expo Go; a Tailwind "latest" é a 4, fora da
 // faixa que a NativeWind 4.2 suporta (só v3).
 describe('instalação em app Expo usa npx expo install para os peers nativos e fixa tailwindcss@3', () => {
-  it('PROMPT_MIGRACAO.md (CAMINHO A), COMO_APLICAR.md e README.md mandam usar npx expo install para os peers nativos', () => {
+  doPacote('PROMPT_MIGRACAO.md (CAMINHO A), COMO_APLICAR.md e README.md mandam usar npx expo install para os peers nativos', () => {
     expect(promptMigracao).toMatch(/npx expo install/)
     expect(comoAplicar).toMatch(/npx expo install/)
     expect(readmeMd).toMatch(/npx expo install/)
   })
 
-  it('os três documentos fixam tailwindcss@3 (a "latest" do Tailwind é a 4, incompatível com a NativeWind, que só suporta v3)', () => {
+  doPacote('os três documentos fixam tailwindcss@3 (a "latest" do Tailwind é a 4, incompatível com a NativeWind, que só suporta v3)', () => {
     expect(promptMigracao).toMatch(/tailwindcss@3/)
     expect(comoAplicar).toMatch(/tailwindcss@3/)
     expect(readmeMd).toMatch(/tailwindcss@3/)

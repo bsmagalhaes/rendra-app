@@ -23,6 +23,8 @@ export function RendraRouterBridge({ children }: { children: ReactNode }) {
   const value = useMemo<RendraNavigationValue>(
     () => ({
       navigate: (href: string) => router.push(href),
+      goBack: () => router.back(),
+      canGoBack: () => router.canGoBack(),
       currentPath: pathname,
       searchParams: searchParams as Record<string, string | undefined>,
       linkComponent: Link,

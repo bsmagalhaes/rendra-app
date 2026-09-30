@@ -7,7 +7,7 @@ const { readFileSync, writeFileSync, existsSync } = require('fs') as {
 }
 const { join } = require('path') as { join: (...parts: string[]) => string }
 import { applyRouteSeo } from './lib/seo-html'
-import { siteUrlFrom, routeUrl, distFileFor, buildSitemapXml, NOINDEX_FILES } from './lib/seo-paths'
+import { siteUrlFrom, routeUrl, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles } from './lib/seo-paths'
 import { buildRobotsTxt } from '../src/lib/robots'
 import { buildLlmsTxt } from '../src/lib/llms-txt'
 import { routeSeo, siteSeo } from '../src/config/seo'
@@ -63,6 +63,24 @@ function main(): void {
   for (const nome of NOINDEX_FILES) {
     const arquivo = join(distDir, nome)
     if (!existsSync(arquivo)) continue
+    const html = readFileSync(arquivo, 'utf8')
+    const saida = applyRouteSeo({
+      html,
+      title: `Página interna · ${siteSeo.productName}`,
+      description: 'Página interna gerada pelo Expo Router, fora do mapa do site.',
+      url: `${url}${nome}`,
+      siteName: siteSeo.productName,
+      ogImageUrl,
+      indexable: false,
+    })
+    writeFileSync(arquivo, saida, 'utf8')
+  }
+
+  // Achado C8 (Opus): o export estático grava também `dist/(shell)/...`; cópias sem `index`.
+  const { globSync } = require('glob') as typeof import('glob')
+  const paginas = globSync('**/*.html', { cwd: distDir, posix: true })
+  for (const nome of groupVariationFiles(paginas)) {
+    const arquivo = join(distDir, nome)
     const html = readFileSync(arquivo, 'utf8')
     const saida = applyRouteSeo({
       html,

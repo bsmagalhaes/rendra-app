@@ -78,6 +78,25 @@ describe('R3: src/brand/themed-status-bar.tsx na lista fechada (correção pós 
   })
 })
 
+describe('R3: arquivos do AppShell na lista fechada (F2)', () => {
+  it('isR3Allowed aceita header.tsx (paddingTop: insets.top, dono do inset superior)', () => {
+    expect(isR3Allowed('src/components/app-shell/header.tsx')).toBe(true)
+  })
+  it('isR3Allowed aceita bottom-nav.tsx (paddingBottom: insets.bottom, dono do inset inferior)', () => {
+    expect(isR3Allowed('src/components/app-shell/bottom-nav.tsx')).toBe(true)
+  })
+  it('isR3Allowed aceita nav-drawer.tsx (useAnimatedStyle, flex 1 do GestureHandlerRootView e insets)', () => {
+    expect(isR3Allowed('src/components/app-shell/nav-drawer.tsx')).toBe(true)
+  })
+})
+
+describe('R3: app/(shell)/tokens/index.tsx (rota movida para o grupo)', () => {
+  it('não acusa R3 nos pares de contraste AA da rota no novo caminho', () => {
+    const violations = runCheckRules(['app/(shell)/tokens/index.tsx'])
+    expect(violations.filter((v) => v.rule === 'R3')).toHaveLength(0)
+  })
+})
+
 describe('R4 degrau fora da escala', () => {
   it('acusa número que não está na escala, em arquivo autorizado a style', () => {
     const violations = runCheckRules(['scripts/__fixtures__/r4-violacao.tsx'], { r4AllowFile: true })
@@ -198,6 +217,32 @@ describe('CLAUDE.md, diff contra o arquivo de referência', () => {
     const violations = checkClaudeMd('CLAUDE.md', 'docs/reference/claude-md-matriz-modelos.txt')
     expect(violations).toHaveLength(0)
   })
+
+  it('CRLF no CLAUDE.md (checkout do Windows com autocrlf) não conta como diferença', () => {
+    // Sem @types/node no programa (tsconfig `types: ["jest"]`): cast estrutural, como nos scripts.
+    const fs = require('fs') as {
+      mkdtempSync: (prefix: string) => string
+      writeFileSync: (path: string, data: string) => void
+      rmSync: (path: string, options: { recursive: boolean; force: boolean }) => void
+    }
+    const os = require('os') as { tmpdir: () => string }
+    const path = require('path') as { join: (...parts: string[]) => string }
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-md-'))
+    try {
+      const marker = '## Matriz de modelos (inegociável)'
+      const reference = `${marker}\n\nlinha um\nlinha dois\n`
+      const claude = `# Titulo\n\nintro\n\n${reference}`.replace(/\n/g, '\r\n')
+      const claudePath = path.join(dir, 'CLAUDE.md')
+      const referencePath = path.join(dir, 'ref.txt')
+      fs.writeFileSync(claudePath, claude)
+      fs.writeFileSync(referencePath, reference)
+      expect(checkClaudeMd(claudePath, referencePath)).toHaveLength(0)
+      fs.writeFileSync(claudePath, claude.replace('linha dois', 'linha DOIS'))
+      expect(checkClaudeMd(claudePath, referencePath)).toHaveLength(1)
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true })
+    }
+  })
 })
 
 describe('R2: cor fixa também em className', () => {
@@ -289,5 +334,20 @@ describe('R15: texto orientativo fora do limite ou com verbo de instrucao (item 
   it('sem r15IsScreen (fora de app/), a mesma violacao nao e acusada (prova o escopo)', () => {
     const violations = runCheckRules(['scripts/__fixtures__/r15-help-longo.tsx'])
     expect(violations.filter((v) => v.rule === 'R15')).toHaveLength(0)
+  })
+})
+
+describe('R3: app/index.tsx na lista fechada (F2, amostras de paleta da home)', () => {
+  it('isR3Allowed aceita app/index.tsx e continua recusando outras telas fora da lista', () => {
+    expect(isR3Allowed('app/index.tsx')).toBe(true)
+    expect(isR3Allowed('app/login.tsx')).toBe(false)
+  })
+})
+
+describe('R3: src/components/splash/rendra-splash.tsx na lista fechada (F2, achado B14 do Opus)', () => {
+  it('isR3Allowed aceita o splash e o check:rules não acusa R3 nele', () => {
+    expect(isR3Allowed('src/components/splash/rendra-splash.tsx')).toBe(true)
+    const violations = runCheckRules(['src/components/splash/rendra-splash.tsx'])
+    expect(violations.filter((v) => v.rule === 'R3')).toHaveLength(0)
   })
 })

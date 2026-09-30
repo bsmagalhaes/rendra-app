@@ -19,6 +19,25 @@ function SondaNavega() {
   )
 }
 
+function SondaVolta() {
+  const nav = useRendraNavigation()
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={() => {
+        if (nav.canGoBack?.()) nav.goBack?.()
+      }}
+    >
+      <Text>Voltar</Text>
+    </Pressable>
+  )
+}
+
+function SondaPodeVoltar() {
+  const nav = useRendraNavigation()
+  return <Text>{`pode:${String(nav.canGoBack?.())}`}</Text>
+}
+
 describe('RendraRouterBridge', () => {
   // C5 (veredito do Opus): o teste afirma o valor de verdade (currentPath e searchParams.codigo
   // lidos do expo-router real), nao so que o bridge montou sem erro.
@@ -50,6 +69,50 @@ describe('RendraRouterBridge', () => {
     )
     await fireEvent.press(await context.findByRole('button', { name: 'Ir' }))
     expect(await context.findByText('Tela de destino')).toBeTruthy()
+  })
+
+  it('goBack do contexto volta para a tela anterior de verdade', async () => {
+    const context = await renderRouter(
+      {
+        index: () => (
+          <RendraRouterBridge>
+            <SondaNavega />
+            <Text>Tela inicial</Text>
+          </RendraRouterBridge>
+        ),
+        destino: () => (
+          <RendraRouterBridge>
+            <SondaVolta />
+          </RendraRouterBridge>
+        ),
+      },
+      { initialUrl: '/' },
+    )
+    await fireEvent.press(await context.findByRole('button', { name: 'Ir' }))
+    await fireEvent.press(await context.findByRole('button', { name: 'Voltar' }))
+    expect(await context.findByText('Tela inicial')).toBeTruthy()
+  })
+
+  it('canGoBack responde falso na primeira tela e verdadeiro depois de navegar', async () => {
+    const context = await renderRouter(
+      {
+        index: () => (
+          <RendraRouterBridge>
+            <SondaNavega />
+            <SondaPodeVoltar />
+          </RendraRouterBridge>
+        ),
+        destino: () => (
+          <RendraRouterBridge>
+            <SondaPodeVoltar />
+          </RendraRouterBridge>
+        ),
+      },
+      { initialUrl: '/' },
+    )
+    expect(await context.findByText('pode:false')).toBeTruthy()
+    await fireEvent.press(await context.findByRole('button', { name: 'Ir' }))
+    expect(await context.findByText('pode:true')).toBeTruthy()
   })
 
   // M4 (veredito Fable, Blocos 1 e 2): sem useMemo, este value era recriado a cada render do

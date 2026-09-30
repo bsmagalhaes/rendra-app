@@ -12,6 +12,8 @@ declare module 'react-native' {
   interface ViewProps {
     /** @platform web */
     tabIndex?: number
+    /** @platform web. Encaminhado pelo react-native-web ao DOM; marca o link do destino ativo. */
+    'aria-current'?: 'page'
     /**
      * @platform web
      * `dataSet` chega ao DOM como atributos `data-*` (react-native-web,

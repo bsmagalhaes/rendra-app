@@ -50,6 +50,7 @@ export const CATALOG: ComponentCatalogEntry[] = [
   { code: 'GAV-001', name: 'Gaveta', component: 'Drawer', file: 'components/ui/drawer.tsx', variantProps: {}, whenToUse: 'Para formulário ou detalhe de volume médio, até cerca de 12 campos.' },
   { code: 'DDM-001', name: 'Menu suspenso', component: 'DropdownMenuContent', file: 'components/ui/dropdown-menu.tsx', variantProps: {}, whenToUse: 'Para uma lista de ações ou opções que abre a partir de um botão ou de um item.' },
   { code: 'VAZ-001', name: 'Estado vazio', component: 'EmptyState', file: 'components/ui/empty-state.tsx', variantProps: {}, whenToUse: 'Para quando uma lista, busca ou seção não tem nenhum dado ainda.' },
+  { code: 'ERRO-001', name: 'Tela de erro', component: 'ErrorPage', file: 'components/ui/error-page.tsx', variantProps: {}, whenToUse: 'Para página não encontrada (404) ou falha do lado do servidor (500).' },
   { code: 'FLD-001', name: 'Campo com rótulo e ajuda', component: 'Field', file: 'components/ui/field.tsx', variantProps: {}, whenToUse: 'Para envolver qualquer controle de formulário com rótulo, ajuda e erro.' },
   { code: 'FLD-002', name: 'Rótulo', component: 'Label', file: 'components/ui/field.tsx', variantProps: {}, whenToUse: 'Para um rótulo avulso, quando o Field completo não se aplica.' },
   { code: 'FORM-001', name: 'Formulário', component: 'Form', file: 'components/ui/form.tsx', variantProps: {}, whenToUse: 'Para envolver um formulário inteiro, ligado ao React Hook Form.' },
@@ -64,6 +65,7 @@ export const CATALOG: ComponentCatalogEntry[] = [
   { code: 'PROG-001', name: 'Barra de progresso', component: 'Progress', file: 'components/ui/progress.tsx', variantProps: {}, whenToUse: 'Para o andamento de uma tarefa ou de um envio.' },
   { code: 'RDO-001', name: 'Opções em lista', component: 'RadioGroup', file: 'components/ui/radio-group.tsx', variantProps: { variant: 'list' }, whenToUse: 'Para poucas opções simples, uma escolha só, em lista com bolinha e texto.', isDefault: true },
   { code: 'RDO-002', name: 'Opções em cartões', component: 'RadioGroup', file: 'components/ui/radio-group.tsx', variantProps: { variant: 'cards' }, whenToUse: 'Para opções com ícone e descrição, quando cada uma merece mais destaque.' },
+  { code: 'CRED-001', name: 'Crédito Feito com Rendra', component: 'RendraCredit', file: 'components/ui/rendra-credit.tsx', variantProps: {}, whenToUse: 'No rodapé da tela de login, discreto; pode ser removido (credit={false}) ou levado para outro lugar visível, como uma tela Sobre.' },
   { code: 'SEL-001', name: 'Select', component: 'Select', file: 'components/ui/select.tsx', variantProps: {}, whenToUse: 'Para escolher uma ou mais opções de uma lista, com ou sem busca.' },
   { code: 'SEP-001', name: 'Separador', component: 'Separator', file: 'components/ui/separator.tsx', variantProps: {}, whenToUse: 'Para dividir conteúdo dentro de um card, no lugar de um card dentro de card.' },
   { code: 'SKEL-001', name: 'Esqueleto de carregamento', component: 'Skeleton', file: 'components/ui/skeleton.tsx', variantProps: {}, whenToUse: 'Para o estado de carregamento, com a mesma estrutura do conteúdo final.' },
@@ -120,7 +122,7 @@ export function findInvalidFormatCodes(catalog: ComponentCatalogEntry[] = CATALO
   return catalog.filter((entry) => !COMPONENT_CODE_PATTERN.test(entry.code)).map((entry) => entry.code)
 }
 
-const PRESET_CODE_PATTERN = /[TCM]\d+/
+const PRESET_CODE_PATTERN = /[TCMN]\d+/
 
 /** Nenhum codigo de componente pode colidir com os codigos de modelo (`T1`, `C4`, `M5`...). */
 export function findPresetCollisions(catalog: ComponentCatalogEntry[] = CATALOG): string[] {

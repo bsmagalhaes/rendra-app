@@ -4,6 +4,8 @@ import * as SafeAreaContext from 'react-native-safe-area-context'
 import { BrandProvider } from '../../brand/brand-provider'
 import { ActionBar } from './action-bar'
 import { nodesWithCode } from '../../test-utils/rendra-code'
+import { ShellProvider } from '../app-shell/shell-context'
+import { navComPagina } from '../../test-utils/shell-fixtures'
 
 describe('ActionBar: layout de colunas', () => {
   it('só primary: ocupa flex-1', async () => {
@@ -115,5 +117,33 @@ describe('ActionBar: data-rendra (item D12 do levantamento da Sincronizacao 1)',
       </BrandProvider>,
     )
     expect(nodesWithCode(container, 'ACB-001')).toHaveLength(1)
+  })
+})
+
+describe('ActionBar dentro do shell', () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  function noShell(layout: { bottomNav: boolean }) {
+    return render(
+      <BrandProvider>
+        <ShellProvider navigation={navComPagina} layout={layout} userConfigurable={false}>
+          <ActionBar primary={{ label: 'Salvar', onPress: () => {} }} testID="barra" />
+        </ShellProvider>
+      </BrandProvider>,
+    )
+  }
+
+  it('com barra inferior não soma insets.bottom (a barra já é dona do respiro)', async () => {
+    jest.spyOn(SafeAreaContext, 'useSafeAreaInsets').mockReturnValue({ top: 0, bottom: 34, left: 0, right: 0 })
+    const { findByTestId } = await noShell({ bottomNav: true })
+    expect(StyleSheet.flatten((await findByTestId('barra')).props.style)).toMatchObject({ paddingBottom: 16 })
+  })
+
+  it('sem barra inferior mantém o inset inferior', async () => {
+    jest.spyOn(SafeAreaContext, 'useSafeAreaInsets').mockReturnValue({ top: 0, bottom: 34, left: 0, right: 0 })
+    const { findByTestId } = await noShell({ bottomNav: false })
+    expect(StyleSheet.flatten((await findByTestId('barra')).props.style)).toMatchObject({ paddingBottom: 34 })
   })
 })

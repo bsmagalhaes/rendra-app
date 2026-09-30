@@ -1,4 +1,4 @@
-import { siteUrlFrom, routeUrl, distFileFor, buildSitemapXml, NOINDEX_FILES } from './seo-paths'
+import { siteUrlFrom, routeUrl, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles } from './seo-paths'
 
 describe('siteUrlFrom', () => {
   it('usa SITE_URL do env quando informado, garantindo barra final', () => {
@@ -82,5 +82,28 @@ describe('NOINDEX_FILES', () => {
     expect(NOINDEX_FILES).toContain('_sitemap.html')
     expect(NOINDEX_FILES).toContain('componentes/[slug].html')
     expect(NOINDEX_FILES).toHaveLength(3)
+  })
+})
+
+describe('groupVariationFiles', () => {
+  it('separa as variações com o grupo de rota (shell) que o export estático grava a mais', () => {
+    const arquivos = [
+      'index.html',
+      'componentes/index.html',
+      'tokens/index.html',
+      '(shell)/tokens/index.html',
+      '(shell)/componentes/acoes.html',
+      'outro/(grupo)/pagina.html',
+      '+not-found.html',
+    ]
+    expect(groupVariationFiles(arquivos)).toEqual([
+      '(shell)/tokens/index.html',
+      '(shell)/componentes/acoes.html',
+      'outro/(grupo)/pagina.html',
+    ])
+  })
+
+  it('sem grupos devolve lista vazia', () => {
+    expect(groupVariationFiles(['index.html', 'galeria/index.html'])).toEqual([])
   })
 })

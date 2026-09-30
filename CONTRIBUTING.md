@@ -46,8 +46,8 @@ Nenhuma tag `vX.Y.Z` sai sem os cinco passos abaixo, nesta ordem:
 1. `CHANGELOG.md` com a entrada da versão (`## [X.Y.Z] - DD/MM/AAAA`).
 2. `npm run build:lib && npm run verify:pack -- --publicacao` verde (sem a flag `--publicacao`, o `verify:pack` só confere a entrada do `CHANGELOG.md`; com ela, também exige a frase da simulação abaixo e que `private` esteja ausente/`false`, e prova, ao final, com um segundo `npm pack --dry-run`, que o `dist-lib` empacotado não carrega nenhuma sobra da própria rodada de verificação).
 3. Simulação das duas pessoas leigas pelo Fable ("quero começar um app novo" e "quero migrar o meu app"), registrada só na máquina de quem valida (nunca no git) e resumida no `CHANGELOG.md` em uma linha: "Simulação dos dois leigos aprovada em DD/MM/AAAA".
-4. `private` só sai do `package.json` na confirmação do Bruno, junto da primeira publicação manual (num terminal interativo); até lá, `verify:pack -- --publicacao` bloqueia por esse campo de propósito.
-5. Tag `vX.Y.Z` só depois dos passos acima.
+4. `private` ausente ou `false` no `package.json` (`verify:pack -- --publicacao` bloqueia por esse campo de propósito).
+5. Tag `vX.Y.Z` só depois dos passos acima. A tag dispara `.github/workflows/publish.yml`, que repete os portões e publica com `npm publish --provenance --access public` pelo trusted publishing do npm: sem segredo `NPM_TOKEN` e sem `NODE_AUTH_TOKEN`, o `id-token` do GitHub autentica. O pacote precisa ter este repositório e o workflow `publish.yml` cadastrados como "Trusted Publisher" nas configurações do pacote no npm, e o runner precisa de npm 11.5.1 ou mais recente (o workflow confere e atualiza).
 
 ## Conduta
 

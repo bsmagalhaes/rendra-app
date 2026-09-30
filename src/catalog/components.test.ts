@@ -23,8 +23,8 @@ const entradaFabricada = (over: Partial<ComponentCatalogEntry>): ComponentCatalo
   ...over,
 })
 
-// Lista literal dos 34 arquivos catalogaveis de src/components/ui (sem index.ts, sem teste;
-// eram 33 ate a Tarefa 8.1, que acrescentou spinner.tsx),
+// Lista literal dos 36 arquivos catalogaveis de src/components/ui (sem index.ts, sem teste;
+// eram 33 ate a Tarefa 8.1, que acrescentou spinner.tsx, 34 ate a F2 A.2, que acrescentou rendra-credit.tsx, e 35 ate a F2 C.1, que acrescentou error-page.tsx),
 // igual ao levantamento (Fable) secao 3.3.2 e ao veredito do Opus (B6).
 const ARQUIVOS_REAIS_DE_COMPONENTE = [
   'components/ui/accordion.tsx',
@@ -42,6 +42,7 @@ const ARQUIVOS_REAIS_DE_COMPONENTE = [
   'components/ui/drawer.tsx',
   'components/ui/dropdown-menu.tsx',
   'components/ui/empty-state.tsx',
+  'components/ui/error-page.tsx',
   'components/ui/field.tsx',
   'components/ui/form.tsx',
   'components/ui/info-hint.tsx',
@@ -51,6 +52,7 @@ const ARQUIVOS_REAIS_DE_COMPONENTE = [
   'components/ui/otp-input.tsx',
   'components/ui/progress.tsx',
   'components/ui/radio-group.tsx',
+  'components/ui/rendra-credit.tsx',
   'components/ui/select.tsx',
   'components/ui/separator.tsx',
   'components/ui/skeleton.tsx',
@@ -89,6 +91,7 @@ const TABELA_PARIDADE: [string, string, Record<string, unknown>, true | undefine
   ['GAV-001', 'Drawer', {}, undefined],
   ['DDM-001', 'DropdownMenuContent', {}, undefined],
   ['VAZ-001', 'EmptyState', {}, undefined],
+  ['ERRO-001', 'ErrorPage', {}, undefined],
   ['FLD-001', 'Field', {}, undefined],
   ['FLD-002', 'Label', {}, undefined],
   ['FORM-001', 'Form', {}, undefined],
@@ -103,6 +106,7 @@ const TABELA_PARIDADE: [string, string, Record<string, unknown>, true | undefine
   ['PROG-001', 'Progress', {}, undefined],
   ['RDO-001', 'RadioGroup', { variant: 'list' }, true],
   ['RDO-002', 'RadioGroup', { variant: 'cards' }, undefined],
+  ['CRED-001', 'RendraCredit', {}, undefined],
   ['SEL-001', 'Select', {}, undefined],
   ['SEP-001', 'Separator', {}, undefined],
   ['SKEL-001', 'Skeleton', {}, undefined],
@@ -125,8 +129,17 @@ describe('catalogo de componentes', () => {
     expect(filesMissingCatalogEntry(ARQUIVOS_REAIS_DE_COMPONENTE, CATALOG)).toEqual([])
   })
 
-  it('nenhum codigo colide com [TCM]\\d+ dos presets de modelo', () => {
+  it('nenhum codigo colide com [TCMN]\\d+ dos presets de modelo (o web para em [TCM]; o app ganha N)', () => {
     expect(findPresetCollisions(CATALOG)).toEqual([])
+    expect(findPresetCollisions([entradaFabricada({ code: 'ZN1-001' })])).toEqual(['ZN1-001'])
+  })
+
+  it('resolveCatalogCode resolve RendraCredit para CRED-001', () => {
+    expect(resolveCatalogCode('RendraCredit', {})).toBe('CRED-001')
+  })
+
+  it('resolveCatalogCode resolve ErrorPage para ERRO-001', () => {
+    expect(resolveCatalogCode('ErrorPage', {})).toBe('ERRO-001')
   })
 
   it('resolveCatalogCode acha a variante certa', () => {
@@ -200,8 +213,8 @@ describe('catalogo de componentes', () => {
     ).toThrow(/mais de um isDefault/)
   })
 
-  it('paridade com o web: 47 entradas com code/component/variantProps/isDefault iguais (Apendice A do veredito do Opus, mais SPIN-001 da Tarefa 8.1)', () => {
-    expect(CATALOG).toHaveLength(47)
+  it('paridade com o web: 49 entradas com code/component/variantProps/isDefault iguais (Apendice A do veredito do Opus, mais SPIN-001 da Tarefa 8.1 CRED-001 e ERRO-001 da F2)', () => {
+    expect(CATALOG).toHaveLength(49)
   })
 
   it.each(TABELA_PARIDADE)('%s (%s) casa code/component/variantProps/isDefault', (code, component, variantProps, isDefault) => {

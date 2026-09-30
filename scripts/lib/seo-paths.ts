@@ -11,6 +11,15 @@ export interface SeoPathRoute {
 export const NOINDEX_FILES = ['_sitemap.html', 'componentes/[slug].html', '+not-found.html'] as const
 
 /**
+ * Arquivos de `dist/` (caminhos relativos, com `/`) que o `expo export` grava a mais por causa
+ * dos grupos de rota entre parênteses (`dist/(shell)/tokens/index.html`, achado C8 do Opus): são
+ * cópias da página sem o SEO da rota real, então recebem `noindex`.
+ */
+export function groupVariationFiles(files: string[]): string[] {
+  return files.filter((arquivo) => /(^|\/)\([^/]+\)\//.test(arquivo))
+}
+
+/**
  * URL do site, sempre com barra final. Usa `SITE_URL` do ambiente quando informado (garantindo a
  * barra); senão tenta derivar o domínio do GitHub Pages a partir do `homepage` do `package.json`
  * (achado M6 da validação da entrega, Blocos 5 e 6, Fable): sem isso, todo clone que ainda não

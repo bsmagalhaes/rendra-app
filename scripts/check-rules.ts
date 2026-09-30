@@ -9,7 +9,9 @@ import { helpLimit, PAGE_DESCRIPTION_LIMIT, INSTRUCTION_VERBS } from './lib/help
 // `checkClaudeMd` sem reabrir `tsconfig.json` (fora do escopo de `Files` desta tarefa).
 function readFileText(path: string): string {
   const fs = require('fs') as { readFileSync: (path: string, encoding: 'utf8') => string }
-  return fs.readFileSync(path, 'utf8')
+  // Normaliza CRLF: no Windows com `core.autocrlf` o CLAUDE.md sai do checkout com CRLF e o
+  // arquivo de referência (LF) não bate caractere a caractere sem isto.
+  return fs.readFileSync(path, 'utf8').replace(/\r\n/g, '\n')
 }
 
 // Desvio H3 (verificação de clone limpo): `module` (usado em `require.main === module`, no bloco
@@ -102,7 +104,7 @@ export const R3_ALLOWED_FILES = [
   'app/_layout.tsx',
   'src/brand/brand-provider.tsx',
   'src/components/internal/text.tsx',
-  'app/tokens/index.tsx',
+  'app/(shell)/tokens/index.tsx',
   // F1b, reservados com antecedência (spec seção 12.1, bloqueadora C9)
   'src/components/internal/bottom-sheet.tsx',
   'src/components/internal/overlay-shell.tsx',
@@ -124,6 +126,13 @@ export const R3_ALLOWED_FILES = [
   'src/components/ui/button.tsx', // useAnimatedStyle (escala 0,98 do pressed)
   'src/components/ui/spinner.tsx', // useAnimatedStyle (rotação)
   'src/components/ui/brand-feedback-icon.tsx', // useAnimatedStyle (pop e shake)
+  // F2, AppShell
+  'src/components/app-shell/header.tsx', // paddingTop: insets.top (dono do inset superior)
+  'src/components/app-shell/bottom-nav.tsx', // paddingBottom: insets.bottom (dono do inset inferior)
+  'src/components/app-shell/nav-drawer.tsx', // useAnimatedStyle (posição e largura), flex 1 do GestureHandlerRootView, insets
+  // F2, splash e home
+  'src/components/splash/rendra-splash.tsx', // useAnimatedStyle (entrada do selo, do nome e do lema, fade do overlay)
+  'app/index.tsx', // só backgroundColor das amostras de paleta
   // correção pós lote 1 (barra de status legível em qualquer modo): `style` aqui não é um objeto
   // de estilo React Native, é o enum de string ('light' | 'dark') do StatusBar de expo-status-bar,
   // fora do universo de valores que R3/spec 12.1 regula (nenhum token de design envolvido).

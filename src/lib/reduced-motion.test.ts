@@ -15,6 +15,15 @@ describe('useReducedMotion', () => {
     await waitFor(() => expect(result.current).toBe(true))
   })
 
+  it('devolve false, sem quebrar, quando isReduceMotionEnabled rejeita', async () => {
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockRejectedValue(new Error('indisponível'))
+    const { result } = await renderHook(() => useReducedMotion())
+    await act(async () => {
+      await Promise.resolve()
+    })
+    expect(result.current).toBe(false)
+  })
+
   it('reage ao evento reduceMotionChanged', async () => {
     jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false)
     let emit: ((value: boolean) => void) | undefined

@@ -33,13 +33,13 @@ const rotasFixas: RouteSeo[] = [
   {
     path: '/',
     title: `${siteSeo.productName}`,
-    description: 'Design system e boilerplate mobile do Rendra, com 44 componentes de UI, tokens em três camadas e três modelos de marca, em React Native e Expo.',
+    description: 'Design system e boilerplate mobile do Rendra, com 49 componentes de UI, tokens em três camadas e três modelos de marca, em React Native e Expo.',
     indexable: true,
   },
   {
     path: '/componentes',
     title: `Componentes · ${siteSeo.productName}`,
-    description: 'Vitrine dos 44 componentes de UI do Rendra App, organizados por ações, formulário, feedback, exibição e layout.',
+    description: 'Vitrine dos componentes de UI do Rendra App, organizados por ações, formulário, feedback, exibição e layout.',
     indexable: true,
   },
   {
@@ -52,6 +52,24 @@ const rotasFixas: RouteSeo[] = [
     path: '/galeria',
     title: `Galeria · ${siteSeo.productName}`,
     description: 'Galeria ao vivo do Rendra App, com troca de modelo, paleta e modo claro/escuro em tempo real.',
+    indexable: true,
+  },
+  {
+    path: '/painel',
+    title: `Painel · ${siteSeo.productName}`,
+    description: 'Painel de exemplo do Rendra App, com indicadores, clientes recentes e atividade, dentro do menu de navegação do AppShell.',
+    indexable: true,
+  },
+  {
+    path: '/configuracoes',
+    title: `Configurações · ${siteSeo.productName}`,
+    description: 'Configurações de exemplo do Rendra App: modelo, paleta, modo claro ou escuro, layout do menu e perfil.',
+    indexable: true,
+  },
+  {
+    path: '/login',
+    title: `Entrar · ${siteSeo.productName}`,
+    description: 'Tela de entrada de exemplo do Rendra App, com painel de marca, formulário validado e o crédito Feito com Rendra.',
     indexable: true,
   },
 ]

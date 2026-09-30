@@ -1,9 +1,9 @@
 import { FlatList, Pressable } from 'react-native'
 import { Link } from 'expo-router'
-import { useDocumentTitle } from '../../src/lib/use-document-title'
-import { showcaseGroups } from '../../src/config/showcase'
-import { Container, PageHeader } from '../../src/components/layout'
-import { Text } from '../../src/components/internal/text'
+import { useDocumentTitle } from '../../../src/lib/use-document-title'
+import { showcaseGroups } from '../../../src/config/showcase'
+import { Container, PageHeader } from '../../../src/components/layout'
+import { Text } from '../../../src/components/internal/text'
 
 export default function ComponentesIndex() {
   useDocumentTitle('Componentes')

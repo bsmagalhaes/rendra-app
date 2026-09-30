@@ -1,9 +1,11 @@
-import { Children, cloneElement, Fragment, isValidElement } from 'react'
+import { Children, cloneElement, Fragment, isValidElement, useContext, useEffect, useRef } from 'react'
 import type { ReactElement, ReactNode } from 'react'
 import { View, type ViewProps } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Text } from '../internal/text'
 import { InfoHint } from '../ui/info-hint'
+import { ShellContext } from '../app-shell/shell-context'
+import { useRendraNavigation } from '../../navigation/rendra-navigation'
 import { cn } from '../../lib/cn'
 import { a11yPresets } from '../../lib/a11y'
 
@@ -31,16 +33,41 @@ export function PageHeader({
   ...rest
 }: PageHeaderProps) {
   const insets = useSafeAreaInsets()
-  const inlineHelp = help ? (
-    <InfoHint title={typeof title === 'string' ? title : 'Sobre esta tela'}>{help}</InfoHint>
-  ) : null
-  const titleVisible = showTitle || Boolean(inlineHelp)
-  const visible = showTitle || Boolean(description) || Boolean(actions) || Boolean(children) || Boolean(inlineHelp)
+  // Fora do AppShell o contexto é nulo e o componente se comporta como sempre.
+  const shell = useContext(ShellContext)
+  const setPageMeta = shell?.setPageMeta
+  const titleText = typeof title === 'string' ? title : undefined
+  const helpText = typeof help === 'string' ? help : undefined
+
+  // Dentro do shell, título e ajuda em texto vão para o cabeçalho (só strings: um `ReactNode`
+  // novo a cada render entraria em laço com o estado do shell).
+  // A rota é lida por ref: a tela que segue montada por baixo numa pilha não reenvia com a rota
+  // nova (o efeito só roda quando título ou ajuda mudam), então nunca reivindica a rota alheia.
+  const { currentPath } = useRendraNavigation()
+  const pathRef = useRef(currentPath)
+  useEffect(() => {
+    pathRef.current = currentPath
+  })
+  useEffect(() => {
+    if (!setPageMeta) return
+    setPageMeta({ title: titleText, help: helpText, path: pathRef.current })
+    return () => setPageMeta(null)
+  }, [setPageMeta, titleText, helpText])
+
+  const helpInShell = Boolean(shell) && helpText !== undefined
+  const inlineHelp =
+    help && !helpInShell ? (
+      <InfoHint title={typeof title === 'string' ? title : 'Sobre esta tela'}>{help}</InfoHint>
+    ) : null
+  // No shell o título visível é o do cabeçalho; aqui fica só o título semântico, oculto.
+  const titleVisible = !shell && (showTitle || Boolean(inlineHelp))
+  const visible =
+    (!shell && showTitle) || Boolean(description) || Boolean(actions) || Boolean(children) || Boolean(inlineHelp)
 
   return (
     <View
       className={cn('-mb-2 flex-col gap-4', !visible && visuallyHiddenClassName, className)}
-      style={{ paddingTop: Math.max(0, insets.top) }}
+      style={{ paddingTop: shell ? 0 : Math.max(0, insets.top) }}
       {...rest}
     >
       <View className="flex-col gap-4">

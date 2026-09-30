@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand'
-import TokensIndex from '../../../app/tokens/index'
+import TokensIndex from '../../../app/(shell)/tokens/index'
 
 describe('/tokens', () => {
   it('mostra a seção de paleta com o selo de contraste AA', async () => {

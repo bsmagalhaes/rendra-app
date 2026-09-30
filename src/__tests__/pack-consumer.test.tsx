@@ -6,6 +6,7 @@
 // `scripts/verify-pack.ts` chama esta suíte; sem ela, a suíte inteira é pulada (não quebra o
 // `test:coverage`/CI comum, que não define essa variável).
 import { render, fireEvent } from '@testing-library/react-native'
+import { Text } from 'react-native'
 import { createElement, useState, type ReactElement } from 'react'
 
 const RENDRA_PACK_ENTRY = process.env.RENDRA_PACK_ENTRY
@@ -61,5 +62,37 @@ descrever('consumidor do pacote instalado de verdade (@rendra-ui/app)', () => {
     // Metro/NativeWind (que gera e registra o stylesheet), inexistente neste Jest isolado; por
     // isso a prova aqui é funcional (o componente publicado funciona), e a prova do runtime é
     // estática, no arquivo gerado.
+  }, 60000)
+
+  it('renderiza o AppShell a partir do dist-lib instalado, com conteúdo e menu do usuário', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- caminho vem de env var em runtime (projeto temporario fora do repositorio)
+    const pacote = require(RENDRA_PACK_ENTRY as string)
+    const { BrandProvider, RendraNavigationProvider, AppShell } = pacote as {
+      BrandProvider: (props: { children?: ReactElement }) => ReactElement
+      RendraNavigationProvider: (props: { value: unknown; children?: ReactElement }) => ReactElement
+      AppShell: (props: { navigation: unknown; user: unknown; children?: ReactElement }) => ReactElement
+    }
+    expect(typeof AppShell).toBe('function')
+
+    const navigation = [
+      { title: 'Geral', items: [{ title: 'Início', to: '/', icon: () => null, bottomNav: true }] },
+    ]
+    const { findByText, findByRole } = await render(
+      createElement(
+        BrandProvider,
+        null,
+        createElement(
+          RendraNavigationProvider,
+          { value: { navigate: () => {}, currentPath: '/' } },
+          createElement(
+            AppShell,
+            { navigation, user: { name: 'Ana Ribeiro' } },
+            createElement(Text, null, 'Conteúdo do consumidor'),
+          ),
+        ),
+      ),
+    )
+    expect(await findByText('Conteúdo do consumidor')).toBeTruthy()
+    expect(await findByRole('button', { name: /Ana Ribeiro/ })).toBeTruthy()
   }, 60000)
 })

@@ -1,6 +1,7 @@
 // e2e/a11y.spec.ts
 import { test, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { semSplash } from './splash'
 import AxeBuilder from '@axe-core/playwright'
 import { blockingViolations } from '../src/lib/axe-false-positives'
 
@@ -16,11 +17,23 @@ import { blockingViolations } from '../src/lib/axe-false-positives'
  * diferentes a cada rodada, a assinatura exata do achado de CI). Esta função espera a opacidade
  * combinada (o próprio nó vezes cada ancestral, até `body`) chegar a 1 de verdade antes do axe
  * rodar, em vez de confiar só na presença do nó no DOM.
+ *
+ * O seletor precisa apontar o nó que realmente anima (ou um descendente dele, porque a conta
+ * sobe pelos ancestrais). Dois seletores genéricos davam falso "pronto": `[role="dialog"]` casa
+ * primeiro o invólucro do `RNModal` (react-native-web, `animationType="none"`, opacidade 1 desde
+ * o início) e `[data-testid^="toast-"]` casa primeiro o `toast-host`, que também não anima. Por
+ * isso os testes usam `MODAL_CARD` (o cartão dentro de `Animated.View`, `modal.tsx`) e
+ * `TOAST_ITEM` (o toast dentro do `Animated.View` de `FadeInUp`, `toast.tsx`), e a função falha
+ * alto se o seletor não achar exatamente um nó.
  */
+const MODAL_CARD = '[role="dialog"][data-rendra]'
+const TOAST_ITEM = '[data-testid^="toast-"]:not([data-testid="toast-host"])'
+
 async function waitForFullOpacity(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
-    const el = document.querySelector(sel)
-    if (!el) return false
+    const found = document.querySelectorAll(sel)
+    if (found.length !== 1) return false
+    const el = found[0]
     let node: Element | null = el
     let combined = 1
     while (node && node !== document.body) {
@@ -33,6 +46,7 @@ async function waitForFullOpacity(page: Page, selector: string) {
 }
 
 const ROUTES = [
+  '/',
   '/componentes',
   '/componentes/acoes',
   '/componentes/layout',
@@ -41,6 +55,9 @@ const ROUTES = [
   '/componentes/exibicao',
   '/tokens',
   '/galeria',
+  '/painel',
+  '/configuracoes',
+  '/login',
 ]
 
 for (const route of ROUTES) {
@@ -52,6 +69,7 @@ for (const route of ROUTES) {
     // /rendra-ui-app do baseURL na navegação.
     await page.goto(`${route.slice(1)}?codigo=${codigo}`)
     await page.getByTestId(`rendra-${codigo}`).waitFor()
+    await semSplash(page)
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
     const blocking = blockingViolations(results.violations)
     expect(blocking, JSON.stringify(blocking, null, 2)).toEqual([])
@@ -62,6 +80,7 @@ test('axe na folha do Select com busca focada, em /componentes/formulario', asyn
   const codigo = 'T1-C1'
   await page.goto(`componentes/formulario?codigo=${codigo}`)
   await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
   // SelectExample (Tarefa 21) usa label="Categoria" sem valor selecionado; o gatilho
   // não repete o placeholder no nome acessível (Select, Tarefa 7): o nome é só "Categoria".
   await page.getByRole('combobox', { name: 'Categoria' }).click()
@@ -75,6 +94,7 @@ test('axe no painel do DatePicker com dropdowns e time, em /componentes/formular
   const codigo = 'T1-C1'
   await page.goto(`componentes/formulario?codigo=${codigo}`)
   await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
   await page.getByRole('button', { name: 'Data e hora do evento' }).click()
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const serious = blockingViolations(results.violations)
@@ -85,6 +105,7 @@ test('axe com o Drawer aberto, em /componentes/feedback', async ({ page }) => {
   const codigo = 'T1-C1'
   await page.goto(`componentes/feedback?codigo=${codigo}`)
   await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
   await page.getByRole('button', { name: 'Abrir drawer' }).click()
   await page.getByRole('dialog', { name: 'Editar cliente' }).waitFor()
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
@@ -96,9 +117,10 @@ test('axe com um toast de erro visível, em /componentes/feedback', async ({ pag
   const codigo = 'T1-C1'
   await page.goto(`componentes/feedback?codigo=${codigo}`)
   await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
   await page.getByRole('button', { name: 'Mostrar erro' }).click()
   await page.getByText('Falha ao salvar').waitFor()
-  await waitForFullOpacity(page, '[data-testid^="toast-"]')
+  await waitForFullOpacity(page, TOAST_ITEM)
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   await expect(page.getByText('Falha ao salvar')).toBeVisible()
   const serious = blockingViolations(results.violations)
@@ -109,9 +131,10 @@ test('axe com o Modal de formulário aberto, em /componentes/feedback', async ({
   const codigo = 'T1-C1'
   await page.goto(`componentes/feedback?codigo=${codigo}`)
   await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
   await page.getByRole('button', { name: 'Abrir modal' }).click()
   await page.getByRole('dialog', { name: 'Novo contato' }).waitFor()
-  await waitForFullOpacity(page, '[role="dialog"]')
+  await waitForFullOpacity(page, MODAL_CARD)
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const serious = blockingViolations(results.violations)
   expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
@@ -121,9 +144,10 @@ test('axe com o Modal de informação (InfoHint) aberto, em /componentes/feedbac
   const codigo = 'T1-C1'
   await page.goto(`componentes/feedback?codigo=${codigo}`)
   await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
   await page.getByRole('button', { name: 'Sobre: Sobre este campo' }).click()
   await page.getByRole('dialog', { name: 'Sobre este campo' }).waitFor()
-  await waitForFullOpacity(page, '[role="dialog"]')
+  await waitForFullOpacity(page, MODAL_CARD)
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const serious = blockingViolations(results.violations)
   expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
@@ -134,6 +158,7 @@ test('axe com o Tabs em modo Select, em /componentes/exibicao, largura 360', asy
   const codigo = 'T1-C1'
   await page.goto(`componentes/exibicao?codigo=${codigo}`)
   await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
   await page.getByRole('combobox').first().waitFor()
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const serious = blockingViolations(results.violations)
@@ -144,6 +169,7 @@ test('axe com o menu do DropdownMenu aberto, em /componentes/acoes', async ({ pa
   const codigo = 'T1-C1'
   await page.goto(`componentes/acoes?codigo=${codigo}`)
   await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
   // Desvio: /componentes/acoes tem 2 botoes com aria-label "Mais ações" na mesma pagina
   // (o overflow do ActionBarExample, showcase.tsx:102, e o gatilho do DropdownMenuExample,
   // showcase.tsx:106); a ordem das entradas do grupo acoes e fixa e coberta por teste
@@ -151,6 +177,52 @@ test('axe com o menu do DropdownMenu aberto, em /componentes/acoes', async ({ pa
   // DropdownMenu), entao o gatilho do DropdownMenu e sempre o ultimo da pagina.
   await page.getByRole('button', { name: 'Mais ações' }).last().click()
   await page.getByRole('menuitem').first().waitFor()
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+  const serious = blockingViolations(results.violations)
+  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+})
+
+test('axe com a gaveta de navegação aberta, em /componentes', async ({ page }) => {
+  const codigo = 'T1-C1'
+  await page.goto(`componentes?codigo=${codigo}`)
+  await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
+  await page.getByRole('button', { name: 'Abrir menu' }).click()
+  await page.getByRole('dialog', { name: 'Menu' }).waitFor()
+  // a gaveta entra por translateX: espera assentar (borda esquerda em 0) antes de medir
+  await page.waitForFunction(() => {
+    const painel = document.querySelector('[data-testid="nav-drawer-painel"]')
+    return Boolean(painel) && Math.abs(painel!.getBoundingClientRect().left) < 1
+  })
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+  const serious = blockingViolations(results.violations)
+  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+})
+
+test('axe com o menu do usuário aberto, em /componentes', async ({ page }) => {
+  const codigo = 'T1-C1'
+  await page.goto(`componentes?codigo=${codigo}`)
+  await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
+  await page.getByRole('button', { name: 'Menu de Ana Ribeiro' }).click()
+  await page.getByRole('menuitem', { name: 'Aparência' }).waitFor()
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+  const serious = blockingViolations(results.violations)
+  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+})
+
+// Lote C: a tela de erro tem entrada animada no ícone; o axe só roda com a opacidade assentada.
+test('axe na tela 404 (ErrorPage), com o ícone animado já assentado', async ({ page }, testInfo) => {
+  const codigo = (testInfo.project.metadata as { codigo?: string })?.codigo ?? 'T1-C1'
+  // O `?codigo=` não chega à `+not-found`: grava a escolha numa rota comum e abre o `404.html`.
+  await page.goto(`galeria?codigo=${codigo}`)
+  await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
+  await page.goto('404.html')
+  await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
+  await page.locator('[data-rendra="ERRO-001"]').waitFor()
+  await waitForFullOpacity(page, '[data-rendra="ERRO-001"] [data-rendra="BFI-001"]')
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const serious = blockingViolations(results.violations)
   expect(serious, JSON.stringify(serious, null, 2)).toEqual([])

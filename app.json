@@ -3,10 +3,22 @@
     "name": "Rendra App",
     "slug": "rendra-ui-app",
     "scheme": "rendra",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#f5f6f7",
+          "dark": { "backgroundColor": "#07142a" }
+        }
+      ]
+    ],
     "web": { "bundler": "metro", "output": "static" },
     "ios": { "supportsTablet": true },
     "experiments": {

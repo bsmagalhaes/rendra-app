@@ -1,9 +1,9 @@
 import { renderRouter, screen } from 'expo-router/testing-library'
 import { fireEvent } from '@testing-library/react-native'
 import RootLayout from '../../../app/_layout'
-import ComponentesLayout from '../../../app/componentes/_layout'
-import ComponentesIndex from '../../../app/componentes/index'
-import ComponentesSlugScreen, { generateStaticParams } from '../../../app/componentes/[slug]'
+import ComponentesLayout from '../../../app/(shell)/componentes/_layout'
+import ComponentesIndex from '../../../app/(shell)/componentes/index'
+import ComponentesSlugScreen, { generateStaticParams } from '../../../app/(shell)/componentes/[slug]'
 
 function routes() {
   return {

@@ -1,6 +1,6 @@
 # Rendra App
 
-**Design system e boilerplate mobile em React Native (Expo), com Expo Router e NativeWind, para todo app novo em português do Brasil.** Traz 44 componentes de UI prontos, 3 modelos de marca e 4 paletas, para quem precisa sair do zero com um app funcionando e trocar marca sem mexer em componente.
+**Design system e boilerplate mobile em React Native (Expo), com Expo Router e NativeWind, para todo app novo em português do Brasil.** Traz 49 componentes de UI prontos, com navegação do app pronta (cabeçalho, barra inferior e menu), telas de exemplo, 3 modelos de marca e 4 paletas, para quem precisa sair do zero com um app funcionando e trocar marca sem mexer em componente.
 
 ![React Native](https://img.shields.io/badge/React%20Native-0.86-61DAFB?logo=react&logoColor=white)
 ![Expo SDK](https://img.shields.io/badge/Expo%20SDK-57-000020?logo=expo&logoColor=white)
@@ -15,9 +15,11 @@
 
 Vitrine publicada: [`https://bsmagalhaes.github.io/rendra-ui-app/`](https://bsmagalhaes.github.io/rendra-ui-app/) (atualizada a cada push em `main` com CI verde).
 
+- [Início](https://bsmagalhaes.github.io/rendra-ui-app/) (home: apresenta o projeto, os 3 modelos e as 4 paletas, com troca ao vivo)
 - [Componentes](https://bsmagalhaes.github.io/rendra-ui-app/componentes) (41 entradas)
 - [Tokens](https://bsmagalhaes.github.io/rendra-ui-app/tokens) (paleta com AA ao vivo, tipografia, espaço, raio, sombra)
 - [Galeria](https://bsmagalhaes.github.io/rendra-ui-app/galeria) (troca ao vivo de modelo, paleta e modo pelo controle real)
+- Telas de exemplo: [Painel](https://bsmagalhaes.github.io/rendra-ui-app/painel) (indicadores e listas dentro do menu do app), [Configurações](https://bsmagalhaes.github.io/rendra-ui-app/configuracoes) (aparência, layout do menu e perfil) e [Entrar](https://bsmagalhaes.github.io/rendra-ui-app/login) (formulário com validação e crédito).
 - Exemplo com modelo e modo escolhidos por URL: [`/galeria?codigo=T3-C3&modo=escuro`](https://bsmagalhaes.github.io/rendra-ui-app/galeria?codigo=T3-C3&modo=escuro)
 
 ## Prints de destaque
@@ -32,7 +34,7 @@ Vitrine publicada: [`https://bsmagalhaes.github.io/rendra-ui-app/`](https://bsma
 
 ## O que é
 
-Mesma finalidade do [Rendra web](https://github.com/bsmagalhaes/rendra-ui-web): base para todo app novo, publicado sob licença MIT. Quem conhece o Rendra web reconhece aqui a mesma arquitetura de tokens em três camadas (modelo, paleta, sistema), os mesmos nomes de classe Tailwind, os mesmos nomes de componente e prop, e o mesmo fluxo de briefing para IA, sem tradução.
+Mesma finalidade do [Rendra web](https://github.com/bsmagalhaes/rendra-ui-web): base para todo app novo, publicado sob licença MIT. Quem conhece o Rendra web reconhece aqui a mesma arquitetura de tokens em três camadas (modelo, paleta, sistema), os mesmos nomes de classe Tailwind, os mesmos nomes de componente e prop, e o mesmo fluxo de briefing guiado para IA, adaptado ao celular: tipo de trabalho, briefing conduzido uma decisão por mensagem, `docs/BRIEFING.md` gravado e plano em etapas.
 
 Critério de sucesso: trocar marca continua sendo 4 cores, degradê, modelo, nome e logotipo, sem mexer em componente.
 
@@ -42,7 +44,7 @@ Galeria completa, com troca ao vivo de modelo, paleta e modo pelo controle real:
 
 ## Códigos de modelo e de componente
 
-Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1` é o modelo Safira com a paleta Safira; `T1-C4` é o modelo Safira com a paleta Ardósia). Os 3 modelos são `T1` Safira/Poppins, `T2` Equilíbrio/DM Sans e `T3` Aurora/Inter; as 4 paletas são `C1` Safira, `C2` Equilíbrio, `C3` Aurora e `C4` Ardósia. Cada componente e cada variante tem um código no formato `SIGLA-000` (por exemplo, `BTN-001` é o botão primário, `ABA-002` são as abas em pílula), igual em web e app: o catálogo é `src/catalog/components.ts`, com o selo do código ao lado do título de cada exemplo em [`/componentes`](https://bsmagalhaes.github.io/rendra-ui-app/componentes).
+Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1` é o modelo Safira com a paleta Safira; `T1-C4` é o modelo Safira com a paleta Ardósia). Uma terceira parte opcional, `N1` a `N3`, escolhe o layout de navegação do `AppShell` (`T1-C1-N2`): `N1` barra inferior com menu em gaveta, `N2` barra inferior com menu em folha, `N3` só gaveta. Os 3 modelos são `T1` Safira/Poppins, `T2` Equilíbrio/DM Sans e `T3` Aurora/Inter; as 4 paletas são `C1` Safira, `C2` Equilíbrio, `C3` Aurora e `C4` Ardósia. Cada componente e cada variante tem um código no formato `SIGLA-000` (por exemplo, `BTN-001` é o botão primário, `ABA-002` são as abas em pílula), igual em web e app: o catálogo é `src/catalog/components.ts`, com o selo do código ao lado do título de cada exemplo em [`/componentes`](https://bsmagalhaes.github.io/rendra-ui-app/componentes).
 
 ## O que tem dentro
 
@@ -51,25 +53,29 @@ Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1
 - 3 modelos prontos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter) e 4 paletas prontas (Safira, Equilíbrio, Aurora, Ardósia).
 - `BrandProvider`/`useBrand`, com persistência local e troca em tempo de execução.
 - `Gradient` em SVG.
-- Os 44 componentes de UI (`src/components/ui`, `src/components/layout`), listados abaixo.
+- Os 49 componentes de UI (`src/components/ui`, `src/components/layout`, `src/components/app-shell`, `src/components/splash`), listados abaixo.
+- `AppShell`: cabeçalho com título e seta de voltar, barra inferior de navegação rápida com botão central de menu, menu em gaveta ou folha e menu do usuário; só `navigation` é obrigatório, sem depender do roteador.
+- Telas de exemplo prontas: home (`/`), `/login`, `/painel`, `/configuracoes` e a página 404; abertura animada (`RendraSplash`) ligada ao splash nativo; crédito discreto "Feito com Rendra" (`RendraCredit`), opcional.
 - `check:rules`, verificação estática das regras de `DESIGN_RULES.md`.
 - Piso de cobertura (`coverageThreshold`): 90% em `src/lib`, 80% em `src/components` e `src/theme`, além do piso por arquivo nos módulos de contrato (`src/lib/masks.ts`, `src/lib/validators.ts`, `src/brand/palette.ts`, `src/theme/vars.ts`, `src/config/presets.ts`, `src/config/showcase.tsx`, `src/lib/robots.ts`, `src/lib/llms-txt.ts`, `src/config/seo.ts`).
-- Rota `/componentes` (vitrine completa, 41 entradas), `/tokens` (paleta com AA ao vivo, tipografia, espaço, raio, sombra) e `/galeria` (troca ao vivo de modelo, paleta e modo pelo controle real).
+- Rotas `/componentes` (vitrine completa, 41 entradas), `/tokens` (paleta com AA ao vivo, tipografia, espaço, raio, sombra) e `/galeria` (troca ao vivo de modelo, paleta e modo pelo controle real).
 - Export web com SEO por rota (título, description, canonical, Open Graph, `sitemap.xml`, `robots.txt`, `llms.txt`), testado por Playwright (layout e toque) e axe (WCAG 2.1 AA).
 - CI (GitHub Actions), fluxo de IA e documentação completos.
 
-### Os 44 componentes de UI (disponíveis)
+### Os 49 componentes de UI (disponíveis)
 
 - **Ações (4):** Button, ButtonGroup, ActionBar, DropdownMenu.
 - **Formulário (14):** Input, Textarea, Select, Checkbox, CheckboxGroup, RadioGroup, Switch, Slider, OtpInput, DatePicker, Field, Form, FormField, FormSection.
-- **Feedback (10):** BrandFeedbackIcon, Alert, Toast, Progress, Skeleton, Spinner, EmptyState, InfoHint, Modal, Drawer.
-- **Exibição (10):** Card, Badge, Avatar, AvatarGroup, List, StatCard, Accordion, Tabs, Separator, BrandLogo.
-- **Layout (6):** Container, Stack, Inline, Grid, Section, PageHeader.
+- **Feedback (12):** BrandFeedbackIcon, Alert, Toast, Progress, Skeleton, Spinner, EmptyState, InfoHint, Modal, Drawer, ErrorPage, RendraSplash.
+- **Exibição (11):** Card, Badge, Avatar, AvatarGroup, List, StatCard, Accordion, Tabs, Separator, BrandLogo, RendraCredit.
+- **Layout (8):** Container, Stack, Inline, Grid, Section, PageHeader, AuthLayout, AppShell.
 
 A vitrine em `/componentes` mostra 41 entradas reais (Ações 4, Formulário 12, Feedback 10, Exibição 9,
 Layout 6): `FormField`/`FormSection` entram compostos nos exemplos de `Form`, e `'Select (lista
 longa)'` conta como entrada própria (decisão do fechamento da F1b), por isso a contagem da vitrine
-difere da contagem por exportação acima.
+difere da contagem por exportação acima. Os cinco componentes da F2 (`RendraCredit`, `ErrorPage`,
+`AuthLayout`, `AppShell` e `RendraSplash`) não têm entrada própria na vitrine: aparecem em uso
+nas telas de exemplo (home, login, painel, configurações e 404).
 
 ## Stack
 
@@ -88,6 +94,8 @@ Cole o link deste repositório numa IA de código (Claude Code, Codex, Cursor, G
 ```text
 Clone https://github.com/bsmagalhaes/rendra-ui-app e use como base do meu novo app. Siga o AGENTS.md do repositório.
 ```
+
+Só tem um chat sem terminal? Cole o link mesmo assim: a IA conduz o briefing e entrega o `docs/BRIEFING.md` para você levar a uma IA com terminal.
 
 **Migração de um app existente**, abra a IA na pasta do seu app e cole:
 
@@ -198,10 +206,16 @@ Registry, CLI e skill: não existem no app; ver `CHANGELOG.md`.
 app/                 # Expo Router (file-based)
   _layout.tsx         # SafeAreaProvider, GestureHandlerRootView, BrandProvider
   +html.tsx           # modelo raiz do export estático (lang, metas de política, reset de layout)
-  index.tsx            # redireciona para /componentes
-  componentes/         # vitrine (grupos, [slug])
-  tokens/index.tsx     # paleta, tipografia, espaço, raio, sombra, pares AA ao vivo
-  galeria/index.tsx    # troca ao vivo de modelo/paleta/modo pelo controle real
+  index.tsx            # home (fora do shell, com SafeAreaView próprio)
+  login.tsx            # tela de entrada (AuthLayout), fora do shell
+  +not-found.tsx       # página 404 (ErrorPage)
+  (shell)/             # grupo com o AppShell, sem entrar na URL
+    _layout.tsx         # AppShell com o menu de exemplo (src/config/navigation.tsx)
+    componentes/        # vitrine (grupos, [slug])
+    tokens/index.tsx    # paleta, tipografia, espaço, raio, sombra, pares AA ao vivo
+    galeria/index.tsx   # troca ao vivo de modelo/paleta/modo pelo controle real
+    painel.tsx          # painel de exemplo
+    configuracoes.tsx   # aparência, layout do menu e perfil
 src/
   index.ts             # entrada principal do pacote @rendra-ui/app
   router-bridge.tsx    # subcaminho ./router-bridge, único ponto com expo-router
@@ -211,11 +225,13 @@ src/
   components/
     internal/           # Text base, primitivas internas
     gradient/            # <Gradient token="brand|soft|accent" />
-    ui/                  # os 44 componentes de UI
-    layout/              # Container, Stack, Inline, Grid, Section, PageHeader
+    ui/                  # os componentes de UI (Button, Input, Card, ErrorPage, RendraCredit, ...)
+    layout/              # Container, Stack, Inline, Grid, Section, PageHeader, AuthLayout
+    app-shell/           # AppShell, ShellProvider, cabeçalho, barra inferior, gaveta, menu do usuário
+    splash/              # RendraSplash, overlay animado de abertura
   hooks/               # useControlledState, useLookup, usePlaceholderColor
   lib/                 # cn, masks, validators, shape, a11y, robots, llms-txt
-  config/              # presets.ts (parseModelCode/formatModelCode), showcase.tsx (vitrine), seo.ts
+  config/              # presets.ts (parseModelCode/formatModelCode), showcase.tsx (vitrine), seo.ts, navigation.tsx (menu de exemplo)
 scripts/
   check-rules.ts        # R1-R15 (ts-morph) + checagem de CLAUDE.md
   seo-build.ts          # title/description/og por rota, sitemap, robots.txt, llms.txt, 404
@@ -240,7 +256,7 @@ Trocar marca é sempre: 4 cores, degradê, modelo, nome e logotipo, nunca compon
 
 - `AGENTS.md`: fluxo de trabalho para assistentes de IA.
 - `DESIGN_RULES.md`: regras de design e `check:rules`.
-- `docs/BRIEFING_MODELO.md`: modelo de briefing para quem usar este boilerplate.
+- `docs/BRIEFING_MODELO.md`: roteiro do briefing guiado que a IA conduz com a pessoa, uma decisão por mensagem; as respostas vão para `docs/BRIEFING.md` (fora do git).
 - `docs/COMO_APLICAR.md`: como trocar marca sem mexer em componente.
 - `docs/PROMPT_MIGRACAO.md`: prompt para migrar um app existente para este design system.
 - `CONTRIBUTING.md`, `CHANGELOG.md`.
@@ -258,7 +274,7 @@ Trocar marca é sempre: 4 cores, degradê, modelo, nome e logotipo, nunca compon
 
 **Qual a licença? Preciso manter o crédito "Feito com Rendra"?** MIT. O crédito na interface é opcional e pode ser removido, mas a licença MIT sempre exige manter o aviso de copyright e o arquivo `LICENSE`.
 
-**Este projeto vira um pacote npm instalável?** Sim, e já está publicado: `npm install @rendra-ui/app` (ver "Formas de uso e comandos" acima). A primeira publicação saiu na versão 0.3.0; a tag `v1.0.0` e o `npm publish` desta versão continuam manuais, num terminal interativo do autor (padrão dos produtos Rendra, seção 1, item 5).
+**Este projeto vira um pacote npm instalável?** Sim, e já está publicado: `npm install @rendra-ui/app` (ver "Formas de uso e comandos" acima). A primeira publicação saiu na versão 0.3.0; as seguintes saem pelo GitHub Actions ao empurrar a tag `vX.Y.Z`, por trusted publishing do npm (sem token guardado no repositório) e com procedência (`--provenance`).
 
 **Uso outro roteador, e agora?** Sem Expo Router, forneça seu próprio `RendraNavigationProvider` (de `@rendra-ui/app`) alimentado pelas funções de navegação do seu roteador, em vez do `RendraRouterBridge` (que é específico do Expo Router).
 

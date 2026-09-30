@@ -1,5 +1,5 @@
 ---
-description: Regras do Rendra App (React Native, Expo Router, NativeWind)
+description: Regras do Rendra App (React Native, Expo Router, NativeWind) e condução do briefing guiado de docs/BRIEFING_MODELO.md
 globs: ["**/*.ts", "**/*.tsx"]
 alwaysApply: true
 ---
@@ -7,6 +7,8 @@ alwaysApply: true
 # Rendra App
 
 Design system e boilerplate mobile do Rendra, em React Native (Expo) com Expo Router e NativeWind, espelho do Rendra web (`https://github.com/bsmagalhaes/rendra-ui-web`), publicado sob licença MIT.
+
+Fluxo de início: se `docs/BRIEFING.md` não existir no disco, pergunte o tipo de trabalho, conduza o briefing de `docs/BRIEFING_MODELO.md` como manda o `AGENTS.md` (uma decisão por mensagem, opções numeradas, "não sei, sugira") e só então planeje. Se o pedido já disser o tipo de trabalho, não pergunte de novo. Sem terminal, conduza o briefing em texto e entregue o `docs/BRIEFING.md` para a pessoa levar a uma IA com terminal, com a continuação de projeto novo ou a de migração, conforme o caso.
 
 <!-- rendra:verificacao:inicio -->
 Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.

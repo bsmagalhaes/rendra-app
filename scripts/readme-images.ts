@@ -87,6 +87,7 @@ async function main(): Promise<void> {
       })
       await page.goto(`${BASE_URL}${captura.rota}?codigo=${captura.codigo}&modo=${captura.modo}`)
       await page.waitForSelector(`[data-testid="rendra-${captura.codigo}"]`)
+      await page.waitForSelector('[data-testid="rendra-splash"]', { state: 'detached' })
       await page.evaluate(async () => {
         await document.fonts.ready
       })
@@ -99,6 +100,7 @@ async function main(): Promise<void> {
     const paginaOgImage = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 })
     await paginaOgImage.goto(`${BASE_URL}/galeria?codigo=T1-C1&modo=claro`)
     await paginaOgImage.waitForSelector('[data-testid="rendra-T1-C1"]')
+    await paginaOgImage.waitForSelector('[data-testid="rendra-splash"]', { state: 'detached' })
     await paginaOgImage.evaluate(async () => {
       await document.fonts.ready
     })

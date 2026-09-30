@@ -1,6 +1,6 @@
 # DESIGN_RULES.md
 
-Regras de design do Rendra App, nativo (React Native/Expo/NativeWind). Esta entrega (F1b, mais o `Spinner` da Sincronização 1) traz os 44 componentes de UI e a rota `/componentes` (41 entradas), sobre a fundação da F1a (tokens, `BrandProvider`, `Gradient`, `check:rules`); a versão corrente está em `CHANGELOG.md`. As regras abaixo valem para todo componente, e `check:rules` reserva a lista fechada de exceções de `style` por arquivo (seção "Lista fechada de exceções", abaixo).
+Regras de design do Rendra App, nativo (React Native/Expo/NativeWind). Esta entrega (F1b, mais o `Spinner` da Sincronização 1) traz os componentes de UI e a rota `/componentes` (41 entradas), e a F2 acrescenta o `AppShell`, as telas base, a home e o splash, num total de 49 componentes, sobre a fundação da F1a (tokens, `BrandProvider`, `Gradient`, `check:rules`); a versão corrente está em `CHANGELOG.md`. As regras abaixo valem para todo componente, e `check:rules` reserva a lista fechada de exceções de `style` por arquivo (seção "Lista fechada de exceções", abaixo).
 
 A lista de referência de códigos de componente é `src/catalog/components.ts`, com selo na vitrine `/componentes`; o mesmo código significa o mesmo componente e a mesma variante em web e app.
 
@@ -40,11 +40,14 @@ Trocar marca é sempre: 4 cores, degradê, modelo, nome e logotipo. Nunca mexer 
 - `Modal` com no máximo 3 campos diretos (`FormField`/`Input`/`Select`/`Checkbox`/`RadioGroup`/`Switch`/`Slider`/`OtpInput`/`DatePicker`/`Textarea`); mais que isso é tela, não modal.
 - No máximo um `<Gradient>` por rota; nunca como filho direto de `Button`/`Input`/`Badge`.
 - Texto orientativo em componente de ajuda (`help`), nunca em prosa livre solta fora de um componente com esse papel.
+- `AppShell`: o título da tela vive no cabeçalho; dentro do shell o `PageHeader` mostra só descrição e ações (o título dele fica só para leitor de tela, e título e ajuda em texto sobem ao cabeçalho). A seta de voltar é automática (rota de segundo nível), o menu abre pelo botão central da barra inferior (ou pelo cabeçalho sem barra), o cabeçalho é dono do inset superior e a barra inferior do inferior. A gaveta leva um `<Gradient>` além do da tela, porque é sobreposição (`RNModal`). Item ativo de navegação usa `aria-current`, nunca `aria-selected`, e declara sempre os dois estados de classe (nada de `shadow-*`/`rotate-*`/`scale-*`/`translate-*`/`ring-*` que aparece só depois).
+- Crédito `RendraCredit`: rodapé do login e da home, discreto e removível por `credit={false}`.
 
 ## Proibido
 
 - Valor arbitrário em classe Tailwind (`p-[13px]`, `w-[220px]`).
 - Cor fixa (`#`, `rgb(`, `rgba(`) fora de `src/theme/tokens.ts`, `src/brand/palette.ts`, `src/brand/palettes.ts` e `src/components/gradient/gradient.tsx`.
+  - Exceção documentada, em JSON: o `backgroundColor` do plugin `expo-splash-screen` em `app.json` (claro `#f5f6f7`, escuro `#07142a`). O `check:rules` não varre JSON, e o splash nativo não conhece a paleta escolhida, por isso é neutro; `src/__tests__/app-json.test.ts` prova que os dois valores acompanham o tema padrão.
 - `style` inline fora da lista fechada abaixo.
 - Degrau de espaço fora da escala de `tailwind.config.ts`.
 - Nome de fonte fixo fora de `src/theme/fonts.ts`/`src/theme/models.ts`.
@@ -61,7 +64,7 @@ React Native não tem `vars()`/CSS custom properties como mecanismo de estilo di
 | `app/_layout.tsx` | `style={{ flex: 1 }}` no `GestureHandlerRootView` raiz | F1a |
 | `src/brand/brand-provider.tsx` | `style={vars(buildThemeVars(...))}` na `View` raiz | F1a |
 | `src/components/internal/text.tsx` | `style={{ fontFamily: ... }}` (fonte resolvida em runtime) | F1a |
-| `app/tokens/index.tsx` | `style={{ backgroundColor, color }}` só nos pares de contraste AA | F1a |
+| `app/(shell)/tokens/index.tsx` | `style={{ backgroundColor, color }}` só nos pares de contraste AA | F1a |
 | `src/components/internal/bottom-sheet.tsx` | `style` de `useAnimatedStyle` (posição da folha) | F1b |
 | `src/components/internal/overlay-shell.tsx`, `src/components/internal/picker-panel.tsx` | `style={{ paddingTop/paddingBottom: insets.* }}` (safe area) | F1b |
 | `src/components/ui/action-bar.tsx`, `src/components/layout/page-header.tsx` | safe area do rodapé/topo | F1b |
@@ -73,6 +76,11 @@ React Native não tem `vars()`/CSS custom properties como mecanismo de estilo di
 | `src/components/ui/otp-input.tsx`, `src/components/ui/badge.tsx`, `src/components/layout/primitives.tsx` (`Grid`) | larguras percentuais equivalentes a `field-sizing`/grade | F1b |
 | `src/components/ui/textarea.tsx` | `style={{ height }}` (altura calculada, 96 a 256px) | F1b |
 | `src/components/ui/spinner.tsx` | `style` de `useAnimatedStyle` da rotação | Sincronização 1 |
+| `src/components/app-shell/header.tsx` | `style={{ paddingTop: insets.top }}` (o cabeçalho do shell é o único dono do inset superior) | F2 |
+| `src/components/app-shell/bottom-nav.tsx` | `style={{ paddingBottom: Math.max(0, insets.bottom) }}` (a barra inferior é dona do inset inferior) | F2 |
+| `src/components/app-shell/nav-drawer.tsx` | `style` de `useAnimatedStyle` (`translateX` e largura do painel), `style={{ flex: 1 }}` no `GestureHandlerRootView` dentro do `RNModal` e `style={{ paddingTop, paddingBottom }}` com os insets (mesmo padrão de `drawer.tsx`) | F2 |
+| `src/components/splash/rendra-splash.tsx` | `style` de `useAnimatedStyle` (entrada do selo, do nome e do lema, anel e fade do overlay, com `pointerEvents: 'none'`) | F2 |
+| `app/index.tsx` | `style={{ backgroundColor }}` só nas amostras de paleta da home (cor de uma paleta que não é a ativa, vinda de `paletteSeeds`) | F2 |
 
 Qualquer outro componente que precisar de um valor dinâmico fora desta lista pede alteração desta regra antes da implementação (nunca `style` "só desta vez").
 

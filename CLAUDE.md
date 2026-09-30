@@ -4,13 +4,17 @@ Autor: Bruno Magalhaes, brunomagalhaes.me, instagram.com/brunomagalhaes.me.
 
 Início de leitura: `@AGENTS.md` (em um minuto, comandos, regras que não podem ser quebradas).
 
+Fluxo de início: se `docs/BRIEFING.md` não existir no disco, pergunte o tipo de trabalho, conduza o briefing de `docs/BRIEFING_MODELO.md` como manda o `AGENTS.md` (uma decisão por mensagem, opções numeradas, "não sei, sugira") e só então planeje. Se o pedido já disser o tipo de trabalho, não pergunte de novo. Sem terminal, conduza o briefing em texto e entregue o `docs/BRIEFING.md` para a pessoa levar a uma IA com terminal, com a continuação de projeto novo ou a de migração, conforme o caso.
+
+A seção "Matriz de modelos" abaixo vale para a manutenção do próprio Rendra App. Em projeto novo ou migração feitos a partir deste repositório, siga o 'Fluxo de desenvolvimento' do `AGENTS.md`, sem subagentes obrigatórios.
+
 ## Leitura obrigatória
 
 `DESIGN_RULES.md`, antes de qualquer alteração de tela, componente ou token.
 
 ## Resumo do projeto
 
-Design system e boilerplate mobile do Rendra, completo, com 44 componentes de UI (spec de fundação e componentes), publicado como pacote npm (`@rendra-ui/app`, primeira publicação em 0.3.0; a versão corrente está em `CHANGELOG.md`). Sobre a fundação: scaffold Expo Router + NativeWind, tokens, os 3 modelos, `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, vitrine completa (`/componentes`, `/tokens` e `/galeria`).
+Design system e boilerplate mobile do Rendra, completo, com 49 componentes de UI (spec de fundação e componentes, mais `AppShell`, telas base, home e splash da F2), publicado como pacote npm (`@rendra-ui/app`, primeira publicação em 0.3.0; a versão corrente está em `CHANGELOG.md`). Sobre a fundação: scaffold Expo Router + NativeWind, tokens, os 3 modelos, `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, vitrine completa (`/componentes`, `/tokens` e `/galeria`).
 
 <!-- rendra:verificacao:inicio -->
 Leia e siga o `AGENTS.md` na raiz, inteiro, antes de qualquer coisa.

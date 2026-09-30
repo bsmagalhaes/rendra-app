@@ -416,6 +416,34 @@ describe('Input: variant secret (item D7 do levantamento da Sincronizacao 1)', (
     expect((await findByTestId('campo')).props.value).toBe('')
   })
 
+  it('clearable em edicao nao aparece so porque o consumidor passou value do valor salvo (observacao 1 do Fable)', async () => {
+    const { findByTestId, queryByLabelText } = await render(
+      <BrandProvider>
+        <Input testID="campo" variant="secret" isEditing clearable value="segredo-salvo" onChange={jest.fn()} onCancelEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    expect((await findByTestId('campo')).props.value).toBe('')
+    expect(queryByLabelText('Limpar campo')).toBeNull()
+  })
+
+  it('clearable em edicao aparece so depois de digitar e Limpar campo esvazia o rascunho e avisa o consumidor', async () => {
+    const onChange = jest.fn()
+    const onValueChange = jest.fn()
+    const { findByTestId, findByLabelText, queryByLabelText } = await render(
+      <BrandProvider>
+        <Input testID="campo" variant="secret" isEditing clearable onChange={onChange} onValueChange={onValueChange} onCancelEdit={jest.fn()} />
+      </BrandProvider>,
+    )
+    const campo = await findByTestId('campo')
+    expect(queryByLabelText('Limpar campo')).toBeNull()
+    await fireEvent.changeText(campo, 'novo-valor')
+    await fireEvent.press(await findByLabelText('Limpar campo'))
+    expect((await findByTestId('campo')).props.value).toBe('')
+    expect(queryByLabelText('Limpar campo')).toBeNull()
+    expect(onChange).toHaveBeenLastCalledWith('')
+    expect(onValueChange).toHaveBeenLastCalledWith('', '')
+  })
+
   it('Trocar chama onStartEdit e Remover chama onRemove', async () => {
     const onStartEdit = jest.fn()
     const onRemove = jest.fn()

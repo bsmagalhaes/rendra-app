@@ -216,6 +216,7 @@ export function Input({
   function handleClear() {
     if (masked) masked.resolve('')
     setInternalValue('')
+    setSecretDraft('')
     onChange?.('')
     onValueChange?.('', '')
     if (mask === 'currency') onCentsChange?.(null)
@@ -223,6 +224,9 @@ export function Input({
   }
 
   // variant="secret" em edicao: buffer proprio, nunca deriva do valor salvo (achado B2).
+  // `clearable` no secret olha o rascunho, nao o `value` do consumidor (observacao 1 do Fable):
+  // o botao so aparece com algo digitado nesta edicao e limpa exatamente isso. O web condiciona
+  // ao `value` do consumidor e nao esvazia o campo (defeito do web, fora do escopo daqui).
   function handleSecretChangeText(text: string) {
     setSecretDraft(text)
     onChange?.(text)
@@ -324,7 +328,7 @@ export function Input({
         />
       ) : null}
       {!hasUnits && suffix ? <Text className="shrink-0 text-sm text-muted-foreground">{suffix}</Text> : null}
-      {clearable && value && !disabled ? (
+      {clearable && (isSecret ? secretDraft : value) && !disabled ? (
         <Pressable
           accessibilityRole={a11yPresets.button.accessibilityRole}
           accessibilityLabel="Limpar campo"

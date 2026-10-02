@@ -55,6 +55,10 @@ describe('orchestrate (scripts/clean-clone.ts), sobre uma cópia real dos arquiv
     expect(existsSync(join(dir, 'CONTRIBUTING.md'))).toBe(false)
     expect(existsSync(join(dir, 'tsconfig.lib.json'))).toBe(false)
     expect(existsSync(join(dir, 'src/index.ts'))).toBe(false)
+    // Lacuna 1 da simulação dos leigos da 1.2.0: os testes dos subcaminhos importam `./index`, que o clone não tem.
+    for (const teste of ['src/chart.test.ts', 'src/rich-text-editor.test.ts', 'src/document-viewer.test.ts']) {
+      expect(existsSync(join(dir, teste))).toBe(false)
+    }
 
     const licencaOriginal = readFileSync(join(process.cwd(), 'LICENSE'), 'utf8')
     expect(readFileSync(join(dir, 'LICENSE'), 'utf8')).toBe(licencaOriginal)

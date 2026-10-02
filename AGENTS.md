@@ -8,7 +8,7 @@ O Rendra App é o design system e boilerplate mobile do Rendra, em React Native 
 
 Este arquivo vale para qualquer IA de código: Codex, Claude Code, Cursor, GitHub Copilot, Gemini, Windsurf, Jules e outras.
 
-O design system completo traz 57 componentes de UI (`src/components/ui`, `src/components/layout`, `src/components/app-shell`, `src/components/splash`), 50 entradas de vitrine (`/componentes`) e telas de exemplo (home, login com verificação em duas etapas, esqueci a senha, nova senha, criar conta, painel, clientes, detalhe, novo cliente, cadastro guiado, tarefas, configurações, 404 e erro 500). Os 44 primeiros existem desde a F1b (o `Spinner` entrou na Sincronização 1) e os cinco da F2 (`RendraCredit`, `ErrorPage`, `AuthLayout`, `AppShell`, `RendraSplash`) chegaram na 1.1.0, e os oito da F3 (`Chart`, `Timeline`, `Calendar`, `Kanban`, `ImageViewer`, o Chat, `RichTextEditor` e `DocumentViewer`) na 1.2.0, sobre a fundação da F1a: scaffold, tokens, os 3 modelos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter), `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, e a vitrine completa (`/componentes`, `/tokens` e `/galeria`). A versão corrente está em `CHANGELOG.md`.
+O design system completo traz 57 componentes de UI (`src/components/ui`, `src/components/layout`, `src/components/app-shell`, `src/components/splash`), 50 entradas de vitrine (`/componentes`) e telas de exemplo (home, login com verificação em duas etapas, esqueci a senha, nova senha, criar conta, painel, clientes, detalhe, novo cliente, cadastro guiado, tarefas, atendimento, agenda, funil, configurações, 404 e erro 500). Os 44 primeiros existem desde a F1b (o `Spinner` entrou na Sincronização 1) e os cinco da F2 (`RendraCredit`, `ErrorPage`, `AuthLayout`, `AppShell`, `RendraSplash`) chegaram na 1.1.0, e os oito da F3 (`Chart`, `Timeline`, `Calendar`, `Kanban`, `ImageViewer`, o Chat, `RichTextEditor` e `DocumentViewer`) na 1.2.0, sobre a fundação da F1a: scaffold, tokens, os 3 modelos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter), `BrandProvider`/`useBrand`, `Gradient`, fontes, `check:rules`, e a vitrine completa (`/componentes`, `/tokens` e `/galeria`). A versão corrente está em `CHANGELOG.md`.
 
 ## Fluxo de início: descubra em qual ramo você está
 
@@ -18,14 +18,14 @@ Primeiro: se você não consegue rodar comandos nem gravar arquivos (chat sem te
 
 **(b) Recebeu o link para começar um projeto novo.** Tudo abaixo é feito pela IA, nunca pedido à pessoa:
 
-1. `git clone https://github.com/bsmagalhaes/rendra-ui-app.git <nome-da-pasta>`.
+1. Pergunte, em uma linha, como o app se chama e derive o nome da pasta e do `--nome`: minúsculas, sem acento, com hífen no lugar de espaço (ex.: `rota-facil`). Depois, `git clone https://github.com/bsmagalhaes/rendra-ui-app.git <nome-da-pasta>`.
 2. Apagar `.git` e `git init` (perguntar se a pessoa quer ligar a um repositório próprio no GitHub dela).
 3. Conferir a versão do Node instalada: Node 22 ou mais recente (`engines` do `package.json`; o CI usa o 24).
 4. `npm install`.
-5. `npm run clean:clone -- --nome <nome>` (troca a identidade de pacote do Rendra pela do projeto novo, mantendo licença e crédito).
-6. `npx expo start --web` e informar o endereço impresso no terminal (normalmente `http://localhost:8081`, ou a porta que o Metro escolher se a 8081 estiver ocupada, ver `--port` abaixo).
-7. Ver no celular: abrir o Expo Go e escanear o QR code impresso no terminal; se não conectar (rede corporativa, VPN), usar `npx expo start --tunnel`.
-8. `npx playwright install chromium`, só quando for rodar `test:layout`/`test:a11y`.
+   Em seguida, `npm run clean:clone -- --nome <nome>` (troca a identidade de pacote do Rendra pela do projeto novo, mantendo licença e crédito).
+5. `npx expo start --web` e informar o endereço impresso no terminal (normalmente `http://localhost:8081`, ou a porta que o Metro escolher se a 8081 estiver ocupada, ver `--port` abaixo).
+6. Ver no celular: abrir o Expo Go e escanear o QR code impresso no terminal; se não conectar (rede corporativa, VPN), usar `npx expo start --tunnel`.
+7. `npx playwright install chromium`, só quando for rodar `test:layout`/`test:a11y`.
 
 Se o projeto for publicar em domínio próprio (GitHub Pages ou outro), defina `homepage` no
 `package.json` (ou a variável `SITE_URL` no comando de build) com o endereço público real: sem
@@ -98,7 +98,7 @@ Se a sua ferramenta tem subagentes ou vários modelos e o trabalho é manutenç�
 
 O clone já traz telas de exemplo, para serem trocadas pelas do produto (nunca apagadas às cegas: o teste de cada rota mostra o que ela promete):
 
-- **Dentro do `AppShell`**, em `app/(shell)/` (o grupo entre parênteses não entra na URL): `/componentes`, `/tokens`, `/galeria`, `/painel`, `/clientes`, `/clientes/[id]`, `/clientes/novo`, `/cadastro`, `/tarefas` e `/configuracoes` (seis seções em abas). Os dados de exemplo vêm de `src/mocks/` e os auxiliares da demo de `src/demo/`, ambos fora do pacote. O `app/(shell)/_layout.tsx` monta o `AppShell` com o menu e o usuário de exemplo de `src/config/navigation.tsx`; em projeto novo, troque esse menu pelo do produto (`title`, `to`, `icon`, `bottomNav` até 4 itens na barra inferior).
+- **Dentro do `AppShell`**, em `app/(shell)/` (o grupo entre parênteses não entra na URL): `/componentes`, `/tokens`, `/galeria`, `/painel`, `/clientes`, `/clientes/[id]`, `/clientes/novo`, `/cadastro`, `/tarefas`, `/atendimento`, `/atendimento/[id]`, `/agenda`, `/kanban` e `/configuracoes` (seis seções em abas). Os dados de exemplo vêm de `src/mocks/` e os auxiliares da demo de `src/demo/`, ambos fora do pacote. O `app/(shell)/_layout.tsx` monta o `AppShell` com o menu e o usuário de exemplo de `src/config/navigation.tsx`; em projeto novo, troque esse menu pelo do produto (`title`, `to`, `icon`, `bottomNav` até 4 itens na barra inferior).
 - **Fora do shell**, em tela cheia: `/` (home), `/login`, `/esqueci-senha`, `/verificacao`, `/nova-senha` e `/cadastre-se` (`AuthLayout`) e `+not-found` (`ErrorPage`); o erro 500 é o `ErrorBoundary` exportado por `app/_layout.tsx`. Cada uma tem o próprio `SafeAreaView`, porque o inset superior do shell é do cabeçalho dele.
 - **Layout do menu** pelo código de modelo: `N1` barra inferior com menu em gaveta (padrão), `N2` barra inferior com menu em folha, `N3` só gaveta (`?codigo=T1-C1-N2`, `useShell().applyLayout('N2')` ou a tela `/configuracoes`); a escolha fica gravada no aparelho.
 - **Crédito "Feito com Rendra"** (`RendraCredit`) vem ligado no login e na home; `credit={false}` no `AuthLayout` (ou não renderizar o `RendraCredit`) o remove, com o aviso de licença descrito abaixo.

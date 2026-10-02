@@ -59,6 +59,10 @@ export const ARQUIVOS_SO_DO_PACOTE = [
   'src/__tests__/pack-consumer.test.tsx',
   'src/index.ts',
   'src/index.test.ts',
+  // Testes dos subcaminhos da F3: importam `./index`, que o clone não tem.
+  'src/chart.test.ts',
+  'src/rich-text-editor.test.ts',
+  'src/document-viewer.test.ts',
   'CONTRIBUTING.md',
 ]
 

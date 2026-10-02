@@ -59,7 +59,7 @@ Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1
 - `Gradient` em SVG.
 - Os 57 componentes de UI (`src/components/ui`, `src/components/layout`, `src/components/app-shell`, `src/components/splash`), listados abaixo.
 - `AppShell`: cabeçalho com título e seta de voltar, barra inferior de navegação rápida com botão central de menu, menu em gaveta ou folha e menu do usuário; só `navigation` é obrigatório, sem depender do roteador.
-- Telas de exemplo prontas: home (`/`), `/login`, `/painel`, `/configuracoes` e a página 404; abertura animada (`RendraSplash`) ligada ao splash nativo; crédito discreto "Feito com Rendra" (`RendraCredit`), opcional.
+- Telas de exemplo prontas: home (`/`), `/login`, `/painel`, `/clientes`, `/cadastro`, `/tarefas`, `/atendimento`, `/agenda`, `/kanban`, `/configuracoes` e a página 404; abertura animada (`RendraSplash`) ligada ao splash nativo; crédito discreto "Feito com Rendra" (`RendraCredit`), opcional.
 - `check:rules`, verificação estática das regras de `DESIGN_RULES.md`.
 - Piso de cobertura (`coverageThreshold`): 90% em `src/lib`, 80% em `src/components` e `src/theme`, além do piso por arquivo nos módulos de contrato (`src/lib/masks.ts`, `src/lib/validators.ts`, `src/brand/palette.ts`, `src/theme/vars.ts`, `src/config/presets.ts`, `src/config/showcase.tsx`, `src/lib/robots.ts`, `src/lib/llms-txt.ts`, `src/config/seo.ts`).
 - Rotas `/componentes` (vitrine completa, 50 entradas), `/tokens` (paleta com AA ao vivo, tipografia, espaço, raio, sombra) e `/galeria` (troca ao vivo de modelo, paleta e modo pelo controle real).
@@ -82,7 +82,7 @@ Layout 6, Dados 2, Planejamento 5): `FormField`/`FormSection` entram compostos n
 longa)'` conta como entrada própria (decisão do fechamento da F1b), por isso a contagem da vitrine
 difere da contagem por exportação acima. Os cinco componentes da F2 (`RendraCredit`, `ErrorPage`,
 `AuthLayout`, `AppShell` e `RendraSplash`) não têm entrada própria na vitrine: aparecem em uso
-nas telas de exemplo (home, login, painel, configurações e 404).
+nas telas de exemplo (home, login, painel, atendimento, agenda, funil, configurações e 404).
 
 ## Stack
 
@@ -235,6 +235,9 @@ app/                 # Expo Router (file-based)
     tokens/index.tsx    # paleta, tipografia, espaço, raio, sombra, pares AA ao vivo
     galeria/index.tsx   # troca ao vivo de modelo/paleta/modo pelo controle real
     painel.tsx          # painel de exemplo
+    atendimento/        # lista e conversa de atendimento (Chat)
+    agenda.tsx          # agenda de exemplo (Calendar)
+    kanban.tsx          # funil de exemplo (Kanban)
     configuracoes.tsx   # aparência, layout do menu e perfil
 src/
   index.ts             # entrada principal do pacote @rendra-ui/app

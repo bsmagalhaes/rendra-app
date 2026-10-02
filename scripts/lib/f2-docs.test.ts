@@ -125,10 +125,9 @@ suite('CHANGELOG 1.1.0 fechado', () => {
 
 suite('CHANGELOG 1.2.0 fechado (F3)', () => {
   const versao = entrada('1.2.0', '1.1.0')
-  const pacote = JSON.parse(ler('package.json')) as { version: string }
-  const app = JSON.parse(ler('app.json')) as { expo: { version: string } }
-
   it('a versão gravada é a 1.2.0 nos dois manifestos', () => {
+    const pacote = JSON.parse(ler('package.json')) as { version: string }
+    const app = JSON.parse(ler('app.json')) as { expo: { version: string } }
     expect(pacote.version).toBe('1.2.0')
     expect(app.expo.version).toBe('1.2.0')
   })
@@ -146,8 +145,8 @@ suite('CHANGELOG 1.2.0 fechado (F3)', () => {
     }
   })
 
-  it('deixa a simulação dos dois leigos pendente, sem a frase de aprovação', () => {
-    expect(versao).toContain('Simulação dos dois leigos: pendente da validação da entrega')
-    expect(versao).not.toMatch(/Simulação dos dois leigos aprovada/)
+  it('registra a simulação dos leigos aprovada para esta versão', () => {
+    expect(versao).toContain('Simulação dos dois leigos aprovada em 02/10/2026')
+    expect(versao).not.toMatch(/Simulação dos dois leigos: pendente/)
   })
 })

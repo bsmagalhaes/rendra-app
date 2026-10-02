@@ -2,7 +2,7 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
-## [1.2.0] - 30/09/2026
+## [1.2.0] - 02/10/2026
 
 Terceira versão sobre a 1.1.0 (ainda não publicada no npm): 57 componentes de UI, com os oito da F3. Mudança aditiva: nenhuma API pública existente foi removida ou renomeada; `a11yPresets` e `systemColors` só ganharam chaves.
 
@@ -50,7 +50,7 @@ Terceira versão sobre a 1.1.0 (ainda não publicada no npm): 57 componentes de 
 
 ### Pendente
 
-- Simulação dos dois leigos: pendente da validação da entrega. Sem a frase de aprovação, `verify:pack -- --publicacao` recusa a publicação.
+- Simulação dos dois leigos aprovada em 02/10/2026 (Regra um, item 7): começar um app novo e migrar um app existente, nos três perfis de IA (com terminal e agentes, com terminal sem agentes, chat sem terminal), com os oito componentes da F3, o Select e as telas do P4 alcançados a partir do link, sem lacuna bloqueadora.
 - Verificação em aparelho (Tarefa 8.3): gesto do `ImageViewer` no Android real, gesto e teclado do Chat, e o editor visual no Expo Go.
 
 ## [1.1.0] - 29/09/2026

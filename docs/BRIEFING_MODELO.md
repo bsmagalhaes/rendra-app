@@ -52,7 +52,7 @@ Cada "sim" vira uma linha "recurso, para quê, spec própria" em `docs/BRIEFING.
 
 ## Bloco 4: Navegação
 
-4.0 Código. Tem um código de modelo, de outro projeto Rendra ou de quem indicou (por exemplo `T1-C4-N2`)? Pode ser parte (`T2`, `C4-N3`). Para ver um modelo, uma paleta e o menu, abra `https://bsmagalhaes.github.io/rendra-ui-app/galeria?codigo=T1-C4-N2` trocando o código (a galeria não mostra o código, só aplica). "Não sei": siga as perguntas abaixo.
+4.0 Código. Tem um código de modelo, de outro projeto Rendra ou de quem indicou (por exemplo `T1-C4-N2`)? Pode ser parte (`T2`, `C4-N3`). Para ver um modelo, uma paleta e o menu, abra `https://bsmagalhaes.github.io/rendra-ui-app/demo/galeria/?codigo=T1-C4-N2` trocando o código (a galeria não mostra o código, só aplica). "Não sei": siga as perguntas abaixo.
 
 | Parte | Códigos e o que definem | Perguntas que pula |
 |---|---|---|
@@ -132,11 +132,11 @@ Referências visuais, pergunta aberta: apps ou sites que a pessoa admira.
 
 ## Bloco 7: Telas
 
-Pergunta aberta, uma tabela: nome, objetivo, como abre e prioridade (1 é a primeira a fazer). Como abre: tela (rota), tela cheia que sobe sobre a tela (`GAV-001`), ou janela de confirmação (`MOD-001`, `MOD-002`, `MOD-003`). Janela com mais de 3 campos vira tela. A IA propõe a lista a partir do menu do bloco 4 e a pessoa ajusta. Já vêm prontas no boilerplate: a tela de abertura (hoje apresenta o Rendra e passa a ser a inicial do produto), login, painel, configurações e tela de erro.
+Pergunta aberta, uma tabela: nome, objetivo, como abre e prioridade (1 é a primeira a fazer). Como abre: tela (rota), tela cheia que sobe sobre a tela (`GAV-001`), ou janela de confirmação (`MOD-001`, `MOD-002`, `MOD-003`). Janela com mais de 3 campos vira tela. A IA propõe a lista a partir do menu do bloco 4 e a pessoa ajusta. Já vêm prontas no boilerplate: a tela de abertura (hoje apresenta o Rendra e passa a ser a inicial do produto), login, painel, configurações e tela de erro, mais as telas de exemplo de clientes, cadastro, tarefas, atendimento, agenda e funil, para trocar pelas do produto.
 
 ## Bloco 8: Componentes
 
-O código de catálogo, como `BTN-001`, diz qual componente e qual variante; o código de modelo, como `T1-C1-N1`, diz a marca. A vitrine publicada mostra cada componente ao vivo: `https://bsmagalhaes.github.io/rendra-ui-app/componentes`.
+O código de catálogo, como `BTN-001`, diz qual componente e qual variante; o código de modelo, como `T1-C1-N1`, diz a marca. A vitrine publicada mostra cada componente ao vivo: `https://bsmagalhaes.github.io/rendra-ui-app/demo/componentes/`.
 
 "não sei, sugira": a IA marca o padrão de cada situação e mostra só as situações que as telas do bloco 7 usam.
 

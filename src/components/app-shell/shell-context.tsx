@@ -7,7 +7,7 @@ import { defaultShellLayout, layoutOptions } from './layout'
 import type { ShellLayout, ShellLayoutCode } from './layout'
 import { getBottomNavItems, getNavigationTargets, resolveActiveTo } from './navigation-utils'
 import type { NavigationTarget } from './navigation-utils'
-import type { NavGroup, NavItem, ShellMenuItem, ShellUser } from './types'
+import type { NavGroup, NavItem, ShellMenuItem, ShellNotificationsConfig, ShellUser } from './types'
 
 const STORAGE_KEY = 'rendra:shell-layout'
 
@@ -47,6 +47,8 @@ export interface ShellContextValue {
   user?: ShellUser
   userMenuItems?: ShellMenuItem[]
   onLogout?: () => void
+  /** Sino de notificações do cabeçalho; ausente, o shell não mostra sino. */
+  notifications?: ShellNotificationsConfig
   homeLabel?: string
   /** Título e ajuda enviados pela tela (o `PageHeader` dentro do shell). */
   pageTitle?: string
@@ -116,6 +118,8 @@ export interface ShellProviderProps {
   user?: ShellUser
   userMenuItems?: ShellMenuItem[]
   onLogout?: () => void
+  /** Sino de notificações do cabeçalho (opcional, a lista é copiada na montagem). */
+  notifications?: ShellNotificationsConfig
   homeLabel?: string
   /** Deixa a pessoa trocar e gravar o layout (padrão `true`). */
   userConfigurable?: boolean
@@ -128,6 +132,7 @@ export function ShellProvider({
   user,
   userMenuItems,
   onLogout,
+  notifications,
   homeLabel,
   userConfigurable = true,
   children,
@@ -216,6 +221,7 @@ export function ShellProvider({
       user,
       userMenuItems,
       onLogout,
+      notifications,
       homeLabel,
       pageTitle: metaAtual?.title,
       pageHelp: metaAtual?.help,
@@ -235,6 +241,7 @@ export function ShellProvider({
       user,
       userMenuItems,
       onLogout,
+      notifications,
       homeLabel,
       metaAtual,
       setPageMeta,

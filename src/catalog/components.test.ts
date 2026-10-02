@@ -62,6 +62,12 @@ const ARQUIVOS_REAIS_DE_COMPONENTE = [
   'components/ui/otp-input.tsx',
   'components/ui/progress.tsx',
   'components/ui/radio-group.tsx',
+  'components/ui/wizard.tsx',
+  'components/ui/table.tsx',
+  'components/ui/data-toolbar.tsx',
+  'components/ui/pagination.tsx',
+  'components/ui/checklist.tsx',
+  'components/ui/rating.tsx',
   'components/ui/rendra-credit.tsx',
   'components/ui/rich-text-editor.tsx',
   'components/ui/select.tsx',
@@ -132,6 +138,14 @@ const TABELA_PARIDADE: [string, string, Record<string, unknown>, true | undefine
   ['PROG-001', 'Progress', {}, undefined],
   ['RDO-001', 'RadioGroup', { variant: 'list' }, true],
   ['RDO-002', 'RadioGroup', { variant: 'cards' }, undefined],
+  ['RTG-001', 'Rating', { variant: 'stars' }, true],
+  ['RTG-002', 'Rating', { variant: 'scale' }, undefined],
+  ['CKLT-001', 'Checklist', {}, undefined],
+  ['PAG-001', 'Pagination', {}, undefined],
+  ['DTB-001', 'DataToolbar', {}, undefined],
+  ['TAB-001', 'Table', {}, undefined],
+  ['WIZ-002', 'Stepper', {}, undefined],
+  ['WIZ-001', 'Wizard', {}, undefined],
   ['CRED-001', 'RendraCredit', {}, undefined],
   ['DOC-001', 'DocumentViewer', {}, undefined],
   ['RTE-001', 'RichTextEditor', {}, undefined],
@@ -256,7 +270,7 @@ describe('catalogo de componentes', () => {
   })
 
   it('paridade com o web: 66 entradas (as 49 da F1b e F2 e da Sincronizacao 1 mais CHT-001 a CHT-007, TLN-001, CAL-001, KANB-001, KANB-002, IMG-001, CHAT-001, CHAT-002, CHAT-003, RTE-001 e DOC-001 da F3) com code/component/variantProps/isDefault iguais (Apendice A do veredito do Opus)', () => {
-    expect(CATALOG).toHaveLength(66)
+    expect(CATALOG).toHaveLength(74)
   })
 
   it.each(TABELA_PARIDADE)('%s (%s) casa code/component/variantProps/isDefault', (code, component, variantProps, isDefault) => {

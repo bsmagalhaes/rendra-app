@@ -1,4 +1,5 @@
 import * as pacote from './index'
+import type { ShellNotificationItem, ShellNotificationsConfig } from './index'
 
 describe('src/index.ts, entrada principal do pacote', () => {
   it('exporta os componentes de UI e o BrandProvider, funcoes de verdade', () => {
@@ -33,6 +34,20 @@ describe('src/index.ts, entrada principal do pacote', () => {
     expect(typeof pacote.ChatComposer).toBe('function')
     expect(typeof pacote.ChannelBadge).toBe('function')
     expect(typeof pacote.moveKanbanCard).toBe('function')
+  })
+
+  it('exporta os componentes da Sincronização 2 (Rating, Checklist, Pagination, DataToolbar, Table, Stepper, Wizard) e os tipos do sino do shell', () => {
+    expect(typeof pacote.Rating).toBe('function')
+    expect(typeof pacote.Checklist).toBe('function')
+    expect(typeof pacote.Pagination).toBe('function')
+    expect(typeof pacote.DataToolbar).toBe('function')
+    expect(typeof pacote.Table).toBe('function')
+    expect(typeof pacote.Stepper).toBe('function')
+    expect(typeof pacote.Wizard).toBe('function')
+    // Tipos do sino: a conferência é a compilação (`npm run typecheck`).
+    const item: ShellNotificationItem = { id: '1', type: 'info', title: 'Fatura paga', time: '29/09/2026', read: false }
+    const config: ShellNotificationsConfig = { items: [item], onMarkAllRead: () => {}, onItemClick: () => {} }
+    expect(config.items).toHaveLength(1)
   })
 
   it('exporta o AppShell e a superficie publica de navegacao, sem o menu de exemplo', () => {

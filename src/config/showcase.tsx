@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Image, KeyboardAvoidingView, Platform, View } from 'react-native'
-import { Archive, Handshake, MoreHorizontal, Wallet, XCircle } from 'lucide-react-native'
+import { Archive, Handshake, MoreHorizontal, UserPlus, Wallet, XCircle } from 'lucide-react-native'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -64,6 +64,16 @@ import {
   ChatThread,
   ChatComposer,
   type ChatMessage,
+  Rating,
+  Checklist,
+  type ChecklistItem,
+  Pagination,
+  DataToolbar,
+  Table,
+  type TableColumn,
+  Stepper,
+  Wizard,
+  type WizardStep,
 } from '../components/ui'
 import { Gradient } from '../components/gradient/gradient'
 import { Container, Grid, Inline, PageHeader, Section, Stack } from '../components/layout'
@@ -76,6 +86,7 @@ import { funilVendas, metaDoMes, porSegmento, receitaMensal } from '../mocks/cha
 import { demoCards, demoEvents, pipelineColumns, referencia } from '../mocks/planning'
 import { historicoContrato } from '../mocks/timeline'
 import { demoTickets, quickRepliesDemo, type Ticket } from '../mocks/chat'
+import { clients, situacoes, statusTone, type Cliente } from '../mocks/clients'
 import { resolveCatalogCode } from '../catalog/components'
 
 export interface ShowcaseEntry {
@@ -382,7 +393,7 @@ function OtpInputExample() {
 
 function DatePickerExample() {
   const [value, setValue] = useState<Date | null>(null)
-  return <DatePicker label="Data e hora do evento" value={value} onChange={setValue} time dropdowns />
+  return <DatePicker label="Data e hora do evento" value={value} onChange={setValue} time dropdowns clearable />
 }
 
 function FieldExample() {
@@ -925,6 +936,167 @@ function ChatExample() {
   )
 }
 
+function RatingExample() {
+  const [estrelas, setEstrelas] = useState<number | null>(4)
+  const [nps, setNps] = useState<number | null>(null)
+  return (
+    <Stack gap="6">
+      <Rating accessibilityLabel="Avaliação do atendimento" value={estrelas} onChange={setEstrelas} />
+      <Rating
+        variant="scale"
+        min={0}
+        accessibilityLabel="Chance de recomendar"
+        lowLabel="Nada provável"
+        highLabel="Muito provável"
+        value={nps}
+        onChange={setNps}
+      />
+    </Stack>
+  )
+}
+
+function ChecklistExample() {
+  const [itens, setItens] = useState<ChecklistItem[]>([
+    { id: 'c1', label: 'Conferir o contrato', checked: true },
+    { id: 'c2', label: 'Enviar a proposta', checked: false },
+  ])
+  return <Checklist accessibilityLabel="Passos do onboarding" value={itens} onChange={setItens} />
+}
+
+function PaginationExample() {
+  const [paginas, setPaginas] = useState(3)
+  const [carregadas, setCarregadas] = useState(1)
+  return (
+    <Stack gap="6">
+      <Pagination page={paginas} pageSize={10} total={248} onPageChange={setPaginas} />
+      <Pagination mobileMode="loadMore" page={carregadas} pageSize={10} total={248} onPageChange={setCarregadas} />
+    </Stack>
+  )
+}
+
+function DataToolbarExample() {
+  const [busca, setBusca] = useState('')
+  const [situacao, setSituacao] = useState<string | null>(null)
+  const [ordem, setOrdem] = useState<string | null>(null)
+  const [mostraEmail, setMostraEmail] = useState(true)
+  return (
+    <Card className="border-border">
+      <DataToolbar
+        search={{ value: busca, onChange: setBusca, placeholder: 'Buscar cliente' }}
+        filters={
+          <Select
+            label="Situação"
+            placeholder="Todas"
+            clearable
+            value={situacao}
+            onChange={setSituacao}
+            options={situacoes.map((s) => ({ value: s, label: s }))}
+          />
+        }
+        filterCount={situacao ? 1 : 0}
+        chips={situacao ? [{ id: 'situacao', label: situacao, onRemove: () => setSituacao(null) }] : []}
+        onClearFilters={() => setSituacao(null)}
+        sort={
+          <Select
+            label="Ordenar por"
+            placeholder="Ordem padrão"
+            clearable
+            value={ordem}
+            onChange={setOrdem}
+            options={[
+              { value: 'nome', label: 'Nome' },
+              { value: 'mrr', label: 'Mensalidade' },
+            ]}
+          />
+        }
+        columns={[{ id: 'email', label: 'E-mail', visible: mostraEmail, onToggle: setMostraEmail }]}
+        primaryAction={<Button icon={<UserPlus className="text-primary-foreground" />} onPress={() => {}}>Novo cliente</Button>}
+      />
+    </Card>
+  )
+}
+
+const colunasClientes: TableColumn<Cliente>[] = [
+  { id: 'nome', header: 'Nome', accessor: (c) => c.nome, mobile: 'primary' },
+  { id: 'situacao', header: 'Situação', accessor: (c) => c.situacao, kind: 'badge', badgeTone: (c) => statusTone[c.situacao], mobile: 'primary' },
+  { id: 'segmento', header: 'Segmento', accessor: (c) => c.segmento },
+  { id: 'cidade', header: 'Cidade', accessor: (c) => c.cidade },
+  { id: 'mrr', header: 'Mensalidade', accessor: (c) => c.mrr, kind: 'currency' },
+  { id: 'email', header: 'E-mail', accessor: (c) => c.email },
+]
+
+function TableExample() {
+  const [busca, setBusca] = useState('')
+  return (
+    <Table<Cliente>
+      accessibilityLabel="Clientes"
+      data={clients}
+      columns={colunasClientes}
+      getRowId={(c) => String(c.id)}
+      globalFilter={busca}
+      selectable
+      columnVisibility
+      pageSize={5}
+      toolbar={{ search: { value: busca, onChange: setBusca, placeholder: 'Buscar cliente' } }}
+      rowActions={[
+        { label: 'Editar', onPress: () => {} },
+        { label: 'Excluir', destructive: true, onPress: () => {} },
+      ]}
+      bulkActions={(_, limpar) => (
+        <Button size="sm" variant="outline" onPress={limpar}>
+          Arquivar
+        </Button>
+      )}
+    />
+  )
+}
+
+const etapasCadastro: WizardStep[] = [
+  { id: 'empresa', title: 'Dados da empresa' },
+  { id: 'contato', title: 'Contato' },
+  { id: 'revisao', title: 'Revisão' },
+]
+
+function StepperExample() {
+  const [atual, setAtual] = useState(1)
+  return (
+    <Stack gap="4">
+      <Stepper steps={etapasCadastro} current={atual} />
+      <ButtonGroup
+        options={etapasCadastro.map((_, i) => ({ value: String(i), label: String(i + 1) }))}
+        value={String(atual)}
+        onChange={(v) => setAtual(Number(v))}
+      />
+    </Stack>
+  )
+}
+
+function WizardExample() {
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  return (
+    <Wizard
+      steps={etapasCadastro}
+      onValidateStep={(i) => (i === 0 ? nome.trim().length > 0 : true)}
+      onFinish={() => {
+        toast.success('Cadastro concluído')
+      }}
+    >
+      {[
+        <Field key="empresa" label="Nome da empresa" required help="Preencha para avançar.">
+          <Input value={nome} onChange={setNome} />
+        </Field>,
+        <Field key="contato" label="E-mail de contato">
+          <Input value={email} onChange={setEmail} />
+        </Field>,
+        <Text key="revisao" className="text-sm text-foreground">
+          {`Empresa: ${nome}. Contato: ${email || 'não informado'}.`}
+        </Text>,
+      ]}
+    </Wizard>
+  )
+}
+
 export const showcaseGroups: ShowcaseGroup[] = [
   {
     slug: 'acoes',
@@ -1007,6 +1179,18 @@ export const showcaseGroups: ShowcaseGroup[] = [
         description: 'Editor de texto rico: visual no celular (WebView), só o modo HTML no navegador (subcaminho @rendra-ui/app/rich-text-editor).',
         render: () => <RichTextEditorExample />,
         codes: codigosPara(['RichTextEditor']),
+      },
+      {
+        name: 'Rating',
+        description: 'Avaliação em estrelas ou em escala, com rótulo nas pontas.',
+        render: () => <RatingExample />,
+        codes: codigosPara(['Rating', { variant: 'stars' }], ['Rating', { variant: 'scale' }]),
+      },
+      {
+        name: 'Checklist',
+        description: 'Lista de itens que se marcam, renomeiam, adicionam e removem.',
+        render: () => <ChecklistExample />,
+        codes: codigosPara(['Checklist']),
       },
     ],
   },
@@ -1110,6 +1294,18 @@ export const showcaseGroups: ShowcaseGroup[] = [
         render: () => <DocumentViewerExample />,
         codes: codigosPara(['DocumentViewer']),
       },
+      {
+        name: 'Stepper',
+        description: 'Indicador de etapas: "Etapa 2 de 3", barra de progresso e nome da etapa.',
+        render: () => <StepperExample />,
+        codes: codigosPara(['Stepper']),
+      },
+      {
+        name: 'Wizard',
+        description: 'Cadastro em etapas com validação, Voltar e Avançar.',
+        render: () => <WizardExample />,
+        codes: codigosPara(['Wizard']),
+      },
     ],
   },
   {
@@ -1147,6 +1343,24 @@ export const showcaseGroups: ShowcaseGroup[] = [
         description: 'Eventos em ordem, com tom semântico, data curta e resultado com ícone e texto.',
         render: () => <TimelineExample />,
         codes: codigosPara(['Timeline']),
+      },
+      {
+        name: 'Pagination',
+        description: 'Anterior e próxima com "Página X de Y", ou "Carregar mais".',
+        render: () => <PaginationExample />,
+        codes: codigosPara(['Pagination']),
+      },
+      {
+        name: 'DataToolbar',
+        description: 'Busca, filtros em gaveta, chips dos filtros e ação principal acima de uma listagem.',
+        render: () => <DataToolbarExample />,
+        codes: codigosPara(['DataToolbar']),
+      },
+      {
+        name: 'Table',
+        description: 'Dados em lista de cards, com busca, ordenação, seleção, ações por linha e paginação.',
+        render: () => <TableExample />,
+        codes: codigosPara(['Table']),
       },
     ],
   },

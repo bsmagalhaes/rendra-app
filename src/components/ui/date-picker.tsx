@@ -2,14 +2,14 @@ import { useMemo, useState } from 'react'
 import { Pressable, View } from 'react-native'
 import { addDays, addMonths, format, isSameDay, setHours, setMinutes, startOfMonth, startOfWeek } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react-native'
+import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react-native'
 import { Text } from '../internal/text'
 import { PickerPanel } from '../internal/picker-panel'
 import { Input } from './input'
 import { Button } from './button'
 import { cn } from '../../lib/cn'
 import { a11yPresets } from '../../lib/a11y'
-import { controlFrameClasses, type ControlSize } from '../../lib/control'
+import { controlAdornmentButton, controlFrameClasses, type ControlSize } from '../../lib/control'
 
 export interface DateRange {
   from?: Date
@@ -26,6 +26,8 @@ interface BaseDatePickerProps {
   minDate?: Date
   maxDate?: Date
   dropdowns?: boolean
+  // Botão de limpar ao lado do gatilho (forma simples e `range`); só com valor e fora de `disabled`.
+  clearable?: boolean
   id?: string // recebido via cloneElement pelo Field (Tarefa 19); reservado, sem uso interno
   className?: string
   testID?: string
@@ -71,6 +73,7 @@ export function DatePicker(props: DatePickerProps) {
     minDate,
     maxDate,
     dropdowns = true,
+    clearable = false,
     className,
     testID,
   } = props
@@ -177,6 +180,8 @@ export function DatePicker(props: DatePickerProps) {
     return time ? `${base} ${formatTime(currentSingle)}` : base
   })()
 
+  const showClear = clearable && Boolean(text) && !disabled
+
   const resolvedPlaceholder = placeholder ?? (range ? 'Selecione o período' : 'Selecione a data')
 
   return (
@@ -185,6 +190,18 @@ export function DatePicker(props: DatePickerProps) {
       onOpenChange={handleOpenChange}
       title={label ?? resolvedPlaceholder}
       testID={testID}
+      adornment={
+        showClear ? (
+          <Pressable
+            accessibilityRole={a11yPresets.button.accessibilityRole}
+            accessibilityLabel="Limpar data"
+            onPress={clearAll}
+            className={cn(controlAdornmentButton, 'absolute right-2 top-1/2 -translate-y-1/2')}
+          >
+            <X className="size-icon-sm" />
+          </Pressable>
+        ) : undefined
+      }
       trigger={
         <Pressable
           accessibilityRole={a11yPresets.button.accessibilityRole}
@@ -193,7 +210,7 @@ export function DatePicker(props: DatePickerProps) {
           accessibilityLabel={label ?? resolvedPlaceholder}
           disabled={disabled}
           onPress={() => !disabled && handleOpenChange(true)}
-          className={cn(controlFrameClasses({ size, invalid, disabled }), className)}
+          className={cn(controlFrameClasses({ size, invalid, disabled }), showClear && 'pr-16', className)}
           dataSet={{ rendra: 'DTP-001' }}
         >
           <CalendarDays className="size-icon-sm shrink-0 text-muted-foreground" />

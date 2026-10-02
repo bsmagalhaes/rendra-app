@@ -81,7 +81,11 @@ Cada "sim" vira uma linha "recurso, para quê, spec própria" em `docs/BRIEFING.
 
 4.4 Conteúdo do menu, pergunta aberta: grupos e itens com ícone; os até 4 atalhos da barra; itens do menu do usuário além de Sair; se a tela de abertura fica no menu como "Início".
 
-Não pergunte posição do menu, estado da barra lateral, hover, tipo de submenu, busca global nem notificações: não existem no app.
+4.5 Sino de avisos no cabeçalho:
+1. Não (padrão)
+2. Sim, diga o que avisa (vem de exemplo no clone)
+
+Não pergunte posição do menu, estado da barra lateral, hover, tipo de submenu nem busca global: não existem no app.
 
 ## Bloco 5: Tema
 
@@ -193,6 +197,14 @@ Demais componentes do catálogo:
 | `SWT-001` | Switch | Para ligar ou desligar uma opção com efeito imediato. |
 | `TXT-001` | Área de texto | Para texto longo, com contador de caracteres opcional. |
 | `TLN-001` | Linha do tempo | Para uma sequência de eventos em ordem, cada um com um tom semântico. |
+| `RTG-001` | Avaliação em estrelas | Para uma nota rápida de satisfação, em estrelas. |
+| `RTG-002` | Avaliação em escala | Para uma nota de 0 a 10 (NPS e pesquisas parecidas), com rótulo nas pontas. |
+| `CKLT-001` | Lista de verificação | Para uma lista de itens que a pessoa cria, renomeia, marca e remove. |
+| `PAG-001` | Paginação | Para navegar entre páginas de uma listagem, ou carregar mais itens. |
+| `DTB-001` | Barra de ferramentas da listagem | Para busca, filtros, ordenação e a ação Novo, dentro do card da listagem. |
+| `TAB-001` | Tabela | Para qualquer listagem de registros, em lista de cards, com busca, ordenação, seleção e paginação. |
+| `WIZ-001` | Wizard | Para um cadastro longo dividido em etapas, com validação por etapa. |
+| `WIZ-002` | Indicador de etapas | Para mostrar o progresso em etapas por conta própria, sem o Wizard inteiro. |
 | `TST-001` | Toast | Para uma confirmação rápida depois de uma ação, sem interromper a tela. |
 
 ## Bloco 9: Dados

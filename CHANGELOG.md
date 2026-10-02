@@ -2,6 +2,32 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
+## [1.3.0] - 02/10/2026
+
+Versão aditiva sobre a 1.2.0: 64 componentes de UI, com os sete da Sincronização 2. Mudança só aditiva: nenhuma API pública existente foi removida, renomeada ou teve a assinatura alterada.
+
+### Adicionado
+
+- `DatePicker.clearable`: botão "Limpar data" ao lado do gatilho, na forma simples e no `range`; só aparece com valor e fora de `disabled`.
+- `AppShell.notifications`: sino de notificações no cabeçalho do shell, que abre a lista numa folha inferior. Tipos `ShellNotificationItem` e `ShellNotificationsConfig`. A lista é copiada uma vez, na montagem, e tocar num item o marca como lido sem fechar a folha. Sem a prop, o shell fica igual ao de antes.
+- `Rating` (`RTG-001` e `RTG-002`): avaliação em estrelas ou em escala numérica.
+- `Checklist` (`CKLT-001`): lista de itens que se marcam, renomeiam, adicionam e removem.
+- `Pagination` (`PAG-001`): anterior e próxima com "Página X de Y", ou "Carregar mais".
+- `DataToolbar` (`DTB-001`): busca, filtros e ordenação numa gaveta em tela cheia, chips dos filtros e ação principal.
+- `Table` (`TAB-001`): dados em lista de cards, com busca, ordenação, seleção, ações por linha, estados de carga, erro e vazio, e paginação. Sem dependência nova.
+- `Stepper` (`WIZ-002`) e `Wizard` (`WIZ-001`): indicador de etapas e fluxo em etapas com validação, Voltar e Avançar.
+- Vitrine com 57 entradas: `Rating` e `Checklist` em Formulário, `Stepper` e `Wizard` em Exibição, `Pagination`, `DataToolbar` e `Table` em Dados. O exemplo do `DatePicker` passou a usar `clearable`.
+- Simulação dos dois leigos aprovada em 02/10/2026 (Regra um, item 7): começar um app novo e migrar um app existente, nos três perfis de IA (com terminal e agentes, com terminal sem agentes, chat sem terminal), com os sete componentes da Sincronização 2, o `DatePicker.clearable` e o sino do `AppShell` alcançados a partir do link, sem lacuna bloqueadora.
+
+### Diferenças de plataforma (mantidas por decisão)
+
+- `List.onReorder` e `itemLabel`, `AppShell.quickActions`, `RepeatableField`, `ColorPicker`, `QrCode`, `ImageCropper`, `Breadcrumb`, `Popover`, `Tooltip`, `Upload` e `WidgetGrid` seguem fora do app. `NavItem.badge` continua `string`.
+- `Pagination` não traz "Itens por página", números de página nem "X a Y de Z" (só existem no desktop do web).
+- `Table` não tem modo remoto (`source`), `density`, `width`, `align`, `lines` nem a barra de seleção fixa no rodapé; a barra de seleção é em linha, acima da lista. Quem precisa de servidor controla `data`, `loading`, `error` e `pageSize` por fora. Os cards são montados com `View` e `map`, sem `List` nem `FlatList` (desvio da letra de "sobre o `List`", decidido no parecer do plano: `List` segue intocado e a tabela vive dentro da rolagem da página).
+- `Wizard` não é controlável (a etapa atual nasce em 0 e só muda por dentro) e não tem `orientation`; `Stepper` não tem `orientation` nem `onStepClick`. Uma `onValidateStep` que rejeita deixa a etapa marcada com erro.
+- `Checklist` não põe foco automático no item novo (o `Input` do app não expõe foco) e o item marcado vira texto riscado no lugar do campo.
+- `DataToolbar` não tem `selectionBar`, menu "Colunas" nem popover de filtros.
+
 ## [1.2.0] - 02/10/2026
 
 Terceira versão sobre a 1.1.0 (ainda não publicada no npm): 57 componentes de UI, com os oito da F3. Mudança aditiva: nenhuma API pública existente foi removida ou renomeada; `a11yPresets` e `systemColors` só ganharam chaves.

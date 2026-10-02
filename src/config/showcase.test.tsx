@@ -40,7 +40,7 @@ describe('showcaseGroups', () => {
     ])
   })
 
-  it('formulario tem as 13 entradas na ordem da spec (a 13a, RichTextEditor, e da F3)', () => {
+  it('formulario tem as 15 entradas na ordem da spec (a 13a, RichTextEditor, e da F3; Rating e Checklist, da Sincronizacao 2)', () => {
     const formulario = showcaseGroups.find((g) => g.slug === 'formulario')!
     expect(formulario.entries.map((e) => e.name)).toEqual([
       'Input',
@@ -56,20 +56,33 @@ describe('showcaseGroups', () => {
       'Field',
       'Formulário (RHF)',
       'RichTextEditor',
+      'Rating',
+      'Checklist',
     ])
   })
 
-  it('exibicao tem as 10 entradas na ordem da spec (a 10a, DocumentViewer, e da F3)', () => {
+  it('exibicao tem as 12 entradas na ordem da spec (a 10a, DocumentViewer, e da F3; Stepper e Wizard, da Sincronizacao 2)', () => {
     const grupo = showcaseGroups.find((g) => g.slug === 'exibicao')
     expect(grupo?.entries.map((e) => e.name)).toEqual([
-      'Card', 'Badge', 'Avatar', 'List', 'StatCard', 'Accordion', 'Tabs', 'Separator', 'BrandLogo', 'DocumentViewer',
+      'Card', 'Badge', 'Avatar', 'List', 'StatCard', 'Accordion', 'Tabs', 'Separator', 'BrandLogo', 'DocumentViewer', 'Stepper', 'Wizard',
     ])
   })
 
   it('dados tem o Chart com os 7 codigos CHT-001 a CHT-007', () => {
     const grupo = showcaseGroups.find((g) => g.slug === 'dados')
-    expect(grupo?.entries.map((e) => e.name)).toEqual(['Chart', 'Timeline'])
+    expect(grupo?.entries.map((e) => e.name)).toEqual(['Chart', 'Timeline', 'Pagination', 'DataToolbar', 'Table'])
     expect(grupo?.entries[0]!.codes).toEqual(['CHT-001', 'CHT-002', 'CHT-003', 'CHT-004', 'CHT-005', 'CHT-006', 'CHT-007'])
+  })
+
+  it('as entradas da Sincronizacao 2 trazem os codigos do catalogo (RTG-001/002, CKLT-001, PAG-001, DTB-001, TAB-001, WIZ-002, WIZ-001)', () => {
+    const codigos = (slug: string, name: string) => showcaseGroups.find((g) => g.slug === slug)!.entries.find((e) => e.name === name)!.codes
+    expect(codigos('formulario', 'Rating')).toEqual(['RTG-001', 'RTG-002'])
+    expect(codigos('formulario', 'Checklist')).toEqual(['CKLT-001'])
+    expect(codigos('dados', 'Pagination')).toEqual(['PAG-001'])
+    expect(codigos('dados', 'DataToolbar')).toEqual(['DTB-001'])
+    expect(codigos('dados', 'Table')).toEqual(['TAB-001'])
+    expect(codigos('exibicao', 'Stepper')).toEqual(['WIZ-002'])
+    expect(codigos('exibicao', 'Wizard')).toEqual(['WIZ-001'])
   })
 
   it('planejamento tem o Calendar e os dois Kanban o ImageViewer e o atendimento, com os codigos CAL-001, KANB-001, KANB-002, IMG-001 e CHAT-001 a CHAT-003', () => {
@@ -78,10 +91,10 @@ describe('showcaseGroups', () => {
     expect(grupo?.entries.map((e) => e.codes)).toEqual([['CAL-001'], ['KANB-001'], ['KANB-002'], ['IMG-001'], ['CHAT-001', 'CHAT-002', 'CHAT-003']])
   })
 
-  it('a vitrine tem 50 entradas reais, 4/13/10/10/6/2/5 por grupo (os grupos dados e planejamento sao da F3) (Spinner no feedback, Tarefa 8.1; divergencia da spec registrada)', () => {
+  it('a vitrine tem 57 entradas reais, 4/15/10/12/6/5/5 por grupo (os grupos dados e planejamento sao da F3; a Sincronizacao 2 acrescenta 7) (Spinner no feedback, Tarefa 8.1; divergencia da spec registrada)', () => {
     const total = showcaseGroups.flatMap((g) => g.entries).length
-    expect(total).toBe(50)
-    expect(showcaseGroups.map((g) => g.entries.length)).toEqual([4, 13, 10, 10, 6, 2, 5])
+    expect(total).toBe(57)
+    expect(showcaseGroups.map((g) => g.entries.length)).toEqual([4, 15, 10, 12, 6, 5, 5])
   })
 
   it.each(['acoes', 'layout', 'feedback', 'formulario', 'exibicao', 'dados', 'planejamento'])(

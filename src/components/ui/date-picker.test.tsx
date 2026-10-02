@@ -1,7 +1,18 @@
+import { useState } from 'react'
 import { render, fireEvent, waitFor } from '@testing-library/react-native'
 import { BrandProvider } from '../../brand/brand-provider'
-import { DatePicker } from './date-picker'
+import { DatePicker, type DateRange } from './date-picker'
 import { nodesWithCode } from '../../test-utils/rendra-code'
+import postcss from 'postcss'
+import tailwind from 'tailwindcss'
+import tailwindConfig from '../../../tailwind.config'
+
+// CSS que o Tailwind realmente gera para uma lista de classes, com a escala do preset. Classe fora da
+// escala (como `pr-11`) não gera regra, e o NativeWind a ignora: é o estilo efetivo que o teste lê.
+async function cssGerado(classes: string): Promise<string> {
+  const r = await postcss([tailwind({ ...tailwindConfig, content: [{ raw: classes }] })]).process('@tailwind utilities;', { from: undefined })
+  return r.css
+}
 
 describe('DatePicker', () => {
   it('gatilho tem papel button e accessibilityLabel', async () => {
@@ -306,5 +317,95 @@ describe('DatePicker', () => {
       </BrandProvider>,
     )
     expect(nodesWithCode(container, 'DTP-001')).toHaveLength(1)
+  })
+
+  describe('clearable', () => {
+    function Controlado({ inicial, onChange, ...resto }: { inicial: Date | null; onChange?: (v: Date | null) => void; clearable?: boolean; disabled?: boolean }) {
+      const [valor, setValor] = useState<Date | null>(inicial)
+      return (
+        <BrandProvider>
+          <DatePicker
+            value={valor}
+            onChange={(v) => {
+              setValor(v)
+              onChange?.(v)
+            }}
+            {...resto}
+          />
+        </BrandProvider>
+      )
+    }
+
+    it('com clearable e value mostra "Limpar data"; ao acionar, o texto some, o placeholder volta e onChange recebe null', async () => {
+      const onChange = jest.fn()
+      const { findByRole, queryByText, queryByRole } = await render(
+        <Controlado inicial={new Date(2026, 8, 25)} onChange={onChange} clearable />,
+      )
+      expect(queryByText('25/09/2026')).toBeTruthy()
+      await fireEvent.press(await findByRole('button', { name: 'Limpar data' }))
+      await waitFor(() => expect(queryByText('25/09/2026')).toBeNull())
+      expect(queryByText('Selecione a data')).toBeTruthy()
+      expect(onChange).toHaveBeenCalledWith(null)
+      expect(queryByRole('button', { name: 'Limpar data' })).toBeNull()
+    })
+
+    it('"Limpar data" é um botão separado do gatilho (os dois por papel e nome)', async () => {
+      const { findByRole } = await render(<Controlado inicial={new Date(2026, 8, 25)} clearable />)
+      const gatilho = await findByRole('button', { name: 'Selecione a data' })
+      const limpar = await findByRole('button', { name: 'Limpar data' })
+      expect(gatilho).not.toBe(limpar)
+    })
+
+    it('com range, clearable e período, acionar chama onChange(null) e o texto do período some', async () => {
+      const onChange = jest.fn()
+      function Periodo() {
+        const [v, setV] = useState<DateRange | null>({ from: new Date(2026, 8, 10), to: new Date(2026, 8, 20) })
+        return (
+          <BrandProvider>
+            <DatePicker range clearable value={v} onChange={(x) => { setV(x); onChange(x) }} />
+          </BrandProvider>
+        )
+      }
+      const { findByRole, queryByText } = await render(<Periodo />)
+      expect(queryByText('10/09/2026 a 20/09/2026')).toBeTruthy()
+      await fireEvent.press(await findByRole('button', { name: 'Limpar data' }))
+      await waitFor(() => expect(queryByText('10/09/2026 a 20/09/2026')).toBeNull())
+      expect(queryByText('Selecione o período')).toBeTruthy()
+      expect(onChange).toHaveBeenCalledWith(null)
+    })
+
+    it('com clearable e sem value, o botão não aparece', async () => {
+      const { queryByRole } = await render(<Controlado inicial={null} clearable />)
+      expect(queryByRole('button', { name: 'Limpar data' })).toBeNull()
+    })
+
+    it('sem clearable, o botão não aparece mesmo com value', async () => {
+      const { queryByRole } = await render(<Controlado inicial={new Date(2026, 8, 25)} />)
+      expect(queryByRole('button', { name: 'Limpar data' })).toBeNull()
+    })
+
+    it('o gatilho reserva à direita o espaço do botão Limpar (right-2 mais 44 px) com classe que existe na escala', async () => {
+      const { findByRole } = await render(<Controlado inicial={new Date(2026, 8, 10)} clearable />)
+      const gatilho = await findByRole('button', { name: 'Selecione a data' })
+      const tokens = String(gatilho.props.className ?? '').split(/\s+/).filter((t) => /^pr-/.test(t))
+      expect(tokens).toHaveLength(1)
+      const css = await cssGerado(tokens[0])
+      const m = css.match(/padding-right:\s*(\d+)px/)
+      expect(m).not.toBeNull()
+      expect(Number(m?.[1])).toBeGreaterThanOrEqual(8 + 44)
+    })
+
+    it('com disabled, o botão não aparece', async () => {
+      const { queryByRole } = await render(<Controlado inicial={new Date(2026, 8, 25)} clearable disabled />)
+      expect(queryByRole('button', { name: 'Limpar data' })).toBeNull()
+    })
+
+    it('acionar "Limpar data" não abre o painel', async () => {
+      const { findByRole, queryByText } = await render(<Controlado inicial={new Date(2026, 8, 25)} clearable />)
+      await fireEvent.press(await findByRole('button', { name: 'Limpar data' }))
+      const gatilho = await findByRole('button', { name: 'Selecione a data' })
+      expect(gatilho.props.accessibilityState.expanded).toBe(false)
+      expect(queryByText('Aplicar')).toBeNull()
+    })
   })
 })

@@ -8,6 +8,7 @@ import { useBrand } from '../../brand/use-brand'
 import { useRendraNavigation } from '../../navigation/rendra-navigation'
 import { getBackTarget } from './navigation-utils'
 import { useShell } from './shell-context'
+import { Notifications } from './notifications'
 import { UserMenu } from './user-menu'
 
 /**
@@ -64,6 +65,7 @@ export function Header() {
           </Text>
           {pageHelp ? <InfoHint title={pageTitle ?? title}>{pageHelp}</InfoHint> : null}
         </View>
+        <Notifications />
         {user ? <UserMenu user={user} userMenuItems={userMenuItems} onLogout={onLogout} /> : null}
       </View>
     </View>

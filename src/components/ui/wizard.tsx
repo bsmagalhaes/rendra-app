@@ -1,0 +1,133 @@
+import { useState } from 'react'
+import type { ReactNode } from 'react'
+import { View } from 'react-native'
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react-native'
+import { Text } from '../internal/text'
+import { ActionBar } from './action-bar'
+import { Progress } from './progress'
+
+export interface WizardStep {
+  id: string
+  title: string
+  description?: string
+}
+
+/** Estado de uma etapa (tipo público, paridade com o web; o formato de celular só destaca o erro da etapa atual). */
+export type StepStatus = 'complete' | 'current' | 'pending' | 'error'
+
+export interface StepperProps {
+  steps: WizardStep[]
+  /** Índice da etapa atual (0 é a primeira). */
+  current: number
+  /** Etapas com erro de validação (índices). */
+  errors?: number[]
+  testID?: string
+}
+
+/**
+ * Indicador de etapas no formato de celular: "Etapa 2 de 5", barra de progresso e o nome da etapa.
+ * `orientation` e `onStepClick` do web só existem no desktop e ficam fora.
+ */
+export function Stepper({ steps, current, errors = [], testID }: StepperProps) {
+  const step = steps[current]
+  return (
+    <View testID={testID} dataSet={{ rendra: 'WIZ-002' }} className="min-w-0 flex-col gap-2">
+      <View className="flex-row items-baseline justify-between gap-3">
+        <Text weight="medium" className="text-xs tabular-nums text-muted-foreground">
+          {`Etapa ${current + 1} de ${steps.length}`}
+        </Text>
+        {errors.includes(current) ? (
+          <Text weight="medium" className="text-xs text-destructive-soft-foreground">
+            Revise esta etapa
+          </Text>
+        ) : null}
+      </View>
+      <Progress value={((current + 1) / steps.length) * 100} size="sm" tone="brand" accessibilityLabel="Progresso" />
+      <Text weight="semibold" className="text-base text-foreground">
+        {step?.title}
+      </Text>
+    </View>
+  )
+}
+
+export interface WizardProps {
+  steps: WizardStep[]
+  /** Conteúdo de cada etapa, na mesma ordem. */
+  children: ReactNode[]
+  /** Valida a etapa antes de avançar. Devolva `false` para bloquear (e marcar erro). */
+  onValidateStep?: (index: number) => boolean | Promise<boolean>
+  onFinish?: () => void | Promise<void>
+  onCancel?: () => void
+  finishLabel?: string
+  /** Rodapé fixo na parte de baixo da tela. Padrão: não, segue junto do conteúdo. */
+  stickyFooter?: boolean
+}
+
+/**
+ * Cadastro em etapas, com validação por etapa e rodapé Voltar / Avançar. Não é controlável: a
+ * etapa atual nasce em 0 e só muda por dentro. O estado de cada etapa que precisa sobreviver ao
+ * "Voltar" fica no consumidor, porque só o filho da etapa atual é montado.
+ */
+export function Wizard({
+  steps,
+  children,
+  onValidateStep,
+  onFinish,
+  onCancel,
+  finishLabel = 'Concluir',
+  stickyFooter = false,
+}: WizardProps) {
+  const [current, setCurrent] = useState(0)
+  const [errors, setErrors] = useState<number[]>([])
+  const [busy, setBusy] = useState(false)
+  const last = current === steps.length - 1
+
+  const next = async () => {
+    setBusy(true)
+    try {
+      let ok = true
+      if (onValidateStep) {
+        try {
+          ok = await onValidateStep(current)
+        } catch {
+          // Validação que rejeita conta como etapa não validada: fica marcada com erro, sem promessa solta.
+          ok = false
+        }
+      }
+      if (!ok) {
+        setErrors((e) => [...new Set([...e, current])])
+        return
+      }
+      setErrors((e) => e.filter((x) => x !== current))
+      if (last) await onFinish?.()
+      else setCurrent((c) => c + 1)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <View dataSet={{ rendra: 'WIZ-001' }} className="min-w-0 flex-col gap-8">
+      <Stepper steps={steps} current={current} errors={errors} />
+      <View className="min-w-0 flex-col gap-6">{children[current]}</View>
+      <ActionBar
+        testID="wizard-rodape"
+        sticky={stickyFooter}
+        cancel={
+          current > 0
+            ? { label: 'Voltar', icon: <ArrowLeft className="text-foreground" />, onPress: () => setCurrent((c) => c - 1) }
+            : onCancel
+              ? { label: 'Cancelar', onPress: onCancel }
+              : undefined
+        }
+        primary={{
+          label: last ? finishLabel : 'Avançar',
+          icon: last ? <Check className="text-primary-foreground" /> : <ArrowRight className="text-primary-foreground" />,
+          onPress: next,
+          loading: busy,
+          loadingLabel: last ? 'Concluindo...' : 'Validando...',
+        }}
+      />
+    </View>
+  )
+}

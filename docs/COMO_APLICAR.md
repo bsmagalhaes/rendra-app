@@ -58,7 +58,7 @@ Quem clona este repositório para começar um projeto novo (em vez de instalar o
 
 ## Ordem de migração
 
-Ao trazer o Rendra App para um app existente (caminho A ou B de `docs/PROMPT_MIGRACAO.md`), a ordem que menos quebra o app no meio do caminho: (1) tokens e tema (cores, tipografia, espaço); (2) `BrandProvider` e a ponte de navegação (`RendraRouterBridge` ou `RendraNavigationProvider` próprio); (3) formulários e ações (`Input`, `Select`, `Button`); (4) listagens (`List`, `Card`, `StatCard`); (5) feedback (`Toast`, `Alert`, `Modal`); (6) as demais telas; (7) limpeza dos estilos antigos que sobraram.
+Ao trazer o Rendra App para um app existente (caminho A ou B de `docs/PROMPT_MIGRACAO.md`), a ordem que menos quebra o app no meio do caminho: (1) tokens e tema (cores, tipografia, espaço); (2) `BrandProvider` e a ponte de navegação (`RendraRouterBridge` ou `RendraNavigationProvider` próprio); (3) formulários e ações (`Input`, `Select`, `Button`); (4) listagens (`Table` com `DataToolbar` e `Pagination`; `List`, `Card`, `StatCard` para listas simples); (5) feedback (`Toast`, `Alert`, `Modal`); (6) as demais telas; (7) limpeza dos estilos antigos que sobraram.
 
 ## 1. As 4 cores e o degradê
 

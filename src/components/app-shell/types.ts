@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import type { FeedbackType } from '../../brand/types'
 
 /** Ícone de item de navegação: qualquer componente que aceite `className` (ícones do `lucide-react-native`). */
 export type NavIcon = ComponentType<{ className?: string }>
@@ -39,4 +40,23 @@ export interface ShellMenuItem {
   to?: string
   onSelect?: () => void
   icon?: NavIcon
+}
+
+/** Notificação do sino do cabeçalho. */
+export interface ShellNotificationItem {
+  id: string
+  type: FeedbackType
+  title: string
+  time: string
+  read: boolean
+}
+
+/**
+ * Sino de notificações do cabeçalho. A lista `items` é copiada uma vez, na montagem: marcar como
+ * lida muda só a cópia interna, e os retornos avisam o consumidor.
+ */
+export interface ShellNotificationsConfig {
+  items: ShellNotificationItem[]
+  onMarkAllRead?: () => void
+  onItemClick?: (id: string) => void
 }

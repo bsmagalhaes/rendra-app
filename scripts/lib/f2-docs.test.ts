@@ -32,13 +32,13 @@ suite('contagem de componentes da F3 (49 da F2 mais Chart, Timeline, Calendar, K
     ['AGENTS.md', agents],
     ['CLAUDE.md', claude],
     ['DESIGN_RULES.md', designRules],
-  ])('%s conta 57 componentes e nenhum "49 componentes"', (_nome, texto) => {
-    expect(texto).toMatch(/57 componentes/)
+  ])('%s conta 64 componentes e nenhum "49 componentes"', (_nome, texto) => {
+    expect(texto).toMatch(/64 componentes/)
     expect(texto).not.toMatch(/\b49 componentes/)
   })
 
-  it('a página de apresentação conta 57 componentes e nenhum "49 componentes" (P4)', () => {
-    expect(pagina).toMatch(/57 componentes/)
+  it('a página de apresentação conta 64 componentes e nenhum "49 componentes" (P4)', () => {
+    expect(pagina).toMatch(/64 componentes/)
     expect(pagina).not.toMatch(/49 componentes/)
   })
 
@@ -123,15 +123,22 @@ suite('CHANGELOG 1.1.0 fechado', () => {
   })
 })
 
-suite('CHANGELOG 1.2.0 fechado (F3)', () => {
-  const versao = entrada('1.2.0', '1.1.0')
-  it('a versão gravada é a 1.2.0 nos dois manifestos', () => {
+suite('CHANGELOG 1.3.0 fechado (Sincronização 2)', () => {
+  const versao = entrada('1.3.0', '1.2.0')
+  it('a versão gravada é a 1.3.0 (Sincronização 2) nos dois manifestos', () => {
     const pacote = JSON.parse(ler('package.json')) as { version: string }
     const app = JSON.parse(ler('app.json')) as { expo: { version: string } }
-    expect(pacote.version).toBe('1.2.0')
-    expect(app.expo.version).toBe('1.2.0')
+    expect(pacote.version).toBe('1.3.0')
+    expect(app.expo.version).toBe('1.3.0')
   })
 
+  it('registra a simulação dos leigos aprovada para esta versão', () => {
+    expect(versao).toContain('Simulação dos dois leigos aprovada em 02/10/2026')
+  })
+})
+
+suite('CHANGELOG 1.2.0 fechado (F3)', () => {
+  const versao = entrada('1.2.0', '1.1.0')
   it('lista os oito componentes e os três subcaminhos da F3', () => {
     for (const item of ['Chart', 'Timeline', 'Calendar', 'Kanban', 'ImageViewer', 'Chat', 'RichTextEditor', 'DocumentViewer', '@rendra-ui/app/chart', '@rendra-ui/app/rich-text-editor', '@rendra-ui/app/document-viewer']) {
       expect(versao).toContain(item)

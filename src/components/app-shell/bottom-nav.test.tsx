@@ -1,5 +1,5 @@
-import { StyleSheet, Text } from 'react-native'
-import { fireEvent, render } from '@testing-library/react-native'
+import { Keyboard, Platform, StyleSheet, Text } from 'react-native'
+import { act, fireEvent, render } from '@testing-library/react-native'
 import * as SafeAreaContext from 'react-native-safe-area-context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BrandProvider } from '../../brand/brand-provider'
@@ -91,6 +91,39 @@ describe('BottomNav', () => {
     const tela = await montar()
     const barra = await tela.findByLabelText('Navegação rápida')
     expect(StyleSheet.flatten(barra.props.style)).toMatchObject({ paddingBottom: 34 })
+  })
+
+  describe('com o teclado aberto', () => {
+    async function comTeclado(os: 'android' | 'ios') {
+      jest.replaceProperty(Platform, 'OS', os)
+      jest.spyOn(SafeAreaContext, 'useSafeAreaInsets').mockReturnValue({ top: 0, bottom: 34, left: 0, right: 0 })
+      const espiao = jest.spyOn(Keyboard, 'addListener')
+      const tela = await montar()
+      const disparar = async (nome: string) =>
+        act(async () => {
+          espiao.mock.calls.filter(([n]) => n === nome).forEach(([, f]) => (f as () => void)())
+        })
+      const barra = () => StyleSheet.flatten(tela.getByLabelText('Navegação rápida').props.style)
+      return { tela, disparar, barra }
+    }
+
+    it('no Android o recuo inferior some ao abrir o teclado e volta ao fechar', async () => {
+      const { tela, disparar, barra } = await comTeclado('android')
+      expect(barra().paddingBottom).toBe(34)
+      await disparar('keyboardDidShow')
+      expect(barra().paddingBottom).toBe(0)
+      await disparar('keyboardDidHide')
+      expect(barra().paddingBottom).toBe(34)
+      await tela.unmount()
+    })
+
+    it('no iOS o recuo inferior continua (o teclado é tratado pelas telas)', async () => {
+      const { tela, disparar, barra } = await comTeclado('ios')
+      await disparar('keyboardDidShow')
+      await disparar('keyboardWillShow')
+      expect(barra().paddingBottom).toBe(34)
+      await tela.unmount()
+    })
   })
 
   it('os dois estados de cor do item existem sempre (sem classe que aparece só depois)', async () => {

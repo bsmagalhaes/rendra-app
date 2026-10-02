@@ -7,7 +7,7 @@ const { readFileSync, writeFileSync, existsSync } = require('fs') as {
 }
 const { join } = require('path') as { join: (...parts: string[]) => string }
 import { applyRouteSeo } from './lib/seo-html'
-import { siteUrlFrom, routeUrl, isDirectoryRoute, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles, clientDetailFiles } from './lib/seo-paths'
+import { siteUrlFrom, routeUrl, isDirectoryRoute, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles, clientDetailFiles, conversationFiles } from './lib/seo-paths'
 import { buildRobotsTxt } from '../src/lib/robots'
 import { buildLlmsTxt } from '../src/lib/llms-txt'
 import { routeSeo, siteSeo } from '../src/config/seo'
@@ -82,7 +82,7 @@ function main(): void {
   // Achado C8 (Opus): o export estático grava também `dist/(shell)/...`; cópias sem `index`.
   const { globSync } = require('glob') as typeof import('glob')
   const paginas = globSync('**/*.html', { cwd: distDir, posix: true })
-  for (const nome of [...groupVariationFiles(paginas), ...clientDetailFiles(paginas)]) {
+  for (const nome of [...groupVariationFiles(paginas), ...clientDetailFiles(paginas), ...conversationFiles(paginas)]) {
     const arquivo = join(distDir, nome)
     const html = readFileSync(arquivo, 'utf8')
     const saida = applyRouteSeo({

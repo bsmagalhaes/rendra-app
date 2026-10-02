@@ -14,6 +14,7 @@ const ler = (caminho: string) => (ehPacote ? readFileSync(caminho, 'utf8') : '')
 const readme = ler('README.md')
 const agents = ler('AGENTS.md')
 const claude = ler('CLAUDE.md')
+const pagina = ler('docs/index.html')
 const designRules = ler('DESIGN_RULES.md')
 const comoAplicar = ler('docs/COMO_APLICAR.md')
 const promptMigracao = ler('docs/PROMPT_MIGRACAO.md')
@@ -25,15 +26,20 @@ function entrada(versao: string, proxima: string): string {
   return changelog.slice(inicio, fim)
 }
 
-suite('contagem de componentes da F2 (44 mais RendraCredit, ErrorPage, AuthLayout, AppShell e RendraSplash)', () => {
+suite('contagem de componentes da F3 (49 da F2 mais Chart, Timeline, Calendar, Kanban, ImageViewer, Chat, RichTextEditor e DocumentViewer)', () => {
   it.each([
     ['README.md', readme],
     ['AGENTS.md', agents],
     ['CLAUDE.md', claude],
     ['DESIGN_RULES.md', designRules],
-  ])('%s conta 49 componentes e nenhum "44 componentes"', (_nome, texto) => {
-    expect(texto).toMatch(/49 componentes/)
-    expect(texto).not.toMatch(/\b44 componentes/)
+  ])('%s conta 57 componentes e nenhum "49 componentes"', (_nome, texto) => {
+    expect(texto).toMatch(/57 componentes/)
+    expect(texto).not.toMatch(/\b49 componentes/)
+  })
+
+  it('a página de apresentação conta 57 componentes e nenhum "49 componentes" (P4)', () => {
+    expect(pagina).toMatch(/57 componentes/)
+    expect(pagina).not.toMatch(/49 componentes/)
   })
 
   it('o README lista os cinco componentes novos', () => {
@@ -114,5 +120,34 @@ suite('CHANGELOG 1.1.0 fechado', () => {
   it('registra a simulação dos leigos aprovada para esta versão', () => {
     expect(versao).toContain('Simulação dos dois leigos aprovada em 30/09/2026')
     expect(versao).not.toMatch(/Simulação dos dois leigos: pendente/)
+  })
+})
+
+suite('CHANGELOG 1.2.0 fechado (F3)', () => {
+  const versao = entrada('1.2.0', '1.1.0')
+  const pacote = JSON.parse(ler('package.json')) as { version: string }
+  const app = JSON.parse(ler('app.json')) as { expo: { version: string } }
+
+  it('a versão gravada é a 1.2.0 nos dois manifestos', () => {
+    expect(pacote.version).toBe('1.2.0')
+    expect(app.expo.version).toBe('1.2.0')
+  })
+
+  it('lista os oito componentes e os três subcaminhos da F3', () => {
+    for (const item of ['Chart', 'Timeline', 'Calendar', 'Kanban', 'ImageViewer', 'Chat', 'RichTextEditor', 'DocumentViewer', '@rendra-ui/app/chart', '@rendra-ui/app/rich-text-editor', '@rendra-ui/app/document-viewer']) {
+      expect(versao).toContain(item)
+    }
+  })
+
+  it('leva o P3 e o P4 (demo com atendimento, agenda, funil, painel com gráficos e Timeline) e não tem mais "Não publicado"', () => {
+    expect(changelog).not.toContain('## [Não publicado]')
+    for (const item of ['Atendimento', 'Agenda', 'Funil', 'Timeline', 'gráficos', 'Enviar ao funil', 'Conversar']) {
+      expect(versao).toContain(item)
+    }
+  })
+
+  it('deixa a simulação dos dois leigos pendente, sem a frase de aprovação', () => {
+    expect(versao).toContain('Simulação dos dois leigos: pendente da validação da entrega')
+    expect(versao).not.toMatch(/Simulação dos dois leigos aprovada/)
   })
 })

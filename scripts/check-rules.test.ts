@@ -71,6 +71,24 @@ describe('R3: src/components/ui/modal.tsx na lista fechada (validação final do
   })
 })
 
+describe('R3: src/components/ui/calendar.tsx na lista fechada, antes da implementacao (F3, tarefa 2.3)', () => {
+  it('isR3Allowed aceita calendar.tsx: top/height da grade de horas e da linha de agora, calculados por funcao pura', () => {
+    expect(isR3Allowed('src/components/ui/calendar.tsx')).toBe(true)
+  })
+})
+
+describe('R3: src/components/ui/image-viewer.tsx na lista fechada, antes da implementacao (F3, tarefa 4.2)', () => {
+  it('isR3Allowed aceita image-viewer.tsx: useAnimatedStyle do zoom, largura da pagina, flex 1 e safe area', () => {
+    expect(isR3Allowed('src/components/ui/image-viewer.tsx')).toBe(true)
+  })
+})
+
+describe('R3: src/components/ui/chat/chat-composer.tsx na lista fechada, antes da implementacao (F3, tarefa 5.2)', () => {
+  it('isR3Allowed aceita chat-composer.tsx: altura do campo e safe area do rodape', () => {
+    expect(isR3Allowed('src/components/ui/chat/chat-composer.tsx')).toBe(true)
+  })
+})
+
 describe('R3: src/brand/themed-status-bar.tsx na lista fechada (correção pós lote 1)', () => {
   it('não acusa src/brand/themed-status-bar.tsx (style é o enum de expo-status-bar, não um objeto de estilo RN)', () => {
     const violations = runCheckRules(['src/brand/themed-status-bar.tsx'])
@@ -274,6 +292,11 @@ describe('R11: Gradient na forma JsxElement', () => {
 describe('R14: variavel do tema sem prefixo --rendra- (itens H2/H3 do levantamento da Sincronizacao 1)', () => {
   it('acusa variavel do tema sem o prefixo --rendra-', () => {
     const violations = runCheckRules(['scripts/__fixtures__/r14-violacao.tsx'])
+    expect(violations.filter((v) => v.rule === 'R14')).toHaveLength(1)
+  })
+
+  it('acusa a variavel do medidor sem o prefixo --rendra- (meter-, F3 M2)', () => {
+    const violations = runCheckRules(['scripts/__fixtures__/r14-meter.tsx'])
     expect(violations.filter((v) => v.rule === 'R14')).toHaveLength(1)
   })
 

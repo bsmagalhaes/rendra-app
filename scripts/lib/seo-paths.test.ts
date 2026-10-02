@@ -1,4 +1,4 @@
-import { siteUrlFrom, routeUrl, isDirectoryRoute, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles, clientDetailFiles } from './seo-paths'
+import { siteUrlFrom, routeUrl, isDirectoryRoute, distFileFor, buildSitemapXml, NOINDEX_FILES, groupVariationFiles, clientDetailFiles, conversationFiles } from './seo-paths'
 
 describe('siteUrlFrom', () => {
   it('usa SITE_URL do env quando informado, garantindo barra final', () => {
@@ -120,7 +120,8 @@ describe('NOINDEX_FILES', () => {
     expect(NOINDEX_FILES).toContain('_sitemap.html')
     expect(NOINDEX_FILES).toContain('componentes/[slug].html')
     expect(NOINDEX_FILES).toContain('clientes/[id].html')
-    expect(NOINDEX_FILES).toHaveLength(4)
+    expect(NOINDEX_FILES).toContain('atendimento/[id].html')
+    expect(NOINDEX_FILES).toHaveLength(5)
   })
 })
 
@@ -144,6 +145,23 @@ describe('groupVariationFiles', () => {
 
   it('sem grupos devolve lista vazia', () => {
     expect(groupVariationFiles(['index.html', 'galeria/index.html'])).toEqual([])
+  })
+})
+
+describe('conversationFiles', () => {
+  it('separa só as páginas estáticas das conversas (atendimento/t<n>.html), sem o índice nem o molde', () => {
+    expect(
+      conversationFiles([
+        'atendimento/t1.html',
+        'atendimento/t2.html',
+        'atendimento/t3.html',
+        'atendimento/index.html',
+        'atendimento.html',
+        'atendimento/[id].html',
+        '(shell)/atendimento/t1.html',
+        'clientes/1000.html',
+      ]),
+    ).toEqual(['atendimento/t1.html', 'atendimento/t2.html', 'atendimento/t3.html'])
   })
 })
 

@@ -1,6 +1,6 @@
 # DESIGN_RULES.md
 
-Regras de design do Rendra App, nativo (React Native/Expo/NativeWind). Esta entrega (F1b, mais o `Spinner` da Sincronização 1) traz os componentes de UI e a rota `/componentes` (41 entradas), e a F2 acrescenta o `AppShell`, as telas base, a home e o splash, num total de 49 componentes, sobre a fundação da F1a (tokens, `BrandProvider`, `Gradient`, `check:rules`); a versão corrente está em `CHANGELOG.md`. As regras abaixo valem para todo componente, e `check:rules` reserva a lista fechada de exceções de `style` por arquivo (seção "Lista fechada de exceções", abaixo).
+Regras de design do Rendra App, nativo (React Native/Expo/NativeWind). Esta entrega (F1b, mais o `Spinner` da Sincronização 1) traz os componentes de UI e a rota `/componentes` (41 entradas), a F2 acrescenta o `AppShell`, as telas base, a home e o splash, e a F3 os componentes de dados, planejamento, atendimento, editor e documento (vitrine com 50 entradas), num total de 57 componentes, sobre a fundação da F1a (tokens, `BrandProvider`, `Gradient`, `check:rules`); a versão corrente está em `CHANGELOG.md`. As regras abaixo valem para todo componente, e `check:rules` reserva a lista fechada de exceções de `style` por arquivo (seção "Lista fechada de exceções", abaixo).
 
 A lista de referência de códigos de componente é `src/catalog/components.ts`, com selo na vitrine `/componentes`; o mesmo código significa o mesmo componente e a mesma variante em web e app.
 
@@ -81,6 +81,9 @@ React Native não tem `vars()`/CSS custom properties como mecanismo de estilo di
 | `src/components/app-shell/nav-drawer.tsx` | `style` de `useAnimatedStyle` (`translateX` e largura do painel), `style={{ flex: 1 }}` no `GestureHandlerRootView` dentro do `RNModal` e `style={{ paddingTop, paddingBottom }}` com os insets (mesmo padrão de `drawer.tsx`) | F2 |
 | `src/components/splash/rendra-splash.tsx` | `style` de `useAnimatedStyle` (entrada do selo, do nome e do lema, anel e fade do overlay, com `pointerEvents: 'none'`) | F2 |
 | `app/index.tsx` | `style={{ backgroundColor }}` só nas amostras de paleta da home (cor de uma paleta que não é a ativa, vinda de `paletteSeeds`) | F2 |
+| `src/components/ui/calendar.tsx` | `style={{ height }}` do contêiner da grade (`horas × HOUR_HEIGHT`) e `style={{ top, height }}` dos eventos da grade de horas e da linha de agora, calculados por função pura (`src/lib/calendar-grid.ts`); minuto exato, sem número literal no `style` | F3 |
+| `src/components/ui/image-viewer.tsx` | `style` de `useAnimatedStyle` (escala e translação da pinça e do arraste), `style={{ width, height }}` de cada página da galeria (medidas da janela), `style={{ width: '100%', height: '100%' }}` da `Image` dentro da página animada, `style={{ flex: 1 }}` no `GestureHandlerRootView` dentro do `RNModal` e `style={{ paddingTop, paddingBottom }}` com os insets do cabeçalho e do rodapé (o visualizador não usa o corpo do `OverlayShell`, que é um `ScrollView` com `p-4`) | F3 |
+| `src/components/ui/chat/chat-composer.tsx` | `style={{ height }}` do campo de mensagem (calculada por `onContentSizeChange`, entre `control-md` e `chart-sm`, mesmo padrão de `textarea.tsx`) e `style={{ paddingBottom }}` com o inset inferior, salvo dentro do `AppShell` com barra inferior (mesmo padrão de `action-bar.tsx`) | F3 |
 
 Qualquer outro componente que precisar de um valor dinâmico fora desta lista pede alteração desta regra antes da implementação (nunca `style` "só desta vez").
 

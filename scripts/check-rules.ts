@@ -133,6 +133,10 @@ export const R3_ALLOWED_FILES = [
   // F2, splash e home
   'src/components/splash/rendra-splash.tsx', // useAnimatedStyle (entrada do selo, do nome e do lema, fade do overlay)
   'app/index.tsx', // só backgroundColor das amostras de paleta
+  // F3
+  'src/components/ui/calendar.tsx', // top/height da grade de horas e da linha de agora (funcao pura)
+  'src/components/ui/image-viewer.tsx', // useAnimatedStyle (pinca e arraste), largura da pagina, flex 1 do GestureHandlerRootView, safe area
+  'src/components/ui/chat/chat-composer.tsx', // style={{ height }} do campo (onContentSizeChange) e paddingBottom da safe area do rodape
   // correção pós lote 1 (barra de status legível em qualquer modo): `style` aqui não é um objeto
   // de estilo React Native, é o enum de string ('light' | 'dark') do StatusBar de expo-status-bar,
   // fora do universo de valores que R3/spec 12.1 regula (nenhum token de design envolvido).

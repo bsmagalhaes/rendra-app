@@ -32,4 +32,13 @@ describe('a11yPresets', () => {
   it('link usa accessibilityRole, para o item de List com href', () => {
     expect(a11yPresets.link).toEqual({ accessibilityRole: 'link' })
   })
+
+  it('papeis da F3 (meter, log, region, figure, list, listitem) usam role do RN', () => {
+    expect(a11yPresets.meter).toEqual({ role: 'meter' })
+    expect(a11yPresets.log).toEqual({ role: 'log' })
+    expect(a11yPresets.region).toEqual({ role: 'region' })
+    expect(a11yPresets.figure).toEqual({ role: 'figure' })
+    expect(a11yPresets.list).toEqual({ role: 'list' })
+    expect(a11yPresets.listitem).toEqual({ role: 'listitem' })
+  })
 })

@@ -1,4 +1,4 @@
-import { act, fireEvent } from '@testing-library/react-native'
+import { act, fireEvent, within } from '@testing-library/react-native'
 import { screen } from 'expo-router/testing-library'
 import { Text } from 'react-native'
 import ShellLayout from '../../../app/(shell)/_layout'
@@ -7,6 +7,7 @@ import { toast } from '../../components/ui'
 import { restaurarClientes } from '../../demo/clients-store'
 import { formatCurrency } from '../../lib/masks'
 import { clients, resumoPeriodo } from '../../mocks/clients'
+import { porSegmento } from '../../mocks/charts'
 import { notifications } from '../../mocks/notifications'
 import { nodesWithCode } from '../../test-utils/rendra-code'
 import { renderDemo } from '../../test-utils/render-demo'
@@ -57,10 +58,38 @@ describe('painel da demonstração', () => {
     expect(tela.getPathname()).toBe(`/clientes/${clients[1]!.id}`)
   })
 
-  it('a atividade mostra as notificações recentes com a data', async () => {
+  it('a atividade mostra as notificações recentes em uma linha do tempo, com título, descrição e data', async () => {
     await renderDemo(rotas, '/painel')
     expect(await screen.findByText(notifications[0]!.titulo)).toBeTruthy()
     expect(await screen.findByText(notifications[0]!.data)).toBeTruthy()
+    const linha = screen.getByTestId('timeline')
+    for (const n of notifications) {
+      expect(within(linha).getByText(n.titulo)).toBeTruthy()
+      expect(within(linha).getByText(n.descricao)).toBeTruthy()
+      expect(within(linha).getByText(n.data)).toBeTruthy()
+      expect(screen.getByTestId(`timeline-item-${n.id}`)).toBeTruthy()
+    }
+  })
+
+  it('mostra só dois gráficos, receita e segmento, cada um com rótulo', async () => {
+    const contexto = await renderDemo(rotas, '/painel')
+    expect(await screen.findByLabelText('Receita e meta dos últimos 12 meses')).toBeTruthy()
+    expect(screen.getByLabelText('Clientes por segmento')).toBeTruthy()
+    expect(nodesWithCode(contexto.container, 'CHT-001')).toHaveLength(1)
+    expect(nodesWithCode(contexto.container, 'CHT-004')).toHaveLength(1)
+    expect(screen.getAllByTestId('chart-plot')).toHaveLength(2)
+  })
+
+  it('a pizza lista os 5 segmentos da carteira, sem Alimentação', async () => {
+    await renderDemo(rotas, '/painel')
+    const pizza = await screen.findByLabelText('Clientes por segmento')
+    const plot = within(pizza).getByTestId('chart-plot')
+    await fireEvent(plot, 'layout', { nativeEvent: { layout: { width: 320, height: 256, x: 0, y: 0 } } })
+    for (const [segmento, n] of porSegmento.map((s) => [s.segmento, s.clientes] as const)) {
+      expect(await within(pizza).findByText(`${segmento}: ${n}`)).toBeTruthy()
+    }
+    expect(porSegmento).toHaveLength(5)
+    expect(within(pizza).queryByText(/Alimentação/)).toBeNull()
   })
 
   it('troca os números do resumo ao mudar o período', async () => {

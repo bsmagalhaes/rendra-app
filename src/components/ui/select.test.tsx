@@ -138,16 +138,18 @@ function ControlledMultiSelect({
   onChange,
   initial = [],
   selectAll,
+  items = options,
 }: {
   onChange: (value: string[]) => void
   initial?: string[]
   selectAll?: boolean
+  items?: { value: string; label: string }[]
 }) {
   const [value, setValue] = useState<string[]>(initial)
   return (
     <Select
       multiple
-      options={options}
+      options={items}
       value={value}
       showCount
       selectAll={selectAll}
@@ -214,6 +216,67 @@ describe('Select múltiplo', () => {
     await waitFor(() => expect(onChange).toHaveBeenCalledWith(['a', 'b', 'c']))
     // Efeito visível, não só a chamada.
     expect(await findByText('3 selecionado(s)')).toBeTruthy()
+  })
+})
+
+describe('Select múltiplo: "Selecionar todos" automático', () => {
+  const make = (n: number) => Array.from({ length: n }, (_, i) => ({ value: `v${i}`, label: `Item ${i}` }))
+
+  it('com 6 opções aparece sem a prop', async () => {
+    const { findByRole, findByText } = await render(
+      <BrandProvider>
+        <ControlledMultiSelect onChange={() => {}} items={make(6)} />
+      </BrandProvider>,
+    )
+    await fireEvent.press(await findByRole('combobox'))
+    expect(await findByText('Selecionar todos')).toBeTruthy()
+  })
+
+  it('com 5 opções não aparece', async () => {
+    const { findByRole, findByText, queryByText } = await render(
+      <BrandProvider>
+        <ControlledMultiSelect onChange={() => {}} items={make(5)} />
+      </BrandProvider>,
+    )
+    await fireEvent.press(await findByRole('combobox'))
+    await findByText('Item 0')
+    expect(queryByText('Selecionar todos')).toBeNull()
+  })
+
+  it('com 5 opções e selectAll aparece', async () => {
+    const { findByRole, findByText } = await render(
+      <BrandProvider>
+        <ControlledMultiSelect onChange={() => {}} items={make(5)} selectAll />
+      </BrandProvider>,
+    )
+    await fireEvent.press(await findByRole('combobox'))
+    expect(await findByText('Selecionar todos')).toBeTruthy()
+  })
+
+  it('selectAll={false} com 6 opções não aparece', async () => {
+    const { findByRole, findByText, queryByText } = await render(
+      <BrandProvider>
+        <ControlledMultiSelect onChange={() => {}} items={make(6)} selectAll={false} />
+      </BrandProvider>,
+    )
+    await fireEvent.press(await findByRole('combobox'))
+    await findByText('Item 0')
+    expect(queryByText('Selecionar todos')).toBeNull()
+  })
+
+  it('o texto vira "Desmarcar todos" com tudo marcado e volta depois', async () => {
+    const { findByRole, findByText, queryByText } = await render(
+      <BrandProvider>
+        <ControlledMultiSelect onChange={() => {}} items={make(6)} />
+      </BrandProvider>,
+    )
+    await fireEvent.press(await findByRole('combobox'))
+    await fireEvent.press(await findByText('Selecionar todos'))
+    expect(await findByText('Desmarcar todos')).toBeTruthy()
+    expect(queryByText('Selecionar todos')).toBeNull()
+    await fireEvent.press(await findByText('Item 0'))
+    expect(await findByText('Selecionar todos')).toBeTruthy()
+    expect(queryByText('Desmarcar todos')).toBeNull()
   })
 })
 

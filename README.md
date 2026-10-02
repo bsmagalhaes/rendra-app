@@ -1,6 +1,6 @@
 # Rendra App
 
-**Design system e boilerplate mobile em React Native (Expo), com Expo Router e NativeWind, para todo app novo em português do Brasil.** Traz 49 componentes de UI prontos, com navegação do app pronta (cabeçalho, barra inferior e menu), telas de exemplo, 3 modelos de marca e 4 paletas, para quem precisa sair do zero com um app funcionando e trocar marca sem mexer em componente.
+**Design system e boilerplate mobile em React Native (Expo), com Expo Router e NativeWind, para todo app novo em português do Brasil.** Traz 57 componentes de UI prontos, com navegação do app pronta (cabeçalho, barra inferior e menu), telas de exemplo, 3 modelos de marca e 4 paletas, para quem precisa sair do zero com um app funcionando e trocar marca sem mexer em componente.
 
 ![React Native](https://img.shields.io/badge/React%20Native-0.86-61DAFB?logo=react&logoColor=white)
 ![Expo SDK](https://img.shields.io/badge/Expo%20SDK-57-000020?logo=expo&logoColor=white)
@@ -16,10 +16,10 @@
 Página de apresentação: [`https://bsmagalhaes.github.io/rendra-ui-app/`](https://bsmagalhaes.github.io/rendra-ui-app/), com o app rodando num celular, os 12 códigos de modelo e paleta, a galeria de telas e o passo a passo de instalação. A demo completa fica em [`/demo/`](https://bsmagalhaes.github.io/rendra-ui-app/demo/) (atualizada a cada push em `main` com CI verde).
 
 - [Início da demo](https://bsmagalhaes.github.io/rendra-ui-app/demo/) (home: apresenta o projeto, os 3 modelos e as 4 paletas, com troca ao vivo)
-- [Componentes](https://bsmagalhaes.github.io/rendra-ui-app/demo/componentes/) (41 entradas)
+- [Componentes](https://bsmagalhaes.github.io/rendra-ui-app/demo/componentes/) (50 entradas)
 - [Tokens](https://bsmagalhaes.github.io/rendra-ui-app/demo/tokens/) (paleta com AA ao vivo, tipografia, espaço, raio, sombra)
 - [Galeria](https://bsmagalhaes.github.io/rendra-ui-app/demo/galeria/) (troca ao vivo de modelo, paleta e modo pelo controle real)
-- Telas de exemplo, com dados fictícios e fluxos que funcionam: [Entrar](https://bsmagalhaes.github.io/rendra-ui-app/demo/login) (formulário com validação e crédito, segue para a verificação em duas etapas), [Painel](https://bsmagalhaes.github.io/rendra-ui-app/demo/painel) (indicadores por período e cadastro rápido), [Clientes](https://bsmagalhaes.github.io/rendra-ui-app/demo/clientes/) (busca, filtros, paginação e exclusão), [Novo cliente](https://bsmagalhaes.github.io/rendra-ui-app/demo/clientes/novo), [Cadastro guiado](https://bsmagalhaes.github.io/rendra-ui-app/demo/cadastro) (quatro etapas), [Tarefas](https://bsmagalhaes.github.io/rendra-ui-app/demo/tarefas) e [Configurações](https://bsmagalhaes.github.io/rendra-ui-app/demo/configuracoes) (seis seções). Na tela de entrada vale qualquer e-mail com senha de 6 ou mais caracteres; na verificação vale qualquer código de 6 dígitos, menos `000000`.
+- Telas de exemplo, com dados fictícios e fluxos que funcionam: [Entrar](https://bsmagalhaes.github.io/rendra-ui-app/demo/login) (formulário com validação e crédito, segue para a verificação em duas etapas), [Painel](https://bsmagalhaes.github.io/rendra-ui-app/demo/painel) (indicadores por período e cadastro rápido), [Clientes](https://bsmagalhaes.github.io/rendra-ui-app/demo/clientes/) (busca, filtros, paginação e exclusão), [Novo cliente](https://bsmagalhaes.github.io/rendra-ui-app/demo/clientes/novo), [Cadastro guiado](https://bsmagalhaes.github.io/rendra-ui-app/demo/cadastro) (quatro etapas), [Tarefas](https://bsmagalhaes.github.io/rendra-ui-app/demo/tarefas) (com "Enviar ao funil"), [Atendimento](https://bsmagalhaes.github.io/rendra-ui-app/demo/atendimento/) (conversas por etapa, busca, filtro por canal e chat), [Agenda](https://bsmagalhaes.github.io/rendra-ui-app/demo/agenda) (mês, dia e lista, com novo evento), [Funil](https://bsmagalhaes.github.io/rendra-ui-app/demo/kanban) (cards por etapa) e [Configurações](https://bsmagalhaes.github.io/rendra-ui-app/demo/configuracoes) (seis seções). Na tela de entrada vale qualquer e-mail com senha de 6 ou mais caracteres; na verificação vale qualquer código de 6 dígitos, menos `000000`.
 - Exemplo com modelo e modo escolhidos por URL: [`/demo/galeria/?codigo=T3-C3&modo=escuro`](https://bsmagalhaes.github.io/rendra-ui-app/demo/galeria/?codigo=T3-C3&modo=escuro)
 
 ## Prints de destaque
@@ -31,6 +31,9 @@ Telas de celular (390 px, com moldura de aparelho), geradas por script a partir 
   <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-componentes-mobile"><img src="docs/images/safira-componentes-mobile.png" alt="Vitrine de componentes, modelo Safira" width="200"></a>
   <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=aurora-escuro-mobile"><img src="docs/images/aurora-escuro-mobile.png" alt="Vitrine de componentes em modo escuro, modelo Aurora" width="200"></a>
   <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=equilibrio-painel-mobile"><img src="docs/images/equilibrio-painel-mobile.png" alt="Painel, modelo Equilíbrio" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-atendimento-mobile"><img src="docs/images/safira-atendimento-mobile.png" alt="Atendimento: chat completo com histórico, anexo e reações" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=equilibrio-agenda-mobile"><img src="docs/images/equilibrio-agenda-mobile.png" alt="Agenda: calendário com os compromissos do dia" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=aurora-funil-mobile"><img src="docs/images/aurora-funil-mobile.png" alt="Funil comercial: quadro de negócios com P&amp;S e MRR por coluna" width="200"></a>
 </p>
 
 ## O que é
@@ -54,25 +57,28 @@ Cada combinação de modelo e paleta tem um código `T#-C#` (por exemplo, `T1-C1
 - 3 modelos prontos (Safira/Poppins, Equilíbrio/DM Sans, Aurora/Inter) e 4 paletas prontas (Safira, Equilíbrio, Aurora, Ardósia).
 - `BrandProvider`/`useBrand`, com persistência local e troca em tempo de execução.
 - `Gradient` em SVG.
-- Os 49 componentes de UI (`src/components/ui`, `src/components/layout`, `src/components/app-shell`, `src/components/splash`), listados abaixo.
+- Os 57 componentes de UI (`src/components/ui`, `src/components/layout`, `src/components/app-shell`, `src/components/splash`), listados abaixo.
 - `AppShell`: cabeçalho com título e seta de voltar, barra inferior de navegação rápida com botão central de menu, menu em gaveta ou folha e menu do usuário; só `navigation` é obrigatório, sem depender do roteador.
 - Telas de exemplo prontas: home (`/`), `/login`, `/painel`, `/configuracoes` e a página 404; abertura animada (`RendraSplash`) ligada ao splash nativo; crédito discreto "Feito com Rendra" (`RendraCredit`), opcional.
 - `check:rules`, verificação estática das regras de `DESIGN_RULES.md`.
 - Piso de cobertura (`coverageThreshold`): 90% em `src/lib`, 80% em `src/components` e `src/theme`, além do piso por arquivo nos módulos de contrato (`src/lib/masks.ts`, `src/lib/validators.ts`, `src/brand/palette.ts`, `src/theme/vars.ts`, `src/config/presets.ts`, `src/config/showcase.tsx`, `src/lib/robots.ts`, `src/lib/llms-txt.ts`, `src/config/seo.ts`).
-- Rotas `/componentes` (vitrine completa, 41 entradas), `/tokens` (paleta com AA ao vivo, tipografia, espaço, raio, sombra) e `/galeria` (troca ao vivo de modelo, paleta e modo pelo controle real).
+- Rotas `/componentes` (vitrine completa, 50 entradas), `/tokens` (paleta com AA ao vivo, tipografia, espaço, raio, sombra) e `/galeria` (troca ao vivo de modelo, paleta e modo pelo controle real).
 - Export web com SEO por rota (título, description, canonical, Open Graph, `sitemap.xml`, `robots.txt`, `llms.txt`), testado por Playwright (layout e toque) e axe (WCAG 2.1 AA).
 - CI (GitHub Actions), fluxo de IA e documentação completos.
 
-### Os 49 componentes de UI (disponíveis)
+### Os 57 componentes de UI (disponíveis)
 
 - **Ações (4):** Button, ButtonGroup, ActionBar, DropdownMenu.
 - **Formulário (14):** Input, Textarea, Select, Checkbox, CheckboxGroup, RadioGroup, Switch, Slider, OtpInput, DatePicker, Field, Form, FormField, FormSection.
 - **Feedback (12):** BrandFeedbackIcon, Alert, Toast, Progress, Skeleton, Spinner, EmptyState, InfoHint, Modal, Drawer, ErrorPage, RendraSplash.
 - **Exibição (11):** Card, Badge, Avatar, AvatarGroup, List, StatCard, Accordion, Tabs, Separator, BrandLogo, RendraCredit.
 - **Layout (8):** Container, Stack, Inline, Grid, Section, PageHeader, AuthLayout, AppShell.
+- **Dados (2), da F3:** Chart (linha, barras, área, pizza, combinado, velocímetro de meta e funil; subcaminho `@rendra-ui/app/chart`) e Timeline.
+- **Planejamento e atendimento (4), da F3:** Calendar, Kanban, ImageViewer e o Chat de atendimento (`ConversationList`, `ChatThread` e `ChatComposer`, contados como um, mais o selo `ChannelBadge`).
+- **Editor e documentos (2), da F3:** RichTextEditor (`@rendra-ui/app/rich-text-editor`) e DocumentViewer (`@rendra-ui/app/document-viewer`).
 
-A vitrine em `/componentes` mostra 41 entradas reais (Ações 4, Formulário 12, Feedback 10, Exibição 9,
-Layout 6): `FormField`/`FormSection` entram compostos nos exemplos de `Form`, e `'Select (lista
+A vitrine em `/componentes` mostra 50 entradas reais (Ações 4, Formulário 13, Feedback 10, Exibição 10,
+Layout 6, Dados 2, Planejamento 5): `FormField`/`FormSection` entram compostos nos exemplos de `Form`, e `'Select (lista
 longa)'` conta como entrada própria (decisão do fechamento da F1b), por isso a contagem da vitrine
 difere da contagem por exportação acima. Os cinco componentes da F2 (`RendraCredit`, `ErrorPage`,
 `AuthLayout`, `AppShell` e `RendraSplash`) não têm entrada própria na vitrine: aparecem em uso
@@ -199,9 +205,18 @@ npx expo install react react-native react-native-reanimated react-native-gesture
 ```ts
 import { BrandProvider, Button, registerIconInterop } from '@rendra-ui/app'
 import { RendraRouterBridge } from '@rendra-ui/app/router-bridge'
+import { Chart } from '@rendra-ui/app/chart'
+import { RichTextEditor } from '@rendra-ui/app/rich-text-editor'
+import { DocumentViewer } from '@rendra-ui/app/document-viewer'
 ```
 
-O pacote e o Tailwind pelo `npm install` comum, fixando `tailwindcss@3` (a `latest` é a 4, fora da faixa que a NativeWind suporta); os peers nativos pelo `npx expo install`, que escolhe a versão que o SDK do app empacota, em vez da versão mais nova do npm. `tailwind.config.js` com `presets: [require('@rendra-ui/app/tailwind-preset')]` e `content` incluindo `./node_modules/@rendra-ui/app/dist-lib/**/*.js`; `babel.config.js`/`metro.config.js` com NativeWind; `registerIconInterop()` e `<BrandProvider>` na raiz; `<RendraRouterBridge>` (Expo Router) ou um `RendraNavigationProvider` próprio. Componentes com `useAnimatedStyle` (`Button`, entre outros) exigem o plugin `react-native-worklets/plugin` no Babel: em app Expo, `babel-preset-expo` já inclui esse plugin sozinho; em bare React Native sem esse preset, acrescente à mão. Passo a passo completo em `docs/COMO_APLICAR.md`, seção "Pelo pacote npm".
+O pacote e o Tailwind pelo `npm install` comum, fixando `tailwindcss@3` (a `latest` é a 4, fora da faixa que a NativeWind suporta); os peers nativos pelo `npx expo install`, que escolhe a versão que o SDK do app empacota, em vez da versão mais nova do npm. `tailwind.config.js` com `presets: [require('@rendra-ui/app/tailwind-preset')]` e `content` incluindo `./node_modules/@rendra-ui/app/dist-lib/**/*.js`; `babel.config.js`/`metro.config.js` com NativeWind; `registerIconInterop()` e `<BrandProvider>` na raiz; `<RendraRouterBridge>` (Expo Router) ou um `RendraNavigationProvider` próprio. Componentes com `useAnimatedStyle` (`Button`, entre outros) exigem o plugin `react-native-worklets/plugin` no Babel: em app Expo, `babel-preset-expo` já inclui esse plugin sozinho; em bare React Native sem esse preset, acrescente à mão. Passo a passo completo em `docs/COMO_APLICAR.md`, seção "Pelo pacote npm". O `Chart` (linha, barra, área, pizza, combinado, velocímetro de meta e funil) mora no subcaminho `@rendra-ui/app/chart`, porque carrega o `d3-shape`: quem não importa o subcaminho não paga o peso dele.
+
+Editor de texto rico: `import { RichTextEditor } from '@rendra-ui/app/rich-text-editor'` (subcaminho à parte, fora da entrada principal). Instale também o peer opcional `react-native-webview` com `npx expo install react-native-webview`. No celular é um editor visual (Tiptap dentro de um WebView, pelo `@10play/tentap-editor`); no navegador, só o modo HTML. O `npm install` pode mostrar o aviso `ERESOLVE overriding peer dependency` do `@10play/tentap-editor` (ele traz um `react-dom` 18 usado só dentro do WebView): é esperado e inofensivo. Por ora ficam de fora alinhamento de texto, tabela, linha divisória e limpar formatação. O botão "Inserir imagem" só aparece com `onImageUpload`, que no celular não recebe arquivo: o app abre o seletor, envia a imagem e devolve o endereço público (no web a função recebe um `File`).
+
+Visualizador de documentos: `import { DocumentViewer } from '@rendra-ui/app/document-viewer'` (subcaminho à parte, com o mesmo peer opcional `react-native-webview`). No iOS o PDF abre dentro do app, sem zoom nem paginação próprios; no Android e no navegador o botão abre o arquivo no aplicativo de PDF do aparelho.
+
+Atendimento (chat): `ConversationList`, `ChatThread` e `ChatComposer` vêm da entrada principal `@rendra-ui/app`. A gravação de áudio do `ChatComposer` é simulada: só o cronômetro e o envio da duração em `audioSeconds`, sem pulso animado e sem captura real do microfone.
 
 Registry, CLI e skill: não existem no app; ver `CHANGELOG.md`.
 
@@ -224,6 +239,9 @@ app/                 # Expo Router (file-based)
 src/
   index.ts             # entrada principal do pacote @rendra-ui/app
   router-bridge.tsx    # subcaminho ./router-bridge, único ponto com expo-router
+  chart.ts             # subcaminho ./chart (Chart, com d3-shape), fora da entrada principal
+  rich-text-editor.ts  # subcaminho ./rich-text-editor (RichTextEditor, com tentap e WebView), fora da entrada principal
+  document-viewer.ts   # subcaminho ./document-viewer (DocumentViewer, com WebView), fora da entrada principal
   navigation/           # contexto de navegação sem roteador (RendraNavigationProvider)
   brand/               # BrandProvider, useBrand, palette.ts, palettes.ts (4 paletas prontas)
   theme/               # tokens.ts, models.ts, vars.ts, fonts.ts, tailwind-preset.ts

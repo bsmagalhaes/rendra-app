@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import { BottomSheet } from '../internal/bottom-sheet'
 import { useRendraNavigation } from '../../navigation/rendra-navigation'
 import { BottomNav } from './bottom-nav'
@@ -26,8 +26,13 @@ function ShellFrame({ children }: { children: ReactNode }) {
     <View className="flex-1 bg-background">
       <Header />
       {/* Área da tela: sem rolagem própria, cada tela mantém a sua (`ScrollView`/`FlatList`). */}
-      <View className="flex-1">{children}</View>
-      {hydrated && layout.bottomNav ? <BottomNav /> : null}
+      {/* Android (edge-to-edge, RN 0.81+): a janela nao redimensiona com o teclado, entao ele cobriria o campo e a
+          rolagem nao ganharia area. O padding encolhe a area da tela e a barra inferior sobe junto. No iOS e no web
+          nada muda: as telas com campo ja tratam o teclado e compensar de novo dobraria o espaco. */}
+      <KeyboardAvoidingView testID="shell-teclado" behavior={Platform.OS === 'android' ? 'padding' : undefined} className="flex-1">
+        <View className="flex-1">{children}</View>
+        {hydrated && layout.bottomNav ? <BottomNav /> : null}
+      </KeyboardAvoidingView>
       {layout.menu === 'drawer' ? (
         <NavDrawer open={mobileNavOpen} onOpenChange={setMobileNavOpen} navigation={navigation} />
       ) : (

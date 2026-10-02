@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { View } from 'react-native'
-import { MoreHorizontal, Wallet } from 'lucide-react-native'
+import { Image, KeyboardAvoidingView, Platform, View } from 'react-native'
+import { Archive, Handshake, MoreHorizontal, Wallet, XCircle } from 'lucide-react-native'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -51,10 +51,31 @@ import {
   Accordion,
   Tabs,
   BrandLogo,
+  Timeline,
+  Calendar,
+  Kanban,
+  moveKanbanCard,
+  type KanbanCard,
+  type KanbanDropTarget,
+  ImageViewer,
+  type ViewerImage,
+  ConversationList,
+  ChannelBadge,
+  ChatThread,
+  ChatComposer,
+  type ChatMessage,
 } from '../components/ui'
 import { Gradient } from '../components/gradient/gradient'
 import { Container, Grid, Inline, PageHeader, Section, Stack } from '../components/layout'
+import { Chart } from '../chart'
+import { RichTextEditor } from '../rich-text-editor'
+import { DocumentViewer } from '../document-viewer'
 import { zBR } from '../lib/validators'
+import { formatCurrency } from '../lib/masks'
+import { funilVendas, metaDoMes, porSegmento, receitaMensal } from '../mocks/charts'
+import { demoCards, demoEvents, pipelineColumns, referencia } from '../mocks/planning'
+import { historicoContrato } from '../mocks/timeline'
+import { demoTickets, quickRepliesDemo, type Ticket } from '../mocks/chat'
 import { resolveCatalogCode } from '../catalog/components'
 
 export interface ShowcaseEntry {
@@ -239,6 +260,39 @@ function InputExample() {
 function TextareaExample() {
   const [value, setValue] = useState('')
   return <Textarea placeholder="Escreva uma mensagem" value={value} onChange={setValue} counter maxLength={200} />
+}
+
+const propostaHtml =
+  '<h2>Proposta comercial</h2><p>Plano <strong>Profissional</strong>, 12 meses, por <em>R$ 1.250,00</em> ao mês.</p><ul><li>Implantação inclusa</li><li>Suporte em horário comercial</li></ul>'
+
+function RichTextEditorExample() {
+  const [html, setHtml] = useState(propostaHtml)
+  return (
+    <Stack gap="2">
+      <RichTextEditor
+        value={html}
+        onChange={setHtml}
+        placeholder="Escreva a proposta"
+        // Simulado: o app de verdade abre o seletor de fotos e envia a imagem; aqui vale uma captura do próprio app.
+        onImageUpload={async () => (Image.resolveAssetSource(require('../../assets/showcase/safira-cliente-mobile.png'))?.uri ?? 'exemplo://captura.png')}
+      />
+      <Text className="text-sm text-muted-foreground">{`Conteúdo: ${html.length} caracteres`}</Text>
+    </Stack>
+  )
+}
+
+const contratoPdf = 'https://exemplo.com.br/documentos/contrato-de-outubro.pdf'
+
+function DocumentViewerExample() {
+  const [url, setUrl] = useState<string | null>(contratoPdf)
+  return (
+    <Stack gap="2">
+      <DocumentViewer url={url} title="Contrato de outubro" className="h-chart-md" />
+      <Button variant="outline" onPress={() => setUrl((atual) => (atual ? null : contratoPdf))}>
+        {url ? 'Limpar seleção' : 'Selecionar contrato'}
+      </Button>
+    </Stack>
+  )
 }
 
 function SelectExample() {
@@ -626,6 +680,251 @@ function BrandLogoExample() {
   )
 }
 
+const emMil = (n: number) => `R$ ${(n / 1000).toLocaleString('pt-BR')} mil`
+
+function ChartExample() {
+  const receitaEMeta = [
+    { key: 'receita', label: 'Receita' },
+    { key: 'meta', label: 'Meta', color: 3 as const },
+  ]
+  return (
+    <Stack gap="6">
+      <Stack gap="2">
+        <Text weight="medium" className="text-sm text-foreground">Linha</Text>
+        <Chart type="line" aria-label="Receita e meta em linha" data={receitaMensal} xKey="mes" series={receitaEMeta} valueFormatter={emMil} />
+      </Stack>
+      <Stack gap="2">
+        <Text weight="medium" className="text-sm text-foreground">Barras</Text>
+        <Chart type="bar" aria-label="Receita por mês" data={receitaMensal} xKey="mes" series={[{ key: 'receita', label: 'Receita' }]} valueFormatter={emMil} />
+      </Stack>
+      <Stack gap="2">
+        <Text weight="medium" className="text-sm text-foreground">Área</Text>
+        <Chart type="area" aria-label="Receita e meta por mês" data={receitaMensal} xKey="mes" series={receitaEMeta} valueFormatter={emMil} />
+      </Stack>
+      <Stack gap="2">
+        <Text weight="medium" className="text-sm text-foreground">Pizza</Text>
+        <Chart type="pie" aria-label="Clientes por segmento" data={porSegmento} xKey="segmento" series={[{ key: 'clientes', label: 'Clientes' }]} />
+      </Stack>
+      <Stack gap="2">
+        <Text weight="medium" className="text-sm text-foreground">Combinado (barra e linha)</Text>
+        <Chart
+          type="combo"
+          aria-label="Receita em barras e meta em linha"
+          data={receitaMensal}
+          xKey="mes"
+          series={[
+            { key: 'receita', label: 'Receita', kind: 'bar' },
+            { key: 'meta', label: 'Meta', kind: 'line', color: 3 },
+          ]}
+          valueFormatter={emMil}
+        />
+      </Stack>
+      <Stack gap="2">
+        <Text weight="medium" className="text-sm text-foreground">Velocímetro de meta</Text>
+        <Chart type="gauge" aria-label="Meta do mês" valueFormatter={formatCurrency} {...metaDoMes} />
+      </Stack>
+      <Stack gap="2">
+        <Text weight="medium" className="text-sm text-foreground">Funil</Text>
+        <Chart type="funnel" aria-label="Funil de vendas" stages={funilVendas} />
+      </Stack>
+    </Stack>
+  )
+}
+
+function TimelineExample() {
+  return <Timeline events={historicoContrato} />
+}
+
+function CalendarExample() {
+  const [ultimo, setUltimo] = useState<string | null>(null)
+  return (
+    <Stack gap="3">
+      <Calendar events={demoEvents} defaultDate={referencia} onEventClick={(e) => setUltimo(e.title)} />
+      {ultimo ? <Text className="text-sm text-muted-foreground">{`Evento aberto: ${ultimo}`}</Text> : null}
+    </Stack>
+  )
+}
+
+const camposKanban = [
+  { key: 'ps', label: 'P&S' },
+  { key: 'mrr', label: 'MRR' },
+]
+
+function KanbanExample() {
+  const [cards, setCards] = useState<KanbanCard[]>(demoCards)
+  return (
+    <Kanban
+      aria-label="Funil comercial"
+      columns={pipelineColumns}
+      cards={cards}
+      valueFields={camposKanban}
+      scrollEnabled={false}
+      onCardMove={(id, para, indice) => setCards((lista) => moveKanbanCard(lista, id, para, indice))}
+      onAddCard={(coluna) =>
+        setCards((lista) => [...lista, { id: `novo-${lista.length + 1}`, columnId: coluna, title: `Novo card ${lista.length + 1}` }])
+      }
+    />
+  )
+}
+
+const destinosKanban: KanbanDropTarget[] = [
+  { id: 'ganho', label: 'Marcar como ganho', icon: <Handshake className="size-icon-sm text-success-soft-foreground" />, tone: 'success' },
+  { id: 'perdido', label: 'Marcar como perdido', hint: 'Encerra o negócio', icon: <XCircle className="size-icon-sm text-destructive-soft-foreground" /> },
+  {
+    id: 'arquivar',
+    label: 'Arquivar',
+    icon: <Archive className="size-icon-sm text-muted-foreground" />,
+    disabled: true,
+    disabledReason: 'Só depois de ganho ou perdido',
+  },
+]
+
+function KanbanDestinosExample() {
+  const [cards, setCards] = useState<KanbanCard[]>(demoCards)
+  const [ultimo, setUltimo] = useState<string | null>(null)
+  return (
+    <Stack gap="3">
+      <Kanban
+        aria-label="Funil comercial com destinos"
+        columns={pipelineColumns}
+        cards={cards}
+        valueFields={camposKanban}
+        scrollEnabled={false}
+        dropTargets={destinosKanban}
+        onCardMove={(id, para, indice) => setCards((lista) => moveKanbanCard(lista, id, para, indice))}
+        onDropTarget={(id, alvo) => {
+          const card = cards.find((c) => c.id === id)
+          setUltimo(`${card?.title ?? id}: ${destinosKanban.find((d) => d.id === alvo)?.label ?? alvo}`)
+          if (alvo === 'ganho') setCards((lista) => moveKanbanCard(lista, id, 'fechamento', 0))
+        }}
+      />
+      {ultimo ? <Text className="text-sm text-muted-foreground">{`Destino escolhido: ${ultimo}`}</Text> : null}
+    </Stack>
+  )
+}
+
+const capturasDeExemplo: ViewerImage[] = [
+  {
+    src: require('../../assets/showcase/safira-componentes-mobile.png'),
+    alt: 'Captura da vitrine de componentes no modelo Safira, em tela de celular',
+    caption: 'Componentes, Safira',
+  },
+  {
+    src: require('../../assets/showcase/aurora-galeria-mobile.png'),
+    alt: 'Captura da galeria no modelo Aurora, em tela de celular',
+    caption: 'Galeria, Aurora',
+  },
+  {
+    src: require('../../assets/showcase/equilibrio-tokens-mobile.png'),
+    alt: 'Captura dos tokens no modelo Equilíbrio, em tela de celular',
+    caption: 'Tokens, Equilíbrio',
+  },
+  {
+    src: require('../../assets/showcase/safira-cliente-mobile.png'),
+    alt: 'Captura do detalhe de um cliente no modelo Safira, em tela de celular',
+  },
+]
+
+function ImageViewerExample() {
+  const [index, setIndex] = useState<number | null>(null)
+  return (
+    <>
+      <Button variant="outline" onPress={() => setIndex(0)}>
+        Abrir galeria de exemplo
+      </Button>
+      <ImageViewer images={capturasDeExemplo} index={index} onIndexChange={setIndex} />
+    </>
+  )
+}
+
+function ChatExample() {
+  // A espera na fila e contada a partir de agora, senao o exemplo diria "Esperando ha 0 min" (as datas dos mocks sao fixas).
+  const [tickets, setTickets] = useState<Ticket[]>(() =>
+    demoTickets.map((t) => (t.waitingSince ? { ...t, waitingSince: new Date(Date.now() - 12 * 60000) } : t)),
+  )
+  const [activeId, setActiveId] = useState(demoTickets[0]!.id)
+  const [quote, setQuote] = useState<ChatMessage | null>(null)
+  const [editing, setEditing] = useState<ChatMessage | null>(null)
+  const ativo = tickets.find((t) => t.id === activeId) ?? tickets[0]!
+
+  const mudarMensagens = (fn: (lista: ChatMessage[]) => ChatMessage[]) =>
+    setTickets((ts) => ts.map((t) => (t.id === ativo.id ? { ...t, messages: fn(t.messages) } : t)))
+
+  return (
+    <Stack gap="3">
+      <ConversationList
+        items={tickets}
+        activeId={ativo.id}
+        onSelect={(id) => {
+          setActiveId(id)
+          setQuote(null)
+          setEditing(null)
+          setTickets((ts) => ts.map((t) => (t.id === id ? { ...t, unread: undefined } : t)))
+        }}
+      />
+      <View testID="chat-canal-ativo" className="flex-row items-center gap-2">
+        <Text className="text-sm text-muted-foreground">Canal da conversa aberta</Text>
+        <ChannelBadge channel={ativo.channel} />
+      </View>
+      <View className="h-chart-md overflow-hidden rounded-surface border border-border">
+        <ChatThread
+          messages={ativo.messages}
+          onReply={(m) => {
+            setEditing(null)
+            setQuote(m)
+          }}
+          onReact={(m, emoji) =>
+            mudarMensagens((lista) =>
+              lista.map((x) => {
+                if (x.id !== m.id) return x
+                const reacoes = x.reactions ?? []
+                return { ...x, reactions: reacoes.includes(emoji) ? reacoes.filter((r) => r !== emoji) : [...reacoes, emoji] }
+              }),
+            )
+          }
+          onEdit={(m) => {
+            setQuote(null)
+            setEditing(m)
+          }}
+          onDelete={(m) => mudarMensagens((lista) => lista.map((x) => (x.id === m.id ? { ...x, deleted: true } : x)))}
+        />
+      </View>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <View className="overflow-hidden rounded-surface border border-border">
+          <ChatComposer
+            quote={quote ? { author: quote.author, text: quote.text } : null}
+            onCancelQuote={() => setQuote(null)}
+            editing={editing ? { id: editing.id, text: editing.text } : null}
+            onCancelEdit={() => setEditing(null)}
+            quickReplies={quickRepliesDemo}
+            onPickFiles={async () => [{ name: 'Orçamento.pdf', uri: 'exemplo://orcamento.pdf', type: 'application/pdf', size: 184320 }]}
+            onPickMedia={async () => [{ name: 'Foto da vitrine.jpg', uri: 'exemplo://vitrine.jpg', type: 'image/jpeg', size: 921600 }]}
+            onSend={({ text, files, audioSeconds }) => {
+              if (editing) {
+                mudarMensagens((lista) => lista.map((x) => (x.id === editing.id ? { ...x, text, editedFrom: x.editedFrom ?? x.text } : x)))
+                setEditing(null)
+                return
+              }
+              const nova: ChatMessage = {
+                id: `nova-${ativo.messages.length + 1}`,
+                from: 'agent',
+                author: 'Bruno Lima',
+                text: text || undefined,
+                time: new Date(2026, 9, 5, 10, 0 + ativo.messages.length),
+                status: 'sent',
+                replyTo: quote ? { id: quote.id, author: quote.author, text: quote.text } : undefined,
+                attachments: files.map((f) => ({ name: f.name, type: f.type, size: f.size, duration: audioSeconds })),
+              }
+              mudarMensagens((lista) => [...lista, nova])
+              setQuote(null)
+            }}
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </Stack>
+  )
+}
+
 export const showcaseGroups: ShowcaseGroup[] = [
   {
     slug: 'acoes',
@@ -702,6 +1001,12 @@ export const showcaseGroups: ShowcaseGroup[] = [
         description: 'Formulário completo com react-hook-form e validação.',
         render: () => <FormularioRhfExample />,
         codes: codigosPara(['Form'], ['FormSection']),
+      },
+      {
+        name: 'RichTextEditor',
+        description: 'Editor de texto rico: visual no celular (WebView), só o modo HTML no navegador (subcaminho @rendra-ui/app/rich-text-editor).',
+        render: () => <RichTextEditorExample />,
+        codes: codigosPara(['RichTextEditor']),
       },
     ],
   },
@@ -799,6 +1104,12 @@ export const showcaseGroups: ShowcaseGroup[] = [
         render: () => <BrandLogoExample />,
         codes: codigosPara(['BrandLogo']),
       },
+      {
+        name: 'DocumentViewer',
+        description: 'PDF dentro do app no iOS; no Android e no navegador abre no aplicativo de PDF (subcaminho @rendra-ui/app/document-viewer).',
+        render: () => <DocumentViewerExample />,
+        codes: codigosPara(['DocumentViewer']),
+      },
     ],
   },
   {
@@ -811,6 +1122,68 @@ export const showcaseGroups: ShowcaseGroup[] = [
       { name: 'Grid', description: 'Grade de colunas fixas.', render: () => <GridExample /> },
       { name: 'Section', description: 'Bloco de conteúdo com título e descrição.', render: () => <SectionExample /> },
       { name: 'PageHeader', description: 'Cabeçalho de tela com título, descrição e ajuda.', render: () => <PageHeaderExample /> },
+    ],
+  },
+  {
+    slug: 'dados',
+    title: 'Dados',
+    entries: [
+      {
+        name: 'Chart',
+        description: 'Gráficos de linha, barra, área, pizza, combinado, velocímetro de meta e funil (subcaminho @rendra-ui/app/chart).',
+        render: () => <ChartExample />,
+        codes: codigosPara(
+          ['Chart', { type: 'line' }],
+          ['Chart', { type: 'bar' }],
+          ['Chart', { type: 'area' }],
+          ['Chart', { type: 'pie' }],
+          ['Chart', { type: 'combo' }],
+          ['Chart', { type: 'gauge' }],
+          ['Chart', { type: 'funnel' }],
+        ),
+      },
+      {
+        name: 'Timeline',
+        description: 'Eventos em ordem, com tom semântico, data curta e resultado com ícone e texto.',
+        render: () => <TimelineExample />,
+        codes: codigosPara(['Timeline']),
+      },
+    ],
+  },
+  {
+    slug: 'planejamento',
+    title: 'Planejamento',
+    entries: [
+      {
+        name: 'Calendar',
+        description: 'Agenda com visão de mês, dia e lista de eventos; toque no dia e no evento.',
+        render: () => <CalendarExample />,
+        codes: codigosPara(['Calendar']),
+      },
+      {
+        name: 'Kanban',
+        description: 'Funil em colunas, uma por vez; o menu do card move para outra coluna ou reordena.',
+        render: () => <KanbanExample />,
+        codes: codigosPara(['Kanban']),
+      },
+      {
+        name: 'Kanban com destinos',
+        description: 'Mesmo funil, com destinos além das colunas no menu Mover para (ganho, perdido, arquivar).',
+        render: () => <KanbanDestinosExample />,
+        codes: codigosPara(['Kanban', { hasDropTargets: true }]),
+      },
+      {
+        name: 'ImageViewer',
+        description: 'Galeria em tela cheia: arraste para trocar, pinça para ampliar, toque duplo para alternar o zoom.',
+        render: () => <ImageViewerExample />,
+        codes: codigosPara(['ImageViewer']),
+      },
+      {
+        name: 'Atendimento (chat)',
+        description: 'Lista de conversas, histórico e campo de mensagem; pressão longa no balão abre as ações.',
+        render: () => <ChatExample />,
+        codes: codigosPara(['ConversationList'], ['ChatThread'], ['ChatComposer']),
+      },
     ],
   },
 ]

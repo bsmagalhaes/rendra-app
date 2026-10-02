@@ -21,6 +21,53 @@ jest.mock('react-native-safe-area-context', () => {
   return { __esModule: true, ...(mock.default ?? mock) }
 })
 
+// F3 (Bloco 6, achado B4 do parecer do Opus): `react-native-webview` e o `@10play/tentap-editor` sao
+// nativos/WebView e nao rodam sob Jest. O preset `jest-expo` resolve a plataforma `ios`, entao o
+// `RichTextEditor` nativo (e o `DocumentViewer`) sobem em todo `npm test` pela vitrine. O mock do
+// editor devolve sempre o MESMO objeto (`__editor`), para o teste conferir as chamadas, e guarda
+// as opcoes de `useEditorBridge` (`__options.onChange`) para simular uma edicao.
+// `WebView` e um `jest.fn` para o teste ler as props da ultima renderizacao (`mock.calls`): `source`,
+// `onLoadEnd`, `onError`, `onHttpError` (DocumentViewer, Bloco 7).
+jest.mock('react-native-webview', () => {
+  const WebView = jest.fn(() => null)
+  return { __esModule: true, WebView, default: WebView }
+})
+jest.mock('@10play/tentap-editor', () => {
+  const editor = {
+    toggleBold: jest.fn(),
+    toggleItalic: jest.fn(),
+    toggleUnderline: jest.fn(),
+    toggleStrike: jest.fn(),
+    toggleCode: jest.fn(),
+    toggleHeading: jest.fn(),
+    toggleBulletList: jest.fn(),
+    toggleOrderedList: jest.fn(),
+    toggleBlockquote: jest.fn(),
+    setLink: jest.fn(),
+    setImage: jest.fn(),
+    undo: jest.fn(),
+    redo: jest.fn(),
+    setContent: jest.fn(),
+    setPlaceholder: jest.fn(),
+    setEditable: jest.fn(),
+    getHTML: jest.fn(() => Promise.resolve('<p></p>')),
+  }
+  const state = { current: {} }
+  return {
+    __esModule: true,
+    __editor: editor,
+    __options: { current: undefined },
+    __state: state,
+    TenTapStartKit: [],
+    RichText: () => null,
+    useEditorBridge: jest.fn(function (options) {
+      require('@10play/tentap-editor').__options.current = options
+      return editor
+    }),
+    useBridgeState: jest.fn(() => state.current),
+  }
+})
+
 require('react-native-reanimated').setUpTests()
 
 require('./src/lib/icon-interop').registerIconInterop()

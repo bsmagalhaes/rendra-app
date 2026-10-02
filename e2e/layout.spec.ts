@@ -11,6 +11,8 @@ const ROUTES = [
   '/componentes/feedback',
   '/componentes/formulario',
   '/componentes/exibicao',
+  '/componentes/dados',
+  '/componentes/planejamento',
   '/tokens',
   '/galeria',
   '/painel',
@@ -25,6 +27,10 @@ const ROUTES = [
   '/clientes/novo',
   '/cadastro',
   '/tarefas',
+  '/atendimento',
+  '/atendimento/t1',
+  '/agenda',
+  '/kanban',
 ]
 
 // Tela 404: o `serve` do Playwright só entrega o `404.html` do export dentro do prefixo
@@ -158,6 +164,17 @@ test('componentes/exibicao: [data-rendra="ABA-001"] visivel (achado C5 do Opus)'
   await page.getByTestId('rendra-T1-C1').waitFor()
   await semSplash(page)
   await expect(page.locator('[data-rendra="ABA-001"]').first()).toBeVisible()
+})
+
+// F3 (criterio 5 do levantamento): o Chart e seus sete tipos chegam ao DOM com o codigo do catalogo.
+test('componentes/dados: [data-rendra="CHT-001" a "CHT-007"] presentes e o velocimetro e um meter', async ({ page }) => {
+  await page.goto('componentes/dados?codigo=T1-C1')
+  await page.getByTestId('rendra-T1-C1').waitFor()
+  await semSplash(page)
+  for (const n of [1, 2, 3, 4, 5, 6, 7]) {
+    await expect(page.locator(`[data-rendra="CHT-00${n}"]`).first()).toBeAttached()
+  }
+  await expect(page.getByRole('meter')).toHaveAttribute('aria-valuenow', '88')
 })
 
 test('componentes/formulario: [data-rendra="FLD-001"] visivel (achado C5 do Opus)', async ({ page }) => {
@@ -375,4 +392,26 @@ test('home: o link Componentes leva à vitrine dentro do shell', async ({ page }
   await page.getByRole('link', { name: /Componentes/ }).click()
   await expect(page).toHaveURL(/\/componentes/)
   await expect(page.getByTestId('shell-cabecalho')).toBeVisible()
+})
+
+test('componentes/exibicao: DocumentViewer no navegador mostra o painel de abrir fora, sem o aviso do WebView', async ({ page }) => {
+  await page.goto('componentes/exibicao?codigo=T1-C1')
+  await page.getByTestId('rendra-T1-C1').waitFor()
+  await semSplash(page)
+  await expect(page.locator('[data-rendra="DOC-001"]')).toBeVisible()
+  await expect(page.getByText('React Native WebView does not support this platform.')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Abrir no aplicativo de PDF' })).toBeVisible()
+  await page.getByRole('button', { name: 'Limpar seleção' }).click()
+  await expect(page.getByText('Nenhum documento selecionado')).toBeVisible()
+})
+
+test('componentes/formulario: RichTextEditor no navegador cai no modo HTML e digitar atualiza o contador', async ({ page }) => {
+  await page.goto('componentes/formulario?codigo=T1-C1')
+  await page.getByTestId('rendra-T1-C1').waitFor()
+  await semSplash(page)
+  await expect(page.locator('[data-rendra="RTE-001"]')).toBeVisible()
+  // Sem a variante .web o react-native-webview mostraria este aviso no lugar do editor.
+  await expect(page.getByText('React Native WebView does not support this platform.')).toHaveCount(0)
+  await page.getByLabel('Código HTML do conteúdo').fill('<p>curto</p>')
+  await expect(page.getByText('Conteúdo: 12 caracteres')).toBeVisible()
 })

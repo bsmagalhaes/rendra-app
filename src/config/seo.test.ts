@@ -33,11 +33,11 @@ describe('routeSeo', () => {
     }
   })
 
-  it('a contagem de componentes nas descricoes bate com os 49 da F2 (44 mais RendraCredit, ErrorPage, AuthLayout, AppShell e RendraSplash)', () => {
+  it('a contagem de componentes nas descricoes bate com os 57 da F3 (49 da F2 mais Chart, Timeline, Calendar, Kanban, ImageViewer, Chat, RichTextEditor e DocumentViewer)', () => {
     const raiz = routeSeo.find((r) => r.path === '/')
     const vitrine = routeSeo.find((r) => r.path === '/componentes')
-    expect(raiz?.description).toContain('49 componentes de UI')
-    expect(raiz?.description).not.toContain('44')
+    expect(raiz?.description).toContain('57 componentes de UI')
+    expect(raiz?.description).not.toContain('49')
     expect(vitrine?.description).not.toMatch(/44/)
   })
 
@@ -77,6 +77,9 @@ describe('SEO das rotas da demonstração (P3.16)', () => {
     ['/cadastro', /Cadastro/],
     ['/tarefas', /Tarefas/],
     ['/configuracoes', /Configurações/],
+    ['/atendimento', /Atendimento/],
+    ['/agenda', /Agenda/],
+    ['/kanban', /Funil/],
   ])('%s tem título e descrição, e é indexada', (rota, titulo) => {
     const seo = routeSeo.find((r) => r.path === rota)
     expect(seo?.title).toMatch(titulo)
@@ -95,6 +98,18 @@ describe('SEO das rotas da demonstração (P3.16)', () => {
     expect(seo).toBeDefined()
     expect(seo?.indexable).toBe(false)
     expect(seo?.title.length).toBeGreaterThan(0)
+  })
+
+  it('as três rotas novas do P4 seguem o padrão de título e vão para o sitemap e o llms.txt (indexáveis)', () => {
+    for (const rota of ['/atendimento', '/agenda', '/kanban']) {
+      const seo = routeSeo.find((r) => r.path === rota)!
+      expect(seo.title).toBe(`${seo.title.split(' · ')[0]} · ${siteSeo.productName}`)
+      expect(seo.indexable).toBe(true)
+    }
+  })
+
+  it('a conversa dinâmica não tem entrada própria (fica com noindex por arquivo)', () => {
+    expect(routeSeo.some((r) => r.path.startsWith('/atendimento/'))).toBe(false)
   })
 
   it('o detalhe dinâmico do cliente não tem entrada própria (fica com noindex por arquivo)', () => {

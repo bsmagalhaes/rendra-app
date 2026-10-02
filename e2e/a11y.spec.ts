@@ -13,6 +13,8 @@ const ROUTES = [
   '/componentes/feedback',
   '/componentes/formulario',
   '/componentes/exibicao',
+  '/componentes/dados',
+  '/componentes/planejamento',
   '/tokens',
   '/galeria',
   '/painel',
@@ -27,6 +29,10 @@ const ROUTES = [
   '/clientes/novo',
   '/cadastro',
   '/tarefas',
+  '/atendimento',
+  '/atendimento/t1',
+  '/agenda',
+  '/kanban',
 ]
 
 for (const route of ROUTES) {
@@ -146,6 +152,77 @@ test('axe com o menu do DropdownMenu aberto, em /componentes/acoes', async ({ pa
   // DropdownMenu), entao o gatilho do DropdownMenu e sempre o ultimo da pagina.
   await page.getByRole('button', { name: 'Mais ações' }).last().click()
   await page.getByRole('menuitem').first().waitFor()
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+  const serious = blockingViolations(results.violations)
+  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+})
+
+test('axe com o menu de ações do card do Kanban aberto, em /componentes/planejamento', async ({ page }) => {
+  const codigo = 'T1-C1'
+  await page.goto(`componentes/planejamento?codigo=${codigo}`)
+  await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
+  await page.getByRole('button', { name: 'Ações do card Padaria Estrela' }).first().click()
+  await page.getByRole('menuitem').first().waitFor()
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+  const serious = blockingViolations(results.violations)
+  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+})
+
+test('axe com o ImageViewer aberto, em /componentes/planejamento', async ({ page }) => {
+  const codigo = 'T1-C1'
+  await page.goto(`componentes/planejamento?codigo=${codigo}`)
+  await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
+  await page.getByRole('button', { name: 'Abrir galeria de exemplo' }).click()
+  const dialogo = page.getByRole('dialog', { name: 'Componentes, Safira' })
+  await dialogo.waitFor()
+  await expect(page.locator('[data-rendra="IMG-001"]')).toBeVisible()
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+  const serious = blockingViolations(results.violations)
+  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+  for (const nome of ['Fechar', 'Anterior', 'Próxima']) {
+    const caixa = await dialogo.getByRole('button', { name: nome }).boundingBox()
+    expect(caixa!.width, nome).toBeGreaterThanOrEqual(44)
+    expect(caixa!.height, nome).toBeGreaterThanOrEqual(44)
+  }
+})
+
+test('axe com a folha Mais ações da mensagem aberta, em /componentes/planejamento', async ({ page }) => {
+  const codigo = 'T1-C1'
+  await page.goto(`componentes/planejamento?codigo=${codigo}`)
+  await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
+  await expect(page.locator('[data-rendra="CHAT-001"]')).toBeVisible()
+  await expect(page.locator('[data-rendra="CHAT-002"]')).toBeVisible()
+  await page.getByRole('button', { name: 'Mais ações da mensagem' }).click()
+  await page.getByRole('button', { name: 'Gravar áudio' }).waitFor()
+  // a folha entra por translateY (200 ms): mede só depois de assentada. Em voo, com a máquina carregada,
+  // o boundingBox do CDP (quads em float32) devolve 43,99994 para uma caixa de 44 px exatos.
+  await page.waitForFunction(async () => {
+    const topo = () =>
+      [...document.querySelectorAll('[role="button"]')].find((e) => e.textContent?.trim() === 'Gravar áudio')?.getBoundingClientRect().top
+    const a = topo()
+    await new Promise((r) => setTimeout(r, 300))
+    return a !== undefined && a === topo()
+  })
+  for (const nome of ['Anexar arquivo', 'Imagem ou vídeo', 'Emoji', 'Mensagens rápidas', 'Gravar áudio']) {
+    const caixa = await page.getByRole('button', { name: nome }).boundingBox()
+    expect(caixa!.height, nome).toBeGreaterThanOrEqual(44)
+  }
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+  const serious = blockingViolations(results.violations)
+  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+})
+
+test('axe com o menu de ações da mensagem aberto, em /componentes/planejamento', async ({ page }) => {
+  const codigo = 'T1-C1'
+  await page.goto(`componentes/planejamento?codigo=${codigo}`)
+  await page.getByTestId(`rendra-${codigo}`).waitFor()
+  await semSplash(page)
+  await page.getByRole('button', { name: 'Ações da mensagem' }).nth(1).click()
+  await page.getByRole('menuitem', { name: 'Responder' }).waitFor()
+  await expect(page.getByRole('menuitem', { name: 'Reagir com 👍' })).toBeVisible()
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const serious = blockingViolations(results.violations)
   expect(serious, JSON.stringify(serious, null, 2)).toEqual([])

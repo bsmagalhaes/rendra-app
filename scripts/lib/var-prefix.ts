@@ -28,7 +28,7 @@ export const RENDRA_VAR_EXACT = new Set([
   'radius-control', 'radius-item', 'radius-surface', 'radius-block', 'radius-avatar',
 ])
 
-export const RENDRA_VAR_PREFIXES = ['chart-', 'shape-', 'shadow-opacity-', 'label-', 'help-']
+export const RENDRA_VAR_PREFIXES = ['chart-', 'shape-', 'shadow-opacity-', 'label-', 'help-', 'meter-']
 
 /** Verdadeiro quando `name` (sem os dois hífens de abertura, ex. "primary" de "--primary") é um
  *  nome próprio do tema Rendra, prefixado ou não. */

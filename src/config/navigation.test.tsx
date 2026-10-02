@@ -17,7 +17,8 @@ describe('menu de exemplo da vitrine', () => {
 
   it('leva às rotas da vitrine, com a raiz para o início', () => {
     // P3.7 (correção D8, mudança de comportamento registrada): Clientes, Cadastros (com os filhos)
-    // e Tarefas entram no grupo Geral, na ordem do menu do web.
+    // e Tarefas entram no grupo Geral, na ordem do menu do web. P4 (T16): Atendimento, Agenda e
+    // Funil entram depois de Tarefas, nessa ordem.
     expect(getNavigationTargets(exampleNavigation).map((t) => t.to)).toEqual([
       '/',
       '/painel',
@@ -25,6 +26,9 @@ describe('menu de exemplo da vitrine', () => {
       '/clientes/novo',
       '/cadastro',
       '/tarefas',
+      '/atendimento',
+      '/agenda',
+      '/kanban',
       '/componentes',
       '/tokens',
       '/galeria',
@@ -46,12 +50,29 @@ describe('menu de exemplo da vitrine', () => {
     expect(porTitulo('Tarefas')?.to).toBe('/tarefas')
   })
 
-  it('ainda não mostra Atendimento, Agenda e Funil (dependem da F3)', () => {
-    for (const titulo of ['Atendimento', 'Agenda', 'Funil']) expect(porTitulo(titulo)).toBeUndefined()
+  it('tem Atendimento, Agenda e Funil no grupo Geral, depois de Tarefas, nessa ordem', () => {
+    // P4 (T16, mudança de comportamento registrada): antes os três não existiam no menu.
+    const geral = exampleNavigation[0]!.items.map((i) => i.title)
+    expect(geral.slice(geral.indexOf('Tarefas'))).toEqual(['Tarefas', 'Atendimento', 'Agenda', 'Funil'])
+    expect(porTitulo('Atendimento')?.to).toBe('/atendimento')
+    expect(porTitulo('Agenda')?.to).toBe('/agenda')
+    expect(porTitulo('Funil')?.to).toBe('/kanban')
+  })
+
+  it('o Funil e o Atendimento não entram na barra inferior (continuam 4 itens)', () => {
+    expect(getBottomNavItems(exampleNavigation)).toHaveLength(4)
+    expect(porTitulo('Atendimento')?.bottomNav).toBeUndefined()
   })
 })
 
 describe('selo de contagem do menu', () => {
+  it('Atendimento leva o total de não lidas e some quando não há nenhuma', () => {
+    const itensCom = (naoLidas: number) => buildNavigation(48, naoLidas).flatMap((g) => g.items)
+    expect(itensCom(3).find((i) => i.title === 'Atendimento')?.badge).toBe('3')
+    expect(itensCom(1).find((i) => i.title === 'Atendimento')?.badge).toBe('1')
+    expect(itensCom(0).find((i) => i.title === 'Atendimento')?.badge).toBeUndefined()
+  })
+
   it('acompanha a quantidade de clientes informada', () => {
     const itensCom = (total: number) => buildNavigation(total).flatMap((g) => g.items)
     expect(itensCom(47).find((i) => i.title === 'Clientes')?.badge).toBe('47')

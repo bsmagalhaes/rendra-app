@@ -16,10 +16,12 @@ import {
   Modal,
   StatCard,
   Tabs,
+  Timeline,
   toast,
 } from '../../../src/components/ui'
 import { DataRow } from '../../../src/demo/data-row'
 import { excluirCliente, useClientes } from '../../../src/demo/clients-store'
+import { useTicketDoCliente } from '../../../src/demo/tickets-store'
 import { formatCurrency } from '../../../src/lib/masks'
 import { useDocumentTitle } from '../../../src/lib/use-document-title'
 import { activityOf, clients, contractsOf, statusTone, type Cliente } from '../../../src/mocks/clients'
@@ -56,7 +58,7 @@ function Resumo({ cliente }: { cliente: Cliente }) {
 
 /**
  * Detalhe do cliente da demonstração (rota dinâmica): quatro abas (Resumo, Contratos, Atividade e
- * Documentos), exclusão com confirmação e o estado "Cliente não encontrado" para id inexistente.
+ * Documentos), "Conversar" (só para quem tem conversa), exclusão com confirmação e o estado "Cliente não encontrado" para id inexistente.
  * O título do cabeçalho do shell é o nome do cliente.
  */
 export default function ClienteDetalhe() {
@@ -64,6 +66,7 @@ export default function ClienteDetalhe() {
   const router = useRouter()
   const { id } = useLocalSearchParams<{ id: string }>()
   const carteira = useClientes()
+  const conversa = useTicketDoCliente(Number(id))
   const [excluindo, setExcluindo] = useState(false)
   const encontrado = carteira.find((c) => c.id === Number(id))
   useDocumentTitle(
@@ -98,6 +101,11 @@ export default function ClienteDetalhe() {
           description={`${encontrado.segmento} · ${encontrado.cidade}`}
           actions={
             <>
+              {conversa ? (
+                <Button variant="outline" onPress={() => router.push(`/atendimento/${conversa.id}`)}>
+                  Conversar
+                </Button>
+              ) : null}
               <Button variant="outline" onPress={() => toast.info('Edição simulada nesta demonstração')}>
                 Editar
               </Button>
@@ -140,12 +148,11 @@ export default function ClienteDetalhe() {
               label: 'Atividade',
               content: (
                 <View className="pt-4">
-                  <List
-                    scrollEnabled={false}
-                    items={activityOf(encontrado.id).map((a) => ({
+                  <Timeline
+                    events={activityOf(encontrado.id).map((a) => ({
                       id: a.id,
                       title: a.titulo,
-                      description: a.data,
+                      date: a.data,
                       tone: a.tone,
                     }))}
                   />

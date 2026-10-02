@@ -22,11 +22,13 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testPathIgnorePatterns: ['/node_modules/', '<rootDir>/e2e/', '<rootDir>/dist/', '<rootDir>/.pages/', '<rootDir>/dist-lib/'],
   transformIgnorePatterns: [
+    // `d3-shape` e `d3-path` (F3, Chart) publicam so ESM; sem a excecao o Jest quebra com
+    // `SyntaxError: Unexpected token 'export'`, mesmo achado do `lucide-react-native`.
     // `standard-navigation` (dependencia de expo-router/testing-library, Tarefa B16) publica só
     // `"type": "module"` em `lib/src/index.js`; sem entrar nesta lista de excecao, o Jest tenta
     // exigir o arquivo como CommonJS puro e quebra em `SyntaxError: Cannot use import statement
     // outside a module`.
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|nativewind|react-native-css-interop|lucide-react-native|standard-navigation)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|nativewind|react-native-css-interop|lucide-react-native|standard-navigation|d3-shape|d3-path)',
   ],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

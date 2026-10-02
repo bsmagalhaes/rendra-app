@@ -10,7 +10,7 @@ export interface SeoPathRoute {
  * desenvolvimento do Expo Router), mas que existem em `dist/` e precisam de `noindex` (achado B10
  * da validação do plano).
  */
-export const NOINDEX_FILES = ['_sitemap.html', 'componentes/[slug].html', 'clientes/[id].html', '+not-found.html'] as const
+export const NOINDEX_FILES = ['_sitemap.html', 'componentes/[slug].html', 'clientes/[id].html', 'atendimento/[id].html', '+not-found.html'] as const
 
 /**
  * Páginas estáticas do detalhe do cliente (`clientes/<id>.html`, uma por id de `generateStaticParams`,
@@ -19,6 +19,15 @@ export const NOINDEX_FILES = ['_sitemap.html', 'componentes/[slug].html', 'clien
  */
 export function clientDetailFiles(files: string[]): string[] {
   return files.filter((arquivo) => /^clientes\/\d+\.html$/.test(arquivo))
+}
+
+/**
+ * Páginas estáticas das conversas do atendimento (`atendimento/t<n>.html`, uma por id de
+ * `generateStaticParams`). Como o detalhe do cliente, não têm entrada em `routeSeo` e recebem
+ * `noindex`; o índice (`atendimento/index.html`) continua indexável.
+ */
+export function conversationFiles(files: string[]): string[] {
+  return files.filter((arquivo) => /^atendimento\/t\d+\.html$/.test(arquivo))
 }
 
 /**

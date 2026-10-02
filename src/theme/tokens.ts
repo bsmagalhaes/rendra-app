@@ -17,6 +17,9 @@ export const systemColorsLight = {
   warningSoft: '#fdf2e1', warningSoftForeground: '#8a3d06',
   info: '#0e6cdb', infoForeground: '#ffffff',
   infoSoft: '#e7f0fc', infoSoftForeground: '#0b58b5',
+  // Faixas do medidor do Chart gauge (igual ao web, `globals.css:731-739`); viram
+  // --rendra-meter-low/mid/high em buildThemeVars pelo mesmo laço das demais chaves.
+  meterLow: '#dc2626', meterMid: '#f5b400', meterHigh: '#16a34a',
 } as const
 
 export const systemColorsDark = {
@@ -29,4 +32,5 @@ export const systemColorsDark = {
   warningSoft: '#362612', warningSoftForeground: '#f7c77e',
   info: '#0b6fe0', infoForeground: '#ffffff',
   infoSoft: '#11305a', infoSoftForeground: '#7fb4ef',
+  meterLow: '#f05252', meterMid: '#facc15', meterHigh: '#34d399',
 } as const

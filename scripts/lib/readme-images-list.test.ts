@@ -7,8 +7,8 @@ describe('CAPTURAS', () => {
     expect(new Set(nomes).size).toBe(nomes.length)
   })
 
-  it('tem 8 telas, 5 da segunda parte da demo e 12 células da matriz modelo por paleta', () => {
-    expect(CAPTURAS).toHaveLength(25)
+  it('tem 8 telas, 5 da segunda parte da demo, 4 do atendimento, agenda, funil e painel escuro e 12 células da matriz modelo por paleta', () => {
+    expect(CAPTURAS).toHaveLength(29)
     expect(CAPTURAS.filter((c) => c.nome.startsWith('matriz-'))).toHaveLength(12)
     for (const nome of [
       'safira-clientes-mobile',
@@ -19,6 +19,15 @@ describe('CAPTURAS', () => {
     ]) {
       expect(CAPTURAS.map((c) => c.nome)).toContain(nome)
     }
+  })
+
+  it('as quatro capturas do P4 apontam para a rota e o modo certos, e nenhuma outra foi acrescentada', () => {
+    const porNome = (nome: string) => CAPTURAS.find((c) => c.nome === nome)
+    expect(porNome('safira-atendimento-mobile')).toMatchObject({ rota: '/atendimento/t1', codigo: 'T1-C1', modo: 'claro' })
+    expect(porNome('equilibrio-agenda-mobile')).toMatchObject({ rota: '/agenda', codigo: 'T2-C2', modo: 'claro' })
+    expect(porNome('aurora-funil-mobile')).toMatchObject({ rota: '/kanban', codigo: 'T3-C3', modo: 'claro' })
+    expect(porNome('safira-painel-escuro-mobile')).toMatchObject({ rota: '/painel', codigo: 'T1-C1', modo: 'escuro' })
+    expect(CAPTURAS.filter((c) => !c.nome.startsWith('matriz-'))).toHaveLength(17)
   })
 
   it('cada captura usa código T x C válido e modo conhecido', () => {

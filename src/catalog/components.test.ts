@@ -36,23 +36,34 @@ const ARQUIVOS_REAIS_DE_COMPONENTE = [
   'components/ui/brand-logo.tsx',
   'components/ui/button.tsx',
   'components/ui/button-group.tsx',
+  'components/ui/calendar.tsx',
   'components/ui/card.tsx',
+  'components/ui/chart.tsx',
+  'components/ui/chat/channel-badge.tsx',
+  'components/ui/chat/chat-thread.tsx',
+  'components/ui/chat/chat-composer.tsx',
+  'components/ui/chat/conversation-list.tsx',
   'components/ui/checkbox.tsx',
   'components/ui/date-picker.tsx',
+  'components/ui/document-viewer.tsx',
+  'components/ui/document-viewer-fallback.tsx',
   'components/ui/drawer.tsx',
   'components/ui/dropdown-menu.tsx',
   'components/ui/empty-state.tsx',
   'components/ui/error-page.tsx',
   'components/ui/field.tsx',
   'components/ui/form.tsx',
+  'components/ui/image-viewer.tsx',
   'components/ui/info-hint.tsx',
   'components/ui/input.tsx',
+  'components/ui/kanban.tsx',
   'components/ui/list.tsx',
   'components/ui/modal.tsx',
   'components/ui/otp-input.tsx',
   'components/ui/progress.tsx',
   'components/ui/radio-group.tsx',
   'components/ui/rendra-credit.tsx',
+  'components/ui/rich-text-editor.tsx',
   'components/ui/select.tsx',
   'components/ui/separator.tsx',
   'components/ui/skeleton.tsx',
@@ -62,6 +73,7 @@ const ARQUIVOS_REAIS_DE_COMPONENTE = [
   'components/ui/switch.tsx',
   'components/ui/tabs.tsx',
   'components/ui/textarea.tsx',
+  'components/ui/timeline.tsx',
   'components/ui/toast.tsx',
 ]
 
@@ -84,7 +96,18 @@ const TABELA_PARIDADE: [string, string, Record<string, unknown>, true | undefine
   ['BTN-005', 'Button', { variant: 'destructive' }, undefined],
   ['BTN-006', 'Button', { variant: 'link' }, undefined],
   ['BTNG-001', 'ButtonGroup', {}, undefined],
+  ['CAL-001', 'Calendar', {}, undefined],
   ['CARD-001', 'Card', {}, undefined],
+  ['CHT-001', 'Chart', { type: 'line' }, true],
+  ['CHT-002', 'Chart', { type: 'bar' }, undefined],
+  ['CHT-003', 'Chart', { type: 'area' }, undefined],
+  ['CHT-004', 'Chart', { type: 'pie' }, undefined],
+  ['CHT-005', 'Chart', { type: 'combo' }, undefined],
+  ['CHT-006', 'Chart', { type: 'gauge' }, undefined],
+  ['CHT-007', 'Chart', { type: 'funnel' }, undefined],
+  ['CHAT-001', 'ConversationList', {}, undefined],
+  ['CHAT-002', 'ChatThread', {}, undefined],
+  ['CHAT-003', 'ChatComposer', {}, undefined],
   ['CHK-001', 'Checkbox', {}, undefined],
   ['CHK-002', 'CheckboxGroup', {}, undefined],
   ['DTP-001', 'DatePicker', {}, undefined],
@@ -96,8 +119,11 @@ const TABELA_PARIDADE: [string, string, Record<string, unknown>, true | undefine
   ['FLD-002', 'Label', {}, undefined],
   ['FORM-001', 'Form', {}, undefined],
   ['FORM-002', 'FormSection', {}, undefined],
+  ['IMG-001', 'ImageViewer', {}, undefined],
   ['INFO-001', 'InfoHint', {}, undefined],
   ['CAMP-001', 'Input', {}, undefined],
+  ['KANB-001', 'Kanban', {}, true],
+  ['KANB-002', 'Kanban', { hasDropTargets: true }, undefined],
   ['LIST-001', 'List', {}, true],
   ['MOD-001', 'Modal', { type: 'confirm' }, true],
   ['MOD-002', 'Modal', { type: 'form' }, undefined],
@@ -107,6 +133,8 @@ const TABELA_PARIDADE: [string, string, Record<string, unknown>, true | undefine
   ['RDO-001', 'RadioGroup', { variant: 'list' }, true],
   ['RDO-002', 'RadioGroup', { variant: 'cards' }, undefined],
   ['CRED-001', 'RendraCredit', {}, undefined],
+  ['DOC-001', 'DocumentViewer', {}, undefined],
+  ['RTE-001', 'RichTextEditor', {}, undefined],
   ['SEL-001', 'Select', {}, undefined],
   ['SEP-001', 'Separator', {}, undefined],
   ['SKEL-001', 'Skeleton', {}, undefined],
@@ -117,6 +145,7 @@ const TABELA_PARIDADE: [string, string, Record<string, unknown>, true | undefine
   ['ABA-001', 'Tabs', { variant: 'line' }, true],
   ['ABA-002', 'Tabs', { variant: 'pill' }, undefined],
   ['TXT-001', 'Textarea', {}, undefined],
+  ['TLN-001', 'Timeline', {}, undefined],
   ['TST-001', 'toast', {}, undefined],
 ]
 
@@ -140,6 +169,19 @@ describe('catalogo de componentes', () => {
 
   it('resolveCatalogCode resolve ErrorPage para ERRO-001', () => {
     expect(resolveCatalogCode('ErrorPage', {})).toBe('ERRO-001')
+  })
+
+  it('resolveCatalogCode resolve cada tipo do Chart para o seu codigo CHT', () => {
+    const tipos = ['line', 'bar', 'area', 'pie', 'combo', 'gauge', 'funnel']
+    expect(tipos.map((type) => resolveCatalogCode('Chart', { type }))).toEqual([
+      'CHT-001', 'CHT-002', 'CHT-003', 'CHT-004', 'CHT-005', 'CHT-006', 'CHT-007',
+    ])
+  })
+
+  it('resolveCatalogCode distingue o Kanban com destinos (KANB-002) do padrao (KANB-001)', () => {
+    expect(resolveCatalogCode('Kanban', {})).toBe('KANB-001')
+    expect(resolveCatalogCode('Kanban', { hasDropTargets: false })).toBe('KANB-001')
+    expect(resolveCatalogCode('Kanban', { hasDropTargets: true })).toBe('KANB-002')
   })
 
   it('resolveCatalogCode acha a variante certa', () => {
@@ -213,8 +255,8 @@ describe('catalogo de componentes', () => {
     ).toThrow(/mais de um isDefault/)
   })
 
-  it('paridade com o web: 49 entradas com code/component/variantProps/isDefault iguais (Apendice A do veredito do Opus, mais SPIN-001 da Tarefa 8.1 CRED-001 e ERRO-001 da F2)', () => {
-    expect(CATALOG).toHaveLength(49)
+  it('paridade com o web: 66 entradas (as 49 da F1b e F2 e da Sincronizacao 1 mais CHT-001 a CHT-007, TLN-001, CAL-001, KANB-001, KANB-002, IMG-001, CHAT-001, CHAT-002, CHAT-003, RTE-001 e DOC-001 da F3) com code/component/variantProps/isDefault iguais (Apendice A do veredito do Opus)', () => {
+    expect(CATALOG).toHaveLength(66)
   })
 
   it.each(TABELA_PARIDADE)('%s (%s) casa code/component/variantProps/isDefault', (code, component, variantProps, isDefault) => {

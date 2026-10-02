@@ -11,6 +11,7 @@ import {
   expoMetroConfig,
   expoAppLayoutTsx,
   expoAppIndexTsx,
+  expoAppEditorTsx,
   expoAppGlobalCss,
   expoAppTailwindConfig,
 } from './verify-pack-expo-app'
@@ -68,6 +69,20 @@ describe('conteúdo do app Expo mínimo do verify:pack (lacuna 2 do veredito Fab
   it('_layout.tsx e index.tsx importam de @rendra-ui/app (reproduz o import do consumidor real)', () => {
     expect(expoAppLayoutTsx()).toContain("from '@rendra-ui/app'")
     expect(expoAppIndexTsx()).toContain("from '@rendra-ui/app'")
+  })
+
+  it('editor.tsx importa o subcaminho do editor, sem react-native-webview nem tentap (prova a resolucao .web.js do Metro, B3)', () => {
+    const rota = expoAppEditorTsx()
+    expect(rota).toContain("from '@rendra-ui/app/rich-text-editor'")
+    expect(rota).toContain('RichTextEditor')
+    expect(rota).toContain("from '@rendra-ui/app/document-viewer'")
+    expect(rota).toContain('DocumentViewer')
+    expect(rota).not.toMatch(/react-native-webview|tentap/)
+  })
+
+  it('o app do verify:pack nao linka react-native-webview nem o tentap (quem instala sem o peer opcional)', () => {
+    expect(EXPO_APP_PEER_LINKS).not.toContain('react-native-webview')
+    expect(EXPO_APP_PEER_LINKS).not.toContain('@10play')
   })
 
   it('_layout.tsx importa o global.css, como o consumidor real faz na raiz do app', () => {

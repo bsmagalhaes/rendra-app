@@ -1,5 +1,5 @@
-import { Text } from 'react-native'
-import { fireEvent, render, waitFor, within } from '@testing-library/react-native'
+import { Keyboard, Platform, StyleSheet, Text } from 'react-native'
+import { act, fireEvent, render, waitFor, within } from '@testing-library/react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BrandProvider } from '../../brand/brand-provider'
 import { RendraNavigationProvider } from '../../navigation/rendra-navigation'
@@ -94,5 +94,43 @@ describe('AppShell', () => {
     expect(tela.queryByLabelText('Navegação rápida')).toBeNull()
     await tela.findByText('Conteúdo da tela')
     expect(tela.queryByLabelText('Navegação rápida')).toBeNull()
+  })
+})
+
+/** Janela de 800 de altura, teclado de 300 abrindo em y 500. */
+async function abrirTeclado(os: 'android' | 'ios' | 'web') {
+  jest.replaceProperty(Platform, 'OS', os)
+  const espiao = jest.spyOn(Keyboard, 'addListener')
+  const tela = await render(arvore('/paginas'))
+  const area = await tela.findByTestId('shell-teclado')
+  await fireEvent(area, 'layout', { persist: () => {}, nativeEvent: { layout: { x: 0, y: 0, width: 400, height: 800 } } })
+  await act(async () => {
+    // Dispara o ouvinte que o KeyboardAvoidingView registrou no teclado.
+    // Os dois eventos: `keyboardDidShow` (Android) e `keyboardWillShow` (iOS), os que o KAV de cada sistema ouve.
+    const evento = { endCoordinates: { screenX: 0, screenY: 500, width: 400, height: 300 }, duration: 0 } as never
+    for (const nome of ['keyboardDidShow', 'keyboardWillShow']) {
+      espiao.mock.calls.filter(([n]) => n === nome).forEach(([, f]) => (f as (e: never) => void)(evento))
+    }
+  })
+  return { tela, area: tela.getByTestId('shell-teclado') }
+}
+
+describe('AppShell: teclado', () => {
+  afterEach(() => jest.restoreAllMocks())
+
+  it('no Android o teclado encolhe a area da tela e a barra inferior sobe junto (padding igual a altura coberta)', async () => {
+    const { tela, area } = await abrirTeclado('android')
+    expect(StyleSheet.flatten(area.props.style).paddingBottom).toBe(300)
+    expect(within(area).getByText('Conteúdo da tela')).toBeTruthy()
+    expect(within(area).getByLabelText('Navegação rápida')).toBeTruthy()
+    await tela.unmount()
+  })
+
+  it('no iOS e no web o shell nao compensa o teclado (as telas com campo ja tratam, e nao deve dobrar)', async () => {
+    for (const os of ['ios', 'web'] as const) {
+      const { tela, area } = await abrirTeclado(os)
+      expect(StyleSheet.flatten(area.props.style)?.paddingBottom).toBeUndefined()
+      await tela.unmount()
+    }
   })
 })

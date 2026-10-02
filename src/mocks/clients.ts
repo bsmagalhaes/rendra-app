@@ -198,7 +198,7 @@ export const monthly: MesReceita[] = [
   { mes: 'Jun/2026', receita: 52100, novosClientes: 4 },
   { mes: 'Jul/2026', receita: 55900, novosClientes: 6 },
   { mes: 'Ago/2026', receita: 58300, novosClientes: 8 },
-  { mes: 'Set/2026', receita: 61450, novosClientes: 7 },
+  { mes: 'Set/2026', receita: 61300, novosClientes: 7 },
 ]
 
 const somaReceita = (meses: MesReceita[]) => meses.reduce((soma, m) => soma + m.receita, 0)

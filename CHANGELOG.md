@@ -2,9 +2,9 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
-## [Não publicado]
+## [1.2.0] - 30/09/2026
 
-Página de apresentação, demo em `/demo/` e prints de celular. Não muda nenhuma API do pacote nem os componentes: a versão que leva estas mudanças (1.1.1 ou junto da 1.2.0) fica para decisão do Bruno.
+Terceira versão sobre a 1.1.0 (ainda não publicada no npm): 57 componentes de UI, com os oito da F3. Mudança aditiva: nenhuma API pública existente foi removida ou renomeada; `a11yPresets` e `systemColors` só ganharam chaves.
 
 ### Adicionado
 
@@ -15,14 +15,33 @@ Página de apresentação, demo em `/demo/` e prints de celular. Não muda nenhu
 - `npm run test:site` (Playwright e axe sobre a página) e `npm run test:demo` (a demo em `/demo/` mantém o prefixo ao navegar e ao voltar).
 - `npm run docs:images:check`: confere que toda captura é de celular em pé e que a `og-image.png` tem 1200x630.
 - `robots.txt` libera de forma explícita os robôs de busca e de resposta de IA (`OAI-SearchBot`, `ChatGPT-User`, `Claude-SearchBot`, `Claude-User`, `PerplexityBot`, `Perplexity-User`).
+- Demo completa (bloco P4): Atendimento (`/atendimento`, conversas por etapa URA/IA, Fila, Atendimento e Encerrado, busca, filtro por canal e a conversa em `/atendimento/[id]` com responder, reagir, editar, excluir, anexos e mensagens rápidas; a conversa da fila pede "Assumir atendimento"), Agenda (`/agenda`, mês, dia e lista, detalhe do evento e novo evento) e Funil comercial (`/kanban`, cards por etapa que se movem pelo menu). Tickets, cards e eventos vivem em stores da demo (`src/demo`), então não lidas zeradas, card movido e evento novo sobrevivem à navegação.
+- Ligações entre as telas: "Enviar ao funil" no menu da tarefa, "Conversar" no detalhe do cliente que tem conversa, selo de não lidas em Atendimento no menu. Painel com dois gráficos (receita e meta, clientes por segmento) e atividade em `Timeline`; aba Atividade do cliente em `Timeline`.
+- Quatro capturas novas (atendimento, agenda, funil e painel no escuro) e as telas novas na página e no README.
+- `Chart` (`CHT-001` a `CHT-007`: linha, barras, área, pizza, combinado, velocímetro de meta e funil), pelo subcaminho `@rendra-ui/app/chart`, que traz o `d3-shape` só para quem o importa. Seleção por toque com aviso em voz, cores dos tokens do tema e o velocímetro como `meter` acessível.
+- `Timeline` (`TLN-001`): linha do tempo vertical.
+- `Calendar` (`CAL-001`): mês, semana, dia e agenda, com grade de horas de 48 px por hora, evento de dia inteiro e linha de agora.
+- `Kanban` (`KANB-001` e `KANB-002`): colunas com contador e limite, movimento de card por menu (sem arrastar), paginação por coluna e, em tela estreita, colunas em abas.
+- `ImageViewer` (`IMG-001`): galeria em tela cheia com pinça, arraste e navegação circular.
+- Chat de atendimento: `ConversationList` (`CHAT-001`), `ChatThread` (`CHAT-002`) e `ChatComposer` (`CHAT-003`), mais o selo `ChannelBadge` e `chatChannels` (dez canais, sem logotipos de terceiros). Responder, reagir, editar e excluir mensagem, anexos, mensagens rápidas e emoji. A gravação de áudio é simulada: só o cronômetro e a duração em `audioSeconds`, sem pulso animado e sem captura real do microfone.
+- `RichTextEditor` (`RTE-001`), pelo subcaminho `@rendra-ui/app/rich-text-editor`: editor visual no celular (Tiptap num WebView, pelo `@10play/tentap-editor`) e modo HTML no navegador. `onImageUpload` devolve o endereço público da imagem (no celular não há `File`; no web a função recebe um `File`). Ficam de fora alinhamento, tabela, linha divisória e limpar formatação.
+- `DocumentViewer` (`DOC-001`), pelo subcaminho `@rendra-ui/app/document-viewer`: PDF dentro do app no iOS; no Android e no navegador, abre no aplicativo de PDF.
+- Peer opcional `react-native-webview` (`>=13.16.0`), exigido só por `RichTextEditor` e `DocumentViewer`.
+- Vitrine com 50 entradas: grupos novos Dados (2) e Planejamento (5), mais o editor em Formulário e o documento em Exibição; mocks determinísticos em `src/mocks`.
+- `verify:pack` confere os três subcaminhos novos, os arquivos `.web.js` do editor e do visualizador, e que o bundle web não arrasta o WebView nativo.
 
 ### Alterado
 
 - A demo passa a viver em `https://bsmagalhaes.github.io/rendra-ui-app/demo/` (`experiments.baseUrl` = `/rendra-ui-app/demo`); os endereços antigos, como `/rendra-ui-app/componentes`, levam à demo pelo `404.html` da raiz.
 - Capturas do README e da página passam a ser de celular (390 px, escala 3, com moldura de aparelho em CSS puro), 20 imagens geradas por script, incluindo a matriz dos 12 códigos de modelo e paleta; as capturas largas de 1920x1080 saem. A `og-image.png` (1200x630) é composta por HTML com dois aparelhos.
 - `clean:clone` não herda a página de apresentação, o subcaminho `/demo/` nem os testes da página; o `docs:images` do clone continua funcionando e gera a `og-image.png` sem a marca Rendra.
-
 - O painel de exemplo deixa de aceitar `?cliente=`: as linhas de clientes recentes levam ao detalhe do cliente.
+- Menu de exemplo: Atendimento, Agenda e Funil entram no grupo Geral, depois de Tarefas. `buildNavigation` recebe também o total de não lidas.
+- Dados de exemplo: a receita de setembro de 2026 é a mesma nos indicadores e no gráfico, e o gráfico por segmento usa só os segmentos da carteira. A página de apresentação passa a dizer 57 componentes.
+- SEO da demo: `/atendimento`, `/agenda` e `/kanban` indexáveis; as páginas de conversa (`atendimento/t1` a `t3`) saem com `noindex`.
+- `Select` múltiplo: a linha "Selecionar todos" aparece sozinha com mais de 5 opções (todas as mostradas, incluindo desabilitadas e de qualquer grupo), sem passar `selectAll`. `selectAll={false}` desliga; com 5 opções ou menos continua opt-in por `selectAll`. A linha é uma só e alterna: vira "Desmarcar todos" quando todas as opções habilitadas estão marcadas. Mudança de comportamento visível sem quebra de API: quem não quer a linha em listas longas passa `selectAll={false}`.
+- `DESIGN_RULES.md`: a lista fechada de exceções R3 ganha `calendar.tsx`, `image-viewer.tsx` e `chat-composer.tsx`, com os campos de `style` que cada um pode usar.
+- Contagens da documentação: 57 componentes de UI e 50 entradas de vitrine.
 
 ### Corrigido
 
@@ -31,7 +50,8 @@ Página de apresentação, demo em `/demo/` e prints de celular. Não muda nenhu
 
 ### Pendente
 
-- Simulação dos dois leigos aprovada para a versão que levar estas mudanças (Regra um, item 7): a demo e a página mudam o que o leigo vê. Sem essa frase, a publicação é recusada.
+- Simulação dos dois leigos: pendente da validação da entrega. Sem a frase de aprovação, `verify:pack -- --publicacao` recusa a publicação.
+- Verificação em aparelho (Tarefa 8.3): gesto do `ImageViewer` no Android real, gesto e teclado do Chat, e o editor visual no Expo Go.
 
 ## [1.1.0] - 29/09/2026
 

@@ -23,6 +23,18 @@ describe('src/index.ts, entrada principal do pacote', () => {
     expect(pacote.RENDRA_CREDIT_TEXT).toBe('Feito com Rendra')
   })
 
+  it('exporta os componentes da F3 da entrada principal (Timeline, Calendar, Kanban)', () => {
+    expect(typeof pacote.Timeline).toBe('function')
+    expect(typeof pacote.Calendar).toBe('function')
+    expect(typeof pacote.Kanban).toBe('function')
+    expect(typeof pacote.ImageViewer).toBe('function')
+    expect(typeof pacote.ConversationList).toBe('function')
+    expect(typeof pacote.ChatThread).toBe('function')
+    expect(typeof pacote.ChatComposer).toBe('function')
+    expect(typeof pacote.ChannelBadge).toBe('function')
+    expect(typeof pacote.moveKanbanCard).toBe('function')
+  })
+
   it('exporta o AppShell e a superficie publica de navegacao, sem o menu de exemplo', () => {
     expect(typeof pacote.AppShell).toBe('function')
     expect(typeof pacote.ShellProvider).toBe('function')

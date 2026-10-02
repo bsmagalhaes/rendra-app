@@ -14,6 +14,18 @@ async function abrir(page: import('@playwright/test').Page, rota: string) {
   await semSplash(page)
 }
 
+// As abas do atendimento e do funil viram um `Select` quando não cabem na largura (360 px): o
+// helper abre a aba pelo controle que a página tiver (mesmo padrão de `abrirSecao`, layout.spec).
+async function abrirAba(page: import('@playwright/test').Page, rotulo: string, aba: string, opcao: string) {
+  const seletor = page.getByRole('combobox', { name: rotulo })
+  if ((await seletor.count()) > 0) {
+    await seletor.click()
+    await page.getByText(opcao, { exact: true }).last().click()
+  } else {
+    await page.getByRole('tab', { name: aba, exact: true }).click()
+  }
+}
+
 test('login, verificação em duas etapas e painel', async ({ page }) => {
   await abrir(page, 'login')
   await page.getByLabel('E-mail', { exact: true }).fill('ana@exemplo.com.br')
@@ -115,6 +127,34 @@ test('configurações: encerrar sessões só depois de confirmar', async ({ page
   await expect(page.getByText('Encerrar todas as sessões?')).toBeVisible()
   await page.getByRole('button', { name: 'Confirmar encerramento' }).click()
   await expect(page.getByText('Sessões encerradas (simulado)')).toBeVisible()
+})
+
+// P4: cada fluxo recomeça do zero (o estado da demonstração só vive na página), então são independentes.
+test('atendimento: abrir a conversa do Carlos, enviar uma mensagem e ver a bolha', async ({ page }) => {
+  await abrir(page, 'atendimento')
+  await abrirAba(page, 'Etapa do atendimento', 'Atendimento 2', 'Atendimento (2)')
+  await page.getByRole('button', { name: /Carlos Dias/ }).click()
+  await expect(page).toHaveURL(/\/atendimento\/t2/)
+  await page.getByLabel('Mensagem', { exact: true }).fill('Posso ajudar em algo mais?')
+  await page.getByRole('button', { name: 'Enviar', exact: true }).click()
+  await expect(page.getByText('Posso ajudar em algo mais?')).toBeVisible()
+})
+
+test('funil: mover o card Padaria Estrela para Qualificado', async ({ page }) => {
+  await abrir(page, 'kanban')
+  await page.getByRole('button', { name: 'Ações do card Padaria Estrela' }).click()
+  await page.getByRole('menuitem', { name: 'Qualificado' }).click()
+  await expect(page.getByText('Padaria Estrela', { exact: true })).toHaveCount(0)
+  await abrirAba(page, 'Colunas', 'Qualificado 2', 'Qualificado (2)')
+  await expect(page.getByText('Padaria Estrela', { exact: true })).toBeVisible()
+})
+
+test('agenda: criar um evento e vê-lo na lista do dia', async ({ page }) => {
+  await abrir(page, 'agenda')
+  await page.getByRole('button', { name: 'Novo evento neste dia' }).click()
+  await page.getByLabel('Título do evento', { exact: true }).fill('Visita ao cliente')
+  await page.getByRole('button', { name: 'Salvar' }).click()
+  await expect(page.getByText('Visita ao cliente', { exact: true })).toBeVisible()
 })
 
 // R1 (validação da entrega): no web o <input> de cada caixa do código tem min-width automático e

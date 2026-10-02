@@ -1,15 +1,25 @@
 import { act, fireEvent } from '@testing-library/react-native'
 import { screen } from 'expo-router/testing-library'
+import { router } from 'expo-router'
+import { Text } from 'react-native'
 import ShellLayout from '../../../app/(shell)/_layout'
+import Funil from '../../../app/(shell)/kanban'
 import Tarefas from '../../../app/(shell)/tarefas'
 import { toast } from '../../components/ui'
+import { restaurarPlanejamento } from '../../demo/planning-store'
 import { tasks } from '../../mocks/tasks'
 import { renderDemo } from '../../test-utils/render-demo'
 
-const rotas = { '(shell)/_layout': ShellLayout, '(shell)/tarefas': Tarefas }
+const rotas = {
+  '(shell)/_layout': ShellLayout,
+  '(shell)/tarefas': Tarefas,
+  '(shell)/kanban': Funil,
+  '(shell)/clientes/[id]': () => <Text>Tela do cliente</Text>,
+}
 
 afterEach(async () => {
   await act(async () => {
+    restaurarPlanejamento()
     toast.dismiss()
   })
 })
@@ -60,6 +70,42 @@ describe('tarefas', () => {
     await fireEvent.changeText(await screen.findByLabelText('Buscar tarefa'), tasks[2]!.titulo)
     expect(screen.queryByText(tasks[0]!.titulo)).toBeNull()
     expect((await screen.findAllByText(tasks[2]!.titulo)).length).toBeGreaterThan(0)
+  })
+
+  it('Enviar ao funil põe um card na primeira coluna, e ele leva ao cliente da tarefa', async () => {
+    const tela = await renderDemo(rotas, '/tarefas')
+    const alvo = tasks[0]!
+    await fireEvent.press(await screen.findByRole('button', { name: `Ações de ${alvo.titulo}` }))
+    await fireEvent.press(await screen.findByRole('menuitem', { name: 'Enviar ao funil' }))
+    expect(await screen.findByText('Tarefa enviada ao funil')).toBeTruthy()
+    await act(async () => {
+      router.push('/kanban')
+    })
+    expect(await screen.findByRole('tab', { name: 'Novo contato 3' })).toBeTruthy()
+    await fireEvent.press((await screen.findAllByText('Padaria Estrela'))[0]!)
+    expect(await screen.findByText('Tela do cliente')).toBeTruthy()
+    expect(tela.getPathname()).toBe('/clientes/1000')
+  })
+
+  it('enviar a mesma tarefa duas vezes não duplica o card', async () => {
+    await renderDemo(rotas, '/tarefas')
+    const alvo = tasks[0]!
+    for (let i = 0; i < 2; i += 1) {
+      await fireEvent.press(await screen.findByRole('button', { name: `Ações de ${alvo.titulo}` }))
+      await fireEvent.press(await screen.findByRole('menuitem', { name: 'Enviar ao funil' }))
+    }
+    await act(async () => {
+      router.push('/kanban')
+    })
+    expect(await screen.findByRole('tab', { name: 'Novo contato 3' })).toBeTruthy()
+  })
+
+  it('a tarefa sem cliente não oferece Enviar ao funil', async () => {
+    await renderDemo(rotas, '/tarefas')
+    const semCliente = tasks.find((t) => t.clienteId === undefined && tasks.indexOf(t) < 10)!
+    await fireEvent.press(await screen.findByRole('button', { name: `Ações de ${semCliente.titulo}` }))
+    expect(await screen.findByRole('menuitem', { name: 'Reabrir tarefa' })).toBeTruthy()
+    expect(screen.queryByRole('menuitem', { name: 'Enviar ao funil' })).toBeNull()
   })
 
   it('busca sem resultado mostra o estado vazio', async () => {

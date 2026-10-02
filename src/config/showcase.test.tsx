@@ -3,8 +3,8 @@ import { BrandProvider } from '../brand/brand-provider'
 import { showcaseGroups } from './showcase'
 
 describe('showcaseGroups', () => {
-  it('tem os 5 grupos, na ordem final', () => {
-    expect(showcaseGroups.map((group) => group.slug)).toEqual(['acoes', 'formulario', 'feedback', 'exibicao', 'layout'])
+  it('tem os grupos, na ordem final', () => {
+    expect(showcaseGroups.map((group) => group.slug)).toEqual(['acoes', 'formulario', 'feedback', 'exibicao', 'layout', 'dados', 'planejamento'])
   })
 
   it('grupo acoes tem as 4 entradas finais', () => {
@@ -40,7 +40,7 @@ describe('showcaseGroups', () => {
     ])
   })
 
-  it('formulario tem as 12 entradas na ordem da spec', () => {
+  it('formulario tem as 13 entradas na ordem da spec (a 13a, RichTextEditor, e da F3)', () => {
     const formulario = showcaseGroups.find((g) => g.slug === 'formulario')!
     expect(formulario.entries.map((e) => e.name)).toEqual([
       'Input',
@@ -55,23 +55,36 @@ describe('showcaseGroups', () => {
       'DatePicker',
       'Field',
       'Formulário (RHF)',
+      'RichTextEditor',
     ])
   })
 
-  it('exibicao tem as 9 entradas na ordem da spec', () => {
+  it('exibicao tem as 10 entradas na ordem da spec (a 10a, DocumentViewer, e da F3)', () => {
     const grupo = showcaseGroups.find((g) => g.slug === 'exibicao')
     expect(grupo?.entries.map((e) => e.name)).toEqual([
-      'Card', 'Badge', 'Avatar', 'List', 'StatCard', 'Accordion', 'Tabs', 'Separator', 'BrandLogo',
+      'Card', 'Badge', 'Avatar', 'List', 'StatCard', 'Accordion', 'Tabs', 'Separator', 'BrandLogo', 'DocumentViewer',
     ])
   })
 
-  it('a vitrine tem 41 entradas reais, 4/12/10/9/6 por grupo (Spinner no feedback, Tarefa 8.1; divergencia da spec registrada)', () => {
-    const total = showcaseGroups.flatMap((g) => g.entries).length
-    expect(total).toBe(41)
-    expect(showcaseGroups.map((g) => g.entries.length)).toEqual([4, 12, 10, 9, 6])
+  it('dados tem o Chart com os 7 codigos CHT-001 a CHT-007', () => {
+    const grupo = showcaseGroups.find((g) => g.slug === 'dados')
+    expect(grupo?.entries.map((e) => e.name)).toEqual(['Chart', 'Timeline'])
+    expect(grupo?.entries[0]!.codes).toEqual(['CHT-001', 'CHT-002', 'CHT-003', 'CHT-004', 'CHT-005', 'CHT-006', 'CHT-007'])
   })
 
-  it.each(['acoes', 'layout', 'feedback', 'formulario', 'exibicao'])(
+  it('planejamento tem o Calendar e os dois Kanban o ImageViewer e o atendimento, com os codigos CAL-001, KANB-001, KANB-002, IMG-001 e CHAT-001 a CHAT-003', () => {
+    const grupo = showcaseGroups.find((g) => g.slug === 'planejamento')
+    expect(grupo?.entries.map((e) => e.name)).toEqual(['Calendar', 'Kanban', 'Kanban com destinos', 'ImageViewer', 'Atendimento (chat)'])
+    expect(grupo?.entries.map((e) => e.codes)).toEqual([['CAL-001'], ['KANB-001'], ['KANB-002'], ['IMG-001'], ['CHAT-001', 'CHAT-002', 'CHAT-003']])
+  })
+
+  it('a vitrine tem 50 entradas reais, 4/13/10/10/6/2/5 por grupo (os grupos dados e planejamento sao da F3) (Spinner no feedback, Tarefa 8.1; divergencia da spec registrada)', () => {
+    const total = showcaseGroups.flatMap((g) => g.entries).length
+    expect(total).toBe(50)
+    expect(showcaseGroups.map((g) => g.entries.length)).toEqual([4, 13, 10, 10, 6, 2, 5])
+  })
+
+  it.each(['acoes', 'layout', 'feedback', 'formulario', 'exibicao', 'dados', 'planejamento'])(
     'toda entrada de %s renderiza sem lançar',
     async (slug) => {
       const group = showcaseGroups.find((item) => item.slug === slug)!

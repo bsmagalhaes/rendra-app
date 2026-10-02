@@ -1,5 +1,6 @@
 import { isValidCnpj } from '../lib/validators';
-import { activityOf, clients, contractsOf, filterClients, findClient, resumoPeriodo, statusTone } from './clients';
+import { porSegmento, receitaMensal } from './charts';
+import { activityOf, clients, contractsOf, filterClients, findClient, monthly, resumoPeriodo, segmentos, statusTone } from './clients';
 
 describe('mocks de clientes', () => {
   it('são 48, com ids únicos a partir de 1000 e nomes únicos', () => {
@@ -64,5 +65,17 @@ describe('mocks de clientes', () => {
   it('os CNPJs fictícios têm dígitos verificadores válidos e são únicos', () => {
     for (const c of clients) expect(isValidCnpj(c.cnpj)).toBe(true);
     expect(new Set(clients.map((c) => c.cnpj)).size).toBe(48);
+  });
+});
+
+describe('receita dos indicadores e dos gráficos (P4)', () => {
+  it('a receita de setembro/2026 é a mesma nos indicadores e no gráfico', () => {
+    expect(monthly.at(-1)!.mes).toBe('Set/2026');
+    expect(receitaMensal.at(-1)!.mes).toBe('Set');
+    expect(monthly.at(-1)!.receita).toBe(receitaMensal.at(-1)!.receita);
+  });
+
+  it('os segmentos do gráfico são todos segmentos da carteira', () => {
+    for (const s of porSegmento) expect(segmentos).toContain(s.segmento);
   });
 });

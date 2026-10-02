@@ -174,3 +174,27 @@ export function expoAppIndexTsx(): string {
     '',
   ].join('\n')
 }
+
+/**
+ * Rota extra do app minimo (F3, Blocos 6 e 7, B3 do parecer do Opus): importa o editor e o visualizador do subcaminho
+ * SEM `react-native-webview` linkado. No `expo export --platform web` o Metro precisa escolher
+ * `rich-text-editor.web.js`; se escolhesse o nativo, o bundle traria o WebView e o tentap, e
+ * `scripts/verify-pack.ts` (`bundleWebComPacoteNativo`) reprova.
+ */
+export function expoAppEditorTsx(): string {
+  return [
+    "import { BrandProvider } from '@rendra-ui/app'",
+    "import { RichTextEditor } from '@rendra-ui/app/rich-text-editor'",
+    "import { DocumentViewer } from '@rendra-ui/app/document-viewer'",
+    '',
+    'export default function Editor() {',
+    '  return (',
+    '    <BrandProvider>',
+    '      <RichTextEditor defaultValue="<p>ok</p>" />',
+    '      <DocumentViewer url="https://exemplo.com.br/a.pdf" title="Contrato" />',
+    '    </BrandProvider>',
+    '  )',
+    '}',
+    '',
+  ].join('\n')
+}

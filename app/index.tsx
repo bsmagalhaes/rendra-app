@@ -12,8 +12,11 @@ import { useDocumentTitle } from '../src/lib/use-document-title'
 import { a11yPresets } from '../src/lib/a11y'
 import { cn } from '../src/lib/cn'
 
+// Uma fonte so para o numero: o cartao e o texto da apresentacao nao podem divergir (eram 49 e 57).
+const totalComponentes = 57
+
 const fatos = [
-  { valor: '49', rotulo: 'componentes' },
+  { valor: String(totalComponentes), rotulo: 'componentes' },
   { valor: '3', rotulo: 'modelos' },
   { valor: '4', rotulo: 'paletas' },
 ]
@@ -82,7 +85,7 @@ export default function Index() {
                   {brand.tagline}
                 </Text>
                 <Text className="text-base text-gradient-brand-foreground">
-                  Rendra App é a base para o seu próximo app: 49 componentes, três modelos de marca e quatro paletas, em React Native e Expo.
+                  Rendra App é a base para o seu próximo app: {totalComponentes} componentes, três modelos de marca e quatro paletas, em React Native e Expo.
                 </Text>
               </View>
               <View className="flex-row gap-6">

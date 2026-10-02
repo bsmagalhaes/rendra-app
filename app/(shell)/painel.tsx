@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { UserPlus } from 'lucide-react-native'
-import { Text } from '../../src/components/internal/text'
 import { useBrand } from '../../src/brand'
 import { PageHeader } from '../../src/components/layout'
 import {
@@ -22,19 +21,36 @@ import {
   Input,
   List,
   StatCard,
+  Timeline,
   toast,
 } from '../../src/components/ui'
+import { Chart } from '../../src/chart'
 import { adicionarCliente, useClientes } from '../../src/demo/clients-store'
 import { formatCurrency } from '../../src/lib/masks'
 import { useDocumentTitle } from '../../src/lib/use-document-title'
 import { zBR } from '../../src/lib/validators'
 import { filterClients, resumoPeriodo } from '../../src/mocks/clients'
+import { porSegmento, receitaMensal } from '../../src/mocks/charts'
 import { notifications } from '../../src/mocks/notifications'
 
 const opcoesPeriodo = [
   { value: '6', label: '6 meses' },
   { value: '12', label: '12 meses' },
 ]
+
+const emMil = (n: number) => `R$ ${(n / 1000).toLocaleString('pt-BR')} mil`
+
+const receitaEMeta = [
+  { key: 'receita', label: 'Receita' },
+  { key: 'meta', label: 'Meta', color: 3 as const },
+]
+
+const eventosAtividade = notifications.map((n) => ({
+  id: String(n.id),
+  title: n.titulo,
+  description: n.descricao,
+  date: n.data,
+}))
 
 const novoClienteSchema = z.object({
   razaoSocial: z.string().trim().min(1, 'Informe a razão social.'),
@@ -44,7 +60,9 @@ const novoClienteSchema = z.object({
 /**
  * Painel da demonstração: o período (6 ou 12 meses) alimenta os indicadores por
  * `resumoPeriodo`, os clientes recentes vêm dos mocks e cada um leva ao detalhe, e "Novo cliente"
- * abre um `Drawer` com dois campos. Um único degradê na rota (o indicador em destaque).
+ * abre um `Drawer` com dois campos. Dois gráficos (receita e meta, clientes por segmento) e a
+ * atividade em `Timeline`. Um único degradê na rota (o indicador em destaque; o `Chart` usa o
+ * degradê do próprio SVG).
  */
 export default function Painel() {
   const { brand } = useBrand()
@@ -92,6 +110,37 @@ export default function Painel() {
 
         <Card>
           <CardHeader>
+            <CardTitle>Receita e meta</CardTitle>
+          </CardHeader>
+          <CardContent noTopPadding>
+            <Chart
+              type="line"
+              aria-label="Receita e meta dos últimos 12 meses"
+              data={receitaMensal}
+              xKey="mes"
+              series={receitaEMeta}
+              valueFormatter={emMil}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Clientes por segmento</CardTitle>
+          </CardHeader>
+          <CardContent noTopPadding>
+            <Chart
+              type="pie"
+              aria-label="Clientes por segmento"
+              data={porSegmento}
+              xKey="segmento"
+              series={[{ key: 'clientes', label: 'Clientes' }]}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>Clientes recentes</CardTitle>
           </CardHeader>
           <CardContent noTopPadding>
@@ -113,15 +162,7 @@ export default function Painel() {
             <CardTitle>Atividade</CardTitle>
           </CardHeader>
           <CardContent noTopPadding>
-            <List
-              scrollEnabled={false}
-              items={notifications.map((n) => ({
-                id: String(n.id),
-                title: n.titulo,
-                description: n.descricao,
-                trailing: <Text className="text-xs text-muted-foreground">{n.data}</Text>,
-              }))}
-            />
+            <Timeline events={eventosAtividade} />
           </CardContent>
         </Card>
       </ScrollView>

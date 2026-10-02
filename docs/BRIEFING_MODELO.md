@@ -153,6 +153,7 @@ O código de catálogo, como `BTN-001`, diz qual componente e qual variante; o c
 | Tela cheia para editar sem sair do fluxo | `GAV-001` Gaveta | |
 | Ação no aparelho fora da tela | `DDM-001` Menu suspenso, abre como folha | |
 | Lista de itens | `LIST-001` Lista | |
+| Gráfico de dados (import de `@rendra-ui/app/chart`) | `CHT-002` Gráfico de barras | `CHT-001` linha, `CHT-003` área, `CHT-004` pizza, `CHT-005` combinado, `CHT-006` velocímetro de meta, `CHT-007` funil |
 | Carregando | `SPIN-001` Indicador de carregamento | `SKEL-001` Esqueleto de carregamento, `PROG-001` Barra de progresso |
 | Rodapé "Feito com Rendra" | `CRED-001` Crédito Feito com Rendra | Pode ser removido ou levado para uma tela Sobre |
 | Tela de erro | `ERRO-001` Tela de erro | |
@@ -168,6 +169,12 @@ Demais componentes do catálogo:
 | `BFI-001` | Ícone de feedback da marca | Para o símbolo da marca colorido conforme o resultado (sucesso, erro, aviso) em avisos e telas de status. |
 | `LOGO-001` | Logotipo | Para o logotipo da marca no menu, no cabeçalho ou no painel do login. |
 | `BTNG-001` | Grupo de botões | Para botões encostados ou um controle de escolha única. |
+| `CAL-001` | Calendário | Para agenda com visão de mês, semana, dia ou lista de eventos. |
+| `CHAT-001` | Lista de conversas | Para a coluna de conversas do atendimento. |
+| `CHAT-002` | Linha do tempo da conversa | Para o histórico de mensagens de uma conversa aberta. |
+| `CHAT-003` | Campo de mensagem | Para escrever, anexar e enviar uma mensagem no atendimento. |
+| `RTE-001` | Editor de texto rico | Para conteúdo com formatação, listas e imagens, como a descrição de um artigo. |
+| `DOC-001` | Visualizador de documentos | Para abrir um PDF (contrato, nota fiscal, comprovante) sem sair da tela. |
 | `CARD-001` | Card | Para agrupar conteúdo da tela com borda e sem sombra pesada. |
 | `DTP-001` | Seletor de data | Para escolher uma data, um período ou um horário. |
 | `VAZ-001` | Estado vazio | Para quando uma lista, busca ou seção ainda não tem nenhum dado. |
@@ -175,13 +182,17 @@ Demais componentes do catálogo:
 | `FLD-002` | Rótulo | Para um rótulo avulso, quando o campo completo com ajuda não se aplica. |
 | `FORM-001` | Formulário | Para envolver um formulário inteiro, com validação dos campos. |
 | `FORM-002` | Seção de formulário | Para agrupar campos relacionados dentro de um card com título. |
+| `IMG-001` | Visualizador de imagens | Para abrir uma ou mais imagens em tela cheia, com legenda e navegação. |
 | `INFO-001` | Dica de informação | Para um texto orientativo que não tem título de tela, card ou seção ao lado. |
+| `KANB-001` | Quadro kanban | Para um funil de etapas com cartões que se movem entre colunas. |
+| `KANB-002` | Quadro kanban com destinos | Quando o cartão pode ir para uma ação além de outra coluna, como "Marcar como ganho", pelo menu "Mover para". |
 | `CAMP-001` | Campo de texto | Para texto, número, senha, telefone, moeda ou qualquer valor de uma linha. |
 | `SEP-001` | Separador | Para dividir conteúdo dentro de um card, no lugar de um card dentro de outro. |
 | `SLD-001` | Slider | Para escolher um número ou uma faixa dentro de um intervalo, arrastando. |
 | `STAT-001` | Card de indicador | Para um número de destaque com variação, num painel. |
 | `SWT-001` | Switch | Para ligar ou desligar uma opção com efeito imediato. |
 | `TXT-001` | Área de texto | Para texto longo, com contador de caracteres opcional. |
+| `TLN-001` | Linha do tempo | Para uma sequência de eventos em ordem, cada um com um tom semântico. |
 | `TST-001` | Toast | Para uma confirmação rápida depois de uma ação, sem interromper a tela. |
 
 ## Bloco 9: Dados

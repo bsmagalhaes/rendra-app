@@ -32,6 +32,11 @@ const TELAS: Captura[] = [
   { nome: 'equilibrio-cadastro-mobile', rota: '/cadastro', codigo: 'T2-C2', modo: 'claro' },
   { nome: 'aurora-verificacao-mobile', rota: '/verificacao', codigo: 'T3-C3', modo: 'claro' },
   { nome: 'safira-tarefas-mobile', rota: '/tarefas', codigo: 'T1-C1', modo: 'claro' },
+  // Terceira parte da demo (P4): atendimento (conversa aberta), agenda, funil e o painel no escuro.
+  { nome: 'safira-atendimento-mobile', rota: '/atendimento/t1', codigo: 'T1-C1', modo: 'claro' },
+  { nome: 'equilibrio-agenda-mobile', rota: '/agenda', codigo: 'T2-C2', modo: 'claro' },
+  { nome: 'aurora-funil-mobile', rota: '/kanban', codigo: 'T3-C3', modo: 'claro' },
+  { nome: 'safira-painel-escuro-mobile', rota: '/painel', codigo: 'T1-C1', modo: 'escuro' },
 ]
 
 const MATRIZ: Captura[] = MODELOS.flatMap((modelo, m) =>

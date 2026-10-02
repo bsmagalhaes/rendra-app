@@ -1,5 +1,5 @@
 import { renderRouter, screen } from 'expo-router/testing-library'
-import { fireEvent } from '@testing-library/react-native'
+import { fireEvent, waitFor, within } from '@testing-library/react-native'
 import RootLayout from '../../../app/_layout'
 import ComponentesLayout from '../../../app/(shell)/componentes/_layout'
 import ComponentesIndex from '../../../app/(shell)/componentes/index'
@@ -59,6 +59,141 @@ describe('/componentes/[slug]', () => {
     expect(await context.findByText('Formulário (RHF)')).toBeTruthy()
   })
 
+  it('renderiza /componentes/dados com o Chart e os sete codigos CHT', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/dados' })
+    expect(await context.findByText('Chart')).toBeTruthy()
+    expect(await context.findByText('CHT-001')).toBeTruthy()
+    expect(await context.findByText('CHT-007')).toBeTruthy()
+    expect(await context.findByText('TLN-001')).toBeTruthy()
+    expect(await context.findByText('Contrato assinado')).toBeTruthy()
+  })
+
+  it('renderiza /componentes/planejamento com o Calendar e o evento tocado', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/planejamento' })
+    expect(await context.findByText('CAL-001')).toBeTruthy()
+    expect(await context.findByText('Outubro de 2026')).toBeTruthy()
+    await fireEvent.press(await context.findByRole('button', { name: /Reunião de equipe/ }))
+    expect(await context.findByText('Evento aberto: Reunião de equipe')).toBeTruthy()
+  })
+
+  it('renderiza os dois Kanban em /componentes/planejamento e move um card pelo menu', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/planejamento' })
+    expect(await context.findByText('KANB-001')).toBeTruthy()
+    expect(await context.findByText('KANB-002')).toBeTruthy()
+    const botoes = await context.findAllByRole('button', { name: 'Ações do card Padaria Estrela' })
+    await fireEvent.press(botoes[0]!)
+    await fireEvent.press(await context.findByRole('menuitem', { name: 'Fechamento' }))
+    expect(await context.findAllByRole('tab', { name: 'Fechamento 2' })).toHaveLength(1)
+  })
+
+  it('abre a galeria de exemplo do ImageViewer, navega e fecha', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/planejamento' })
+    expect(await context.findByText('IMG-001')).toBeTruthy()
+    await fireEvent.press(await context.findByText('Abrir galeria de exemplo'))
+    expect(await context.findByText('1 de 4')).toBeTruthy()
+    await fireEvent.press(context.getByLabelText('Próxima'))
+    expect(await context.findByText('2 de 4')).toBeTruthy()
+    await fireEvent.press(context.getByLabelText('Fechar'))
+    expect(context.queryByTestId('image-viewer')).toBeNull()
+  })
+
+  it('no atendimento, abrir a conversa tira o contador e enviar acrescenta a mensagem ao historico', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/planejamento' })
+    expect(await context.findByText('CHAT-003')).toBeTruthy()
+    expect(within(context.getByTestId('conversation-item-t2')).getByText('2')).toBeTruthy()
+    await fireEvent.press(context.getByRole('button', { name: /Carlos Dias/ }))
+    expect(within(context.getByTestId('conversation-item-t2')).queryByText('2')).toBeNull()
+    expect(await context.findByText('Bom dia, o relatório de vendas não abre aqui.')).toBeTruthy()
+    expect(within(context.getByTestId('chat-canal-ativo')).getByText('E-mail')).toBeTruthy()
+    await fireEvent.changeText(context.getByLabelText('Mensagem'), 'Posso ajudar em algo mais?')
+    await fireEvent.press(context.getByLabelText('Enviar'))
+    expect(await context.findByText('Posso ajudar em algo mais?')).toBeTruthy()
+    expect(context.getByLabelText('Mensagem').props.value).toBe('')
+  })
+
+  it('no atendimento, responder, reagir, editar e excluir agem sobre a mensagem escolhida', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/planejamento' })
+    await context.findByText('CHAT-003')
+    // Responder: o campo mostra a citacao e cancelar a tira.
+    await fireEvent(context.getByTestId('message-bubble-a5'), 'longPress')
+    await fireEvent.press(await context.findByText('Responder'))
+    expect(await context.findByText('Respondendo a Ana Souza')).toBeTruthy()
+    await fireEvent.press(context.getByLabelText('Cancelar resposta'))
+    expect(context.queryByText('Respondendo a Ana Souza')).toBeNull()
+    // Reagir: a nova reacao aparece abaixo do balao.
+    await fireEvent(context.getByTestId('message-bubble-a5'), 'longPress')
+    await fireEvent.press(await context.findByLabelText('Reagir com ❤️'))
+    expect(await context.findByLabelText('Reação ❤️. Remover')).toBeTruthy()
+    await fireEvent.press(context.getByLabelText('Reação ❤️. Remover'))
+    expect(context.queryByLabelText('Reação ❤️. Remover')).toBeNull()
+    // Editar: o campo vem com o texto, e enviar troca o texto e mostra o original riscado.
+    await fireEvent(context.getByTestId('message-bubble-a4'), 'longPress')
+    await fireEvent.press(await context.findByText('Editar'))
+    expect(await context.findByText('Editando mensagem')).toBeTruthy()
+    expect(context.getByLabelText('Mensagem').props.value).toBe('Boleto de outubro, vence em 10/10/2026.')
+    await fireEvent.changeText(context.getByLabelText('Mensagem'), 'Boleto de outubro, vence em 15/10/2026.')
+    await fireEvent.press(context.getByLabelText('Enviar'))
+    expect(await context.findByText('Boleto de outubro, vence em 15/10/2026.')).toBeTruthy()
+    expect(context.getByText('Boleto de outubro, vence em 10/10/2026.')).toBeTruthy()
+    expect(context.queryByText('Editando mensagem')).toBeNull()
+    await fireEvent.press(context.getByLabelText('Mais ações da mensagem'))
+    await fireEvent.press(await context.findByText('Anexar arquivo'))
+    await context.findByText('Orçamento.pdf')
+    // Excluir: a mensagem continua, riscada.
+    await fireEvent(context.getByTestId('message-bubble-a3'), 'longPress')
+    await fireEvent.press(await context.findByText('Excluir'))
+    expect(await context.findByText('Mensagem excluída')).toBeTruthy()
+  })
+
+  it('renderiza /componentes/formulario com o RichTextEditor e a barra de formatacao do celular', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/formulario' })
+    expect(await context.findByText('RTE-001')).toBeTruthy()
+    expect(await context.findByText(/^Conteúdo: \d+ caracteres$/)).toBeTruthy()
+    expect(await context.findByLabelText('Negrito (Ctrl+B)')).toBeTruthy()
+    expect(context.getByLabelText('Inserir imagem')).toBeTruthy()
+  })
+
+  it('renderiza /componentes/exibicao com o DocumentViewer, carregando o PDF e voltando ao vazio', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/exibicao' })
+    expect(await context.findByText('DOC-001')).toBeTruthy()
+    expect(await context.findByText('Carregando documento...')).toBeTruthy()
+    await fireEvent.press(context.getByText('Limpar seleção'))
+    expect(await context.findByText('Nenhum documento selecionado')).toBeTruthy()
+    await fireEvent.press(context.getByText('Selecionar contrato'))
+    expect(await context.findByText('Carregando documento...')).toBeTruthy()
+  })
+
+  it('no formulario, Inserir imagem pede o endereco ao exemplo e o poe no editor', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/formulario' })
+    await fireEvent.press(await context.findByLabelText('Inserir imagem'))
+    const tentap = jest.requireMock('@10play/tentap-editor') as { __editor: { setImage: jest.Mock } }
+    await waitFor(() => expect(tentap.__editor.setImage).toHaveBeenCalledTimes(1))
+    expect(typeof tentap.__editor.setImage.mock.calls[0][0]).toBe('string')
+  })
+
+  it('no planejamento, adicionar card, marcar como ganho, anexar midia e cancelar edicao chamam os manipuladores da vitrine', async () => {
+    const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/planejamento' })
+    await context.findByText('CHAT-003')
+    const adicionar = await context.findAllByLabelText(/^Adicionar card em /)
+    await fireEvent.press(adicionar[0]!)
+    expect((await context.findAllByText(/^Novo card \d+$/)).length).toBeGreaterThan(0)
+    const botoes = await context.findAllByRole('button', { name: 'Ações do card Padaria Estrela' })
+    await fireEvent.press(botoes[1]!)
+    await fireEvent.press(await context.findByRole('menuitem', { name: /Marcar como ganho/ }))
+    await fireEvent.press(context.getByLabelText('Mais ações da mensagem'))
+    await fireEvent.press(await context.findByText('Imagem ou vídeo'))
+    expect(await context.findByText('Foto da vitrine.jpg')).toBeTruthy()
+    await fireEvent.press(context.getByLabelText('Enviar'))
+    expect((await context.findAllByText('Foto da vitrine.jpg')).length).toBeGreaterThan(0)
+    await fireEvent(context.getByTestId('message-bubble-a5'), 'longPress')
+    await fireEvent.press(await context.findByText('Responder'))
+    await fireEvent.press(context.getByLabelText('Cancelar resposta'))
+    await fireEvent(context.getByTestId('message-bubble-a4'), 'longPress')
+    await fireEvent.press(await context.findByText('Editar'))
+    await fireEvent.press(context.getByLabelText('Cancelar edição'))
+    expect(context.queryByText('Editando mensagem')).toBeNull()
+  })
+
   it('mostra "Grupo não encontrado" para slug inválido', async () => {
     const context = await renderRouter(fullRoutes(), { initialUrl: '/componentes/nao-existe' })
     expect(await context.findByText('Grupo não encontrado')).toBeTruthy()
@@ -72,6 +207,8 @@ describe('/componentes/[slug]', () => {
       { slug: 'feedback' },
       { slug: 'exibicao' },
       { slug: 'layout' },
+      { slug: 'dados' },
+      { slug: 'planejamento' },
     ])
   })
 

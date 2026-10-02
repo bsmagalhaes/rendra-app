@@ -19,14 +19,17 @@ import {
   toast,
 } from '../../src/components/ui'
 import type { BadgeTone } from '../../src/components/ui/badge'
+import { adicionarCard } from '../../src/demo/planning-store'
+import { cardDaTarefa } from '../../src/demo/tarefa-card'
 import { useDocumentTitle } from '../../src/lib/use-document-title'
-import { tasks, type Prioridade } from '../../src/mocks/tasks'
+import { tasks, type Prioridade, type Tarefa } from '../../src/mocks/tasks'
 
 const toneDaPrioridade: Record<Prioridade, BadgeTone> = { Alta: 'error', Média: 'warning', Baixa: 'neutral' }
 
 /**
  * Tarefas da demonstração: busca, seleção por `Checkbox` (o rótulo é "Selecionar <título>"),
- * conclusão em massa pelo `ActionBar` e conclusão individual pelo menu da linha. As linhas não
+ * conclusão em massa pelo `ActionBar` e conclusão individual pelo menu da linha, que também envia
+ * ao funil a tarefa que cita um cliente (o card entra na primeira coluna do `/kanban`). As linhas não
  * têm `href` nem `onPress`: o `Checkbox` do `leading` dentro de uma linha interativa viraria
  * controle dentro de controle (axe `nested-interactive`). O estado mora na tela; nada é gravado.
  */
@@ -60,6 +63,13 @@ export default function Tarefas() {
     })
     if (concluida) toast.success('Tarefa concluída')
     else toast.info('Tarefa reaberta')
+  }
+
+  function enviarAoFunil(tarefa: Tarefa) {
+    const card = cardDaTarefa(tarefa)
+    if (!card) return
+    adicionarCard(card)
+    toast.success('Tarefa enviada ao funil')
   }
 
   function concluirSelecionadas() {
@@ -113,6 +123,9 @@ export default function Tarefas() {
                       <DropdownMenuItem onSelect={() => alternarConclusao(t.id, !concluida)}>
                         {concluida ? 'Reabrir tarefa' : 'Concluir tarefa'}
                       </DropdownMenuItem>
+                      {t.clienteId !== undefined ? (
+                        <DropdownMenuItem onSelect={() => enviarAoFunil(t)}>Enviar ao funil</DropdownMenuItem>
+                      ) : null}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </View>

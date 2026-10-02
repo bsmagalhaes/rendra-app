@@ -35,4 +35,11 @@ export const a11yPresets: Record<string, AccessibilityPreset> = {
   img: { role: 'img' },
   tabpanel: { role: 'tabpanel' },
   link: { accessibilityRole: 'link' },
+  // F3: papeis que so existem em `role` no RN 0.86 (ViewAccessibility.d.ts).
+  meter: { role: 'meter' },
+  log: { role: 'log' },
+  region: { role: 'region' },
+  figure: { role: 'figure' },
+  list: { role: 'list' },
+  listitem: { role: 'listitem' },
 }

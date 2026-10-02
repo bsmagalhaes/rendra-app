@@ -46,6 +46,11 @@ import {
   pluginVersionLeakError,
   presetVarsWithoutPrefix,
   buildWindowsShellCommand,
+  exportsTemEntradasEsperadas,
+  requireForaDoSubcaminho,
+  PACOTES_DE_SUBCAMINHO,
+  bundleWebComPacoteNativo,
+  SUBCAMINHOS_ESPERADOS,
 } from './lib/verify-pack-checks'
 import {
   EXPO_APP_PEER_LINKS,
@@ -55,6 +60,7 @@ import {
   expoMetroConfig,
   expoAppLayoutTsx,
   expoAppIndexTsx,
+  expoAppEditorTsx,
   expoAppGlobalCss,
   expoAppTailwindConfig,
 } from './lib/verify-pack-expo-app'
@@ -139,6 +145,17 @@ function acharExpoRouterForaDoBridge(): string | null {
   return null
 }
 
+/** Le o `dist-lib` real e aplica `requireForaDoSubcaminho` (funcao pura, testada). */
+function acharPacoteForaDoSubcaminho(nomeDoPacote: string, permitidos: string[]): string[] {
+  const { globSync } = require('glob') as typeof import('glob')
+  const conteudos: Record<string, string> = {}
+  for (const arquivo of globSync('dist-lib/**/*.js', { posix: true })) {
+    if (arquivo.includes('.verify-pack')) continue
+    conteudos[arquivo] = readFileSync(arquivo, 'utf8')
+  }
+  return requireForaDoSubcaminho(conteudos, nomeDoPacote, permitidos)
+}
+
 /**
  * Reproduz a lacuna 2 do veredito Fable: monta um app Expo mínimo (Expo Router + NativeWind,
  * mesmo perfil 1 do roteiro de simulação), aponta `@rendra-ui/app` para o pacote já
@@ -169,6 +186,7 @@ function executarReproducaoExpoExport(entradaPacote: string, nodeModulesDoRepo: 
     writeFileSync(join(appDir, 'tailwind.config.js'), expoAppTailwindConfig())
     writeFileSync(join(appDir, 'app', '_layout.tsx'), expoAppLayoutTsx())
     writeFileSync(join(appDir, 'app', 'index.tsx'), expoAppIndexTsx())
+    writeFileSync(join(appDir, 'app', 'editor.tsx'), expoAppEditorTsx())
 
     const linkPacote = join(appDir, 'node_modules', '@rendra-ui', 'app')
     symlinkSync(entradaPacote, linkPacote, WIN ? 'junction' : 'dir')
@@ -211,6 +229,20 @@ function executarReproducaoExpoExport(entradaPacote: string, nodeModulesDoRepo: 
       falhar(
         `"expo export --platform web" falhou no app Expo mínimo (lacuna 2 do veredito Fable, dist-lib com worklet quebrando o consumidor):\n${exportResult.stdout}\n${exportResult.stderr}`,
       )
+    }
+
+    // F3 (Bloco 6, B3 do parecer do Opus): a rota /editor importa `@rendra-ui/app/rich-text-editor`
+    // sem o WebView linkado; o bundle web so pode trazer o `.web.js` (Textarea). Se o Metro
+    // resolvesse o arquivo nativo, o WebView e o tentap estariam no bundle.
+    const { globSync } = require('glob') as typeof import('glob')
+    const bundles: Record<string, string> = {}
+    for (const arquivo of globSync('dist/_expo/static/js/web/*.js', { cwd: appDir, posix: true })) {
+      bundles[arquivo] = readFileSync(join(appDir, arquivo), 'utf8')
+    }
+    if (Object.keys(bundles).length === 0) falhar('expo export não gerou nenhum bundle web em dist/_expo/static/js/web.')
+    const comPacoteNativo = bundleWebComPacoteNativo(bundles)
+    if (comPacoteNativo.length > 0) {
+      falhar(`o bundle web do app mínimo trouxe o WebView ou o tentap (o Metro resolveu o editor nativo em vez do .web): ${comPacoteNativo.join(', ')}.`)
     }
   } finally {
     // Remove primeiro os links (um por um: `rmSync` sem `recursive` numa junction/symlink só
@@ -255,13 +287,21 @@ function main() {
   if (erroPeerOpcional) falhar(erroPeerOpcional)
   const erroChangelog = changelogMissingEntryError(changelog, pkg.version, publicacao)
   if (erroChangelog) falhar(erroChangelog)
-  if (!pkg.exports || !pkg.exports['./router-bridge'] || !pkg.exports['./fonts'] || !pkg.exports['./tailwind-preset']) {
-    falhar('exports precisa ter ".", "./router-bridge", "./fonts" e "./tailwind-preset".')
-  }
+  const erroExports = exportsTemEntradasEsperadas(pkg.exports, SUBCAMINHOS_ESPERADOS)
+  if (erroExports) falhar(erroExports)
 
   const expoRouterVazando = acharExpoRouterForaDoBridge()
   if (expoRouterVazando) {
     falhar(`${expoRouterVazando} importa expo-router fora de router-bridge.js.`)
+  }
+
+  // F3: `d3-shape` so pode ser exigido por `chart.js`, nunca pelo grafo da entrada principal
+  // (requireForaDoSubcaminho, scripts/lib/verify-pack-checks.ts).
+  // F3 (Bloco 6): o mesmo vale para `react-native-webview` e `@10play/tentap-editor`, que so o
+  // arquivo nativo do editor pode exigir (PACOTES_DE_SUBCAMINHO, lista exata).
+  for (const [nomeDoPacote, permitidos] of Object.entries(PACOTES_DE_SUBCAMINHO)) {
+    const vazando = acharPacoteForaDoSubcaminho(nomeDoPacote, permitidos)
+    if (vazando.length > 0) falhar(`${nomeDoPacote} exigido fora de ${permitidos.join(', ')}: ${vazando.join(', ')}.`)
   }
 
   // Achado do veredito Fable v2: dist-lib nunca pode carregar __pluginVersion (ver
@@ -332,14 +372,8 @@ function main() {
     if (pkgInstalado.name !== '@rendra-ui/app') falhar('package.json instalado tem o nome errado.')
     if (pkgInstalado.publishConfig?.access !== 'public') falhar('package.json instalado sem publishConfig.access public.')
     if (pkgInstalado.dependencies?.['expo-router']) falhar('package.json instalado tem expo-router em dependencies.')
-    if (
-      !pkgInstalado.exports ||
-      !pkgInstalado.exports['./router-bridge'] ||
-      !pkgInstalado.exports['./fonts'] ||
-      !pkgInstalado.exports['./tailwind-preset']
-    ) {
-      falhar('package.json instalado sem as 4 entradas de exports esperadas.')
-    }
+    const erroExportsInstalado = exportsTemEntradasEsperadas(pkgInstalado.exports, SUBCAMINHOS_ESPERADOS)
+    if (erroExportsInstalado) falhar(`package.json instalado: ${erroExportsInstalado}`)
 
     // require.resolve, só faz sentido no caminho de instalação real (decisão do redator 8).
     if (caminhoUsado === 'instalação') {
@@ -361,6 +395,9 @@ function main() {
       'fonts.js',
       join('theme', 'tailwind-preset.js'),
       join('components', 'ui', 'button.js'),
+      'chart.js',
+      'rich-text-editor.js',
+      'document-viewer.js',
     ]
     for (const relativo of arquivosComCabecalho) {
       const caminho = join(entradaPacote, 'dist-lib', relativo)

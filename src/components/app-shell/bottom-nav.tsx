@@ -1,4 +1,5 @@
-import { Pressable, View } from 'react-native'
+import { useEffect, useState } from 'react'
+import { Keyboard, Platform, Pressable, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Menu } from 'lucide-react-native'
 import { Text } from '../internal/text'
@@ -11,11 +12,24 @@ import type { NavItem } from './types'
  * Barra inferior: até 4 atalhos e, no centro, o botão redondo do menu, subindo metade acima da
  * linha da barra. É a dona do inset inferior. O botão central leva `shadow-md` sempre (nunca
  * condicional: classe de sombra que aparece depois do primeiro render derruba o css-interop no
- * Android), e o item ativo declara os dois estados de cor.
+ * Android), e o item ativo declara os dois estados de cor. No Android, com o teclado aberto, o
+ * inset inferior sai: a área segura fica atrás do teclado e o recuo deixaria um vão entre a barra
+ * e as teclas (o `KeyboardAvoidingView` do shell já subiu a barra até o teclado).
  */
 export function BottomNav() {
   const insets = useSafeAreaInsets()
   const { bottomNavItems, activeTo, setMobileNavOpen } = useShell()
+  const [tecladoAberto, setTecladoAberto] = useState(false)
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return undefined
+    const abre = Keyboard.addListener('keyboardDidShow', () => setTecladoAberto(true))
+    const fecha = Keyboard.addListener('keyboardDidHide', () => setTecladoAberto(false))
+    return () => {
+      abre.remove()
+      fecha.remove()
+    }
+  }, [])
 
   const item = (entry: NavItem) => {
     const to = entry.to ?? entry.children?.[0]?.to ?? '/'
@@ -48,7 +62,7 @@ export function BottomNav() {
       role="navigation"
       accessibilityLabel="Navegação rápida"
       className="flex-row items-end border-t border-border bg-card"
-      style={{ paddingBottom: Math.max(0, insets.bottom) }}
+      style={{ paddingBottom: tecladoAberto ? 0 : Math.max(0, insets.bottom) }}
     >
       {bottomNavItems.slice(0, metade).map(item)}
       <View className="flex-1 items-center">

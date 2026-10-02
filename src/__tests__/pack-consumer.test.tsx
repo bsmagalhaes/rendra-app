@@ -95,4 +95,37 @@ descrever('consumidor do pacote instalado de verdade (@rendra-ui/app)', () => {
     expect(await findByText('Conteúdo do consumidor')).toBeTruthy()
     expect(await findByRole('button', { name: /Ana Ribeiro/ })).toBeTruthy()
   }, 60000)
+
+  it('renderiza o Chart do subcaminho chart.js do tarball, dentro do BrandProvider do mesmo tarball', async () => {
+    // F3 (achado I2 do parecer do Opus): o subcaminho `./chart` tambem vale a prova de fim a fim;
+    // `d3-shape` resolve pelo `--modulePaths` do repositorio, como os peers.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- caminho vem de env var em runtime (projeto temporario fora do repositorio)
+    const pacote = require(RENDRA_PACK_ENTRY as string)
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- idem: o subcaminho mora ao lado da entrada principal do tarball
+    const subcaminho = require((RENDRA_PACK_ENTRY as string).replace(/index\.js$/, 'chart.js'))
+    const { BrandProvider } = pacote as { BrandProvider: (props: { children?: ReactElement }) => ReactElement }
+    const { Chart } = subcaminho as { Chart: (props: Record<string, unknown>) => ReactElement }
+    expect(typeof Chart).toBe('function')
+
+    const { findByTestId } = await render(
+      createElement(
+        BrandProvider,
+        null,
+        createElement(Chart, {
+          type: 'bar',
+          data: [{ mes: 'Out', receita: 42100 }, { mes: 'Nov', receita: 45800 }],
+          xKey: 'mes',
+          series: [{ key: 'receita', label: 'Receita' }],
+          'aria-label': 'Receita mensal',
+        }),
+      ),
+    )
+    const plot = await findByTestId('chart-plot')
+    await fireEvent(plot, 'layout', { nativeEvent: { layout: { width: 320, height: 256, x: 0, y: 0 } } })
+    expect((await findByTestId('chart-bar-receita-0')).props.testID).toBe('chart-bar-receita-0')
+    const { getByLabelText } = await render(createElement(BrandProvider, null, createElement(Chart, {
+      type: 'line', data: [{ mes: 'Out', receita: 1 }], xKey: 'mes', series: [{ key: 'receita', label: 'Receita' }], 'aria-label': 'Linha',
+    })))
+    expect(getByLabelText('Linha').props.dataSet.rendra).toBe('CHT-001')
+  }, 60000)
 })

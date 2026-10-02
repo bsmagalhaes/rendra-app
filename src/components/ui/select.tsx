@@ -41,6 +41,9 @@ interface BaseSelectProps {
   testID?: string
 }
 
+/** Acima deste número de opções, o "Selecionar todos" aparece sem a prop `selectAll`. */
+const SELECT_ALL_AUTO_MIN = 5
+
 export interface SingleSelectProps extends BaseSelectProps {
   multiple?: false
   value?: string | null
@@ -51,6 +54,10 @@ export interface MultipleSelectProps extends BaseSelectProps {
   multiple: true
   value?: string[]
   onChange?: (value: string[]) => void
+  /**
+   * Linha "Selecionar todos" no topo da lista (vira "Desmarcar todos" com tudo marcado).
+   * Padrão: aparece sozinha com mais de 5 opções; `false` desliga, `true` força com 5 ou menos.
+   */
   selectAll?: boolean
   showCount?: boolean
   maxChips?: number
@@ -187,9 +194,11 @@ export function Select(props: SelectProps) {
     else commitSingle(created.value)
   }
 
+  const enabledValues = allOptions.filter((o) => !o.disabled).map((o) => o.value)
+  const allSelected = enabledValues.length > 0 && enabledValues.every((v) => draft.includes(v))
+  const showSelectAll = multiple && ((props as MultipleSelectProps).selectAll ?? allOptions.length > SELECT_ALL_AUTO_MIN)
+
   function toggleSelectAll() {
-    const enabledValues = allOptions.filter((o) => !o.disabled).map((o) => o.value)
-    const allSelected = enabledValues.every((v) => draft.includes(v))
     setDraft(allSelected ? [] : enabledValues)
   }
 
@@ -324,9 +333,9 @@ export function Select(props: SelectProps) {
         keyboardShouldPersistTaps="handled"
         contentContainerClassName="p-1"
         ListHeaderComponent={
-          multiple && props.selectAll && !query ? (
+          showSelectAll && !query ? (
             <Pressable onPress={toggleSelectAll} className="min-h-touch flex-row items-center gap-3 rounded-item px-3">
-              <Text weight="medium" className="text-sm text-foreground">Selecionar todos</Text>
+              <Text weight="medium" className="text-sm text-foreground">{allSelected ? 'Desmarcar todos' : 'Selecionar todos'}</Text>
             </Pressable>
           ) : null
         }

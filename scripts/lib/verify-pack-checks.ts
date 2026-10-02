@@ -25,16 +25,21 @@ export function privateFieldError(pkg: PackageJsonMinimo): string | null {
 // versão presa ao Expo. Qualquer outro nome em `dependencies` (ferramenta de teste/build, peer
 // real, ou pacote de infraestrutura do Expo/Metro) é erro.
 const DEPENDENCIAS_PERMITIDAS = [
+  // F3: `d3-shape` (JS puro, ISC) so para os caminhos do `Chart`; vive no subcaminho `./chart`.
+  // F3: `@10play/tentap-editor` (JS puro, MIT) so para o `RichTextEditor`; vive no subcaminho
+  // `./rich-text-editor` e, por ser so `dependencies`, nunca entra no bundle de quem nao o importa.
   // Correção da lacuna 2 do veredito Fable (2026-09-27-pacote-link-validacao-final-fable.md):
   // `scripts/build-lib-worklets.ts` recompila os arquivos com a diretiva `'worklet'` via Babel
   // (`babel-preset-expo`), que injeta helpers de interop (`interopRequireWildcard` etc.) desse
   // pacote em tempo de execução, não só de build.
+  '@10play/tentap-editor',
   '@babel/runtime',
   '@expo-google-fonts/dm-sans',
   '@expo-google-fonts/inter',
   '@expo-google-fonts/poppins',
   '@hookform/resolvers',
   'clsx',
+  'd3-shape',
   'date-fns',
   'imask',
   'lucide-react-native',
@@ -87,6 +92,19 @@ const ARQUIVOS_OBRIGATORIOS = [
   'dist-lib/fonts.d.ts',
   'dist-lib/theme/tailwind-preset.js',
   'dist-lib/theme/tailwind-preset.d.ts',
+  'dist-lib/chart.js',
+  'dist-lib/chart.d.ts',
+  // F3 (Bloco 6): o editor tem DUAS variantes e as duas precisam ir ao pacote; sem o `.web.js` o
+  // Metro web do consumidor cai no arquivo nativo, que exige o WebView (B3 do parecer do Opus).
+  'dist-lib/rich-text-editor.js',
+  'dist-lib/rich-text-editor.d.ts',
+  'dist-lib/components/ui/rich-text-editor.js',
+  'dist-lib/components/ui/rich-text-editor.web.js',
+  // F3 (Bloco 7): mesma regra das duas variantes para o visualizador de documentos.
+  'dist-lib/document-viewer.js',
+  'dist-lib/document-viewer.d.ts',
+  'dist-lib/components/ui/document-viewer.js',
+  'dist-lib/components/ui/document-viewer.web.js',
 ]
 const ARQUIVOS_PROIBIDOS_EXATOS = [
   'dist-lib/brand/index.js',
@@ -178,4 +196,75 @@ export function changelogMissingEntryError(
     return `CHANGELOG.md, entrada [${version}], sem a frase "Simulação dos dois leigos aprovada" (padrão Regra um, item 7).`
   }
   return null
+}
+
+/**
+ * Subcaminhos que `exports` do `package.json` precisa ter (F3, achado B2 do parecer do Opus):
+ * a lista nasce com `./chart` e cada subcaminho novo entra aqui junto do bloco que o cria
+ * (`./rich-text-editor` na Tarefa 6.2, `./document-viewer` na 7.1, ja criados), nunca antes, para nenhuma
+ * versao publicar um subcaminho vazio.
+ */
+export const SUBCAMINHOS_ESPERADOS = [
+  '.',
+  './router-bridge',
+  './fonts',
+  './tailwind-preset',
+  './package.json',
+  './chart',
+  './rich-text-editor',
+  './document-viewer',
+]
+
+export function exportsTemEntradasEsperadas(
+  exportsDoPacote: Record<string, unknown> | undefined,
+  esperados: string[],
+): string | null {
+  if (!exportsDoPacote) return `package.json sem "exports"; esperado: ${esperados.join(', ')}.`
+  const faltando = esperados.filter((entrada) => !(entrada in exportsDoPacote))
+  if (faltando.length === 0) return null
+  return `exports sem as entradas esperadas: ${faltando.join(', ')}.`
+}
+
+/**
+ * Varre um mapa `caminho -> conteudo` (o `dist-lib` real, lido por `scripts/verify-pack.ts`)
+ * atras de `require("<pacote>")` fora da lista exata de arquivos permitidos: molde de
+ * `acharExpoRouterForaDoBridge`, generico para `d3-shape` (so em `chart.js`) e, nos blocos
+ * seguintes, `react-native-webview`/`@10play/tentap-editor`. A lista e de caminhos exatos, sem
+ * curinga: um `.web.js` vizinho do arquivo permitido tambem e acusado (B3 do parecer).
+ */
+export function requireForaDoSubcaminho(
+  arquivosComConteudo: Record<string, string>,
+  nomeDoPacote: string,
+  arquivosPermitidos: string[],
+): string[] {
+  const dupla = `require("${nomeDoPacote}")`
+  const simples = `require('${nomeDoPacote}')`
+  return Object.entries(arquivosComConteudo)
+    .filter(([arquivo, conteudo]) => !arquivosPermitidos.includes(arquivo) && (conteudo.includes(dupla) || conteudo.includes(simples)))
+    .map(([arquivo]) => arquivo)
+}
+
+/**
+ * Quem pode exigir cada pacote pesado de subcaminho (F3, `requireForaDoSubcaminho`): lista exata
+ * de arquivos do `dist-lib`, sem curinga. O `.web.js` do editor fica de fora de proposito: ele e
+ * o fallback do navegador e nunca pode carregar `react-native-webview` nem o tentap (B3 do parecer
+ * do Opus). `./document-viewer` (Tarefa 7.1) entra na lista do `react-native-webview`, so no arquivo nativo.
+ */
+export const PACOTES_DE_SUBCAMINHO: Record<string, string[]> = {
+  'd3-shape': ['dist-lib/components/ui/chart.js'],
+  'react-native-webview': ['dist-lib/components/ui/rich-text-editor.js', 'dist-lib/components/ui/document-viewer.js'],
+  '@10play/tentap-editor': ['dist-lib/components/ui/rich-text-editor.js'],
+}
+
+/**
+ * Bundle web exportado (`expo export --platform web`) que carregou o WebView nativo ou o tentap:
+ * prova de que o Metro resolveu `rich-text-editor.tsx` em vez do `.web.tsx` (F3, B3 do parecer).
+ * Recebe um mapa `caminho -> conteudo`. `RNCWebView` e o nome do modulo nativo; a mencao textual
+ * a `react-native-webview` vem do `@expo/dom-webview` (recurso do Expo Router) e nao conta.
+ */
+export function bundleWebComPacoteNativo(arquivosComConteudo: Record<string, string>): string[] {
+  const marcas = ['RNCWebView', '10play', 'tiptap']
+  return Object.entries(arquivosComConteudo)
+    .filter(([, conteudo]) => marcas.some((marca) => conteudo.includes(marca)))
+    .map(([arquivo]) => arquivo)
 }

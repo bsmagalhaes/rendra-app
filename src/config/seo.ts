@@ -27,19 +27,21 @@ export const SEO_GROUPS = [
   { slug: 'feedback', title: 'Feedback' },
   { slug: 'exibicao', title: 'Exibição' },
   { slug: 'layout', title: 'Layout' },
+  { slug: 'dados', title: 'Dados' },
+  { slug: 'planejamento', title: 'Planejamento' },
 ] as const
 
 const rotasFixas: RouteSeo[] = [
   {
     path: '/',
     title: `${siteSeo.productName}`,
-    description: 'Design system e boilerplate mobile do Rendra, com 49 componentes de UI, tokens em três camadas e três modelos de marca, em React Native e Expo.',
+    description: 'Design system e boilerplate mobile do Rendra, com 57 componentes de UI, tokens em três camadas e três modelos de marca, em React Native e Expo.',
     indexable: true,
   },
   {
     path: '/componentes',
     title: `Componentes · ${siteSeo.productName}`,
-    description: 'Vitrine dos componentes de UI do Rendra App, organizados por ações, formulário, feedback, exibição e layout.',
+    description: 'Vitrine dos componentes de UI do Rendra App, organizados por ações, formulário, feedback, exibição, layout, dados e planejamento.',
     indexable: true,
   },
   {
@@ -94,6 +96,24 @@ const rotasFixas: RouteSeo[] = [
     path: '/tarefas',
     title: `Tarefas · ${siteSeo.productName}`,
     description: 'Tarefas de exemplo do Rendra App, com busca, seleção de várias linhas, prioridade, prazo e conclusão em massa.',
+    indexable: true,
+  },
+  {
+    path: '/atendimento',
+    title: `Atendimento · ${siteSeo.productName}`,
+    description: 'Atendimento de exemplo do Rendra App, com conversas por etapa, busca, filtro por canal, chat completo e assumir da fila.',
+    indexable: true,
+  },
+  {
+    path: '/agenda',
+    title: `Agenda · ${siteSeo.productName}`,
+    description: 'Agenda de exemplo do Rendra App, com calendário em mês, dia e lista, detalhe do evento e criação de novos compromissos.',
+    indexable: true,
+  },
+  {
+    path: '/kanban',
+    title: `Funil comercial · ${siteSeo.productName}`,
+    description: 'Funil comercial de exemplo do Rendra App, com cards por etapa, totais de P&S e MRR, alerta de limite e mover pelo menu.',
     indexable: true,
   },
   {

@@ -166,7 +166,7 @@ npm run test:layout    # Playwright, layout e toque
 npm run test:a11y      # Playwright + axe, WCAG 2.1 AA
 npm run test:site      # Playwright, a página de apresentação (raiz do Pages): SEO, iframe, links e axe
 npm run test:demo      # Playwright, a demo em /demo/: prefixo mantido ao navegar e ao voltar
-npm run docs:images    # capturas de celular do README e da página, e og-image.png (rode npm run build antes)
+npm run docs:images    # capturas de celular do README e da página (WebP otimizado), e og-image.png (rode npm run build antes)
 npm run docs:images:check # confere que toda captura é de celular e a og-image tem 1200x630
 ```
 

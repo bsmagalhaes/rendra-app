@@ -2,6 +2,12 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
+## [Não lançado]
+
+### Alterado
+
+- Capturas de `docs/images` agora em WebP otimizado (o menor entre sem perda e com perda, com alfa preservado), referenciadas em `docs/index.html`, na galeria `?imagem=` e no `README.md`; `docs/og-image.png` continua PNG, recomprimido sem perda. `npm run docs:images` grava nesses formatos (novo `devDependency` `sharp`) e `docs:images:check` lê o tamanho de WebP.
+
 ## [1.3.0] - 02/10/2026
 
 Versão aditiva sobre a 1.2.0: 64 componentes de UI, com os sete da Sincronização 2. Mudança só aditiva: nenhuma API pública existente foi removida, renomeada ou teve a assinatura alterada.

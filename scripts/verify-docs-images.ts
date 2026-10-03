@@ -6,12 +6,12 @@ const { existsSync, readdirSync, readFileSync } = require('fs') as {
 }
 const { join } = require('path') as { join: (...partes: string[]) => string }
 
-import { imagensForaDoPadrao, readPngSize } from './lib/docs-images-check'
+import { imagensForaDoPadrao, readImageSize } from './lib/docs-images-check'
 import type { ImagemNomeada } from './lib/docs-images-check'
 
 /**
  * Confere o tamanho de toda imagem gerada por `npm run docs:images`: capturas de celular em pé
- * (`docs/images/*.png`) e a `og-image.png` em 1200x630 (`docs/og-image.png` e `public/og-image.png`).
+ * (`docs/images/*.webp`) e a `og-image.png` em 1200x630 (`docs/og-image.png` e `public/og-image.png`).
  * Sai com código 1 se alguma imagem larga sobrar ou se uma `og-image.png` faltar.
  */
 function main(): void {
@@ -19,8 +19,8 @@ function main(): void {
   const dirImagens = join(raiz, 'docs', 'images')
   const arquivos: ImagemNomeada[] = existsSync(dirImagens)
     ? readdirSync(dirImagens)
-        .filter((nome) => nome.endsWith('.png'))
-        .map((nome) => ({ nome, png: readFileSync(join(dirImagens, nome)) }))
+        .filter((nome) => nome.endsWith('.webp'))
+        .map((nome) => ({ nome, bytes: readFileSync(join(dirImagens, nome)) }))
     : []
   // A og-image existe em duas cópias iguais: a da página (docs/) e a da demo (public/). Ambas em 1200x630.
   for (const relativo of ['docs/og-image.png', 'public/og-image.png']) {
@@ -29,11 +29,11 @@ function main(): void {
       console.error(`verify-docs-images: ${relativo} ausente`)
       process.exit(1)
     }
-    arquivos.push({ nome: 'og-image.png', png: readFileSync(caminho) })
+    arquivos.push({ nome: 'og-image.png', bytes: readFileSync(caminho) })
   }
 
-  for (const { nome, png } of arquivos) {
-    const { width, height } = readPngSize(png)
+  for (const { nome, bytes } of arquivos) {
+    const { width, height } = readImageSize(bytes)
     console.log(`${nome} ${width}x${height}`)
   }
   const fora = imagensForaDoPadrao(arquivos)

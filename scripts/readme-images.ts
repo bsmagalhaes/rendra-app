@@ -4,7 +4,7 @@ const { chromium } = require('@playwright/test') as typeof import('@playwright/t
 const { spawn } = require('child_process') as {
   spawn: (cmd: string, args: string[], opts: { stdio: 'ignore' }) => { kill: () => void }
 }
-const { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync } = require('fs') as {
+const { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } = require('fs') as {
   copyFileSync: (de: string, para: string) => void
   mkdirSync: (path: string, options: { recursive: boolean }) => void
   readdirSync: (path: string) => string[]
@@ -13,10 +13,12 @@ const { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync } = require('
     (path: string): Uint8Array
   }
   rmSync: (path: string, options: { force: boolean }) => void
+  writeFileSync: (path: string, dados: Uint8Array) => void
 }
 const { join } = require('path') as { join: (...parts: string[]) => string }
 
 import { imagensForaDoPadrao } from './lib/docs-images-check'
+import { otimizarParaWebp, otimizarPng } from './lib/image-optimize'
 import { buildOgHtml } from './lib/og-html'
 import { buildPhoneFrameHtml } from './lib/phone-frame'
 import { ALTURA_STATUS, CAPTURAS, SCALE_CELULAR, VIEWPORT_CELULAR } from './lib/readme-images-list'
@@ -66,9 +68,9 @@ async function main(): Promise<void> {
 
   // Só o que está em CAPTURAS fica em docs/images: as imagens antigas (por exemplo as de 1920x1080)
   // somem antes de gerar.
-  const nomesAtuais = new Set(CAPTURAS.map((c) => `${c.nome}.png`))
+  const nomesAtuais = new Set(CAPTURAS.map((c) => `${c.nome}.webp`))
   for (const arquivo of readdirSync(destino)) {
-    if (arquivo.endsWith('.png') && !nomesAtuais.has(arquivo)) rmSync(join(destino, arquivo), { force: true })
+    if (!nomesAtuais.has(arquivo)) rmSync(join(destino, arquivo), { force: true })
   }
 
   // Spawna o entrypoint do `serve` direto com `process.execPath` (node), sem `shell: true`: no
@@ -121,7 +123,9 @@ async function main(): Promise<void> {
 
       await paginaMoldura.setContent(buildPhoneFrameHtml(tela, corStatus))
       await paginaMoldura.locator('.phone img').evaluate((img) => (img as HTMLImageElement).decode())
-      await paginaMoldura.locator('.phone').screenshot({ omitBackground: true, path: join(destino, `${captura.nome}.png`) })
+      // Padrão 6.2 e regra 9 do guarda-chuva: imagem de página e README em WebP otimizado (o menor entre sem perda e com perda).
+      const comMoldura = await paginaMoldura.locator('.phone').screenshot({ omitBackground: true })
+      writeFileSync(join(destino, `${captura.nome}.webp`), await otimizarParaWebp(comMoldura))
     }
     await contextoMoldura.close()
 
@@ -139,7 +143,8 @@ async function main(): Promise<void> {
       }),
     )
     const ogDocs = join(process.cwd(), 'docs', 'og-image.png')
-    await paginaOg.screenshot({ path: ogDocs })
+    // A og-image continua PNG (rastreadores sociais), só recomprimida sem perda.
+    writeFileSync(ogDocs, await otimizarPng(await paginaOg.screenshot()))
     await contextoOg.close()
     copyFileSync(ogDocs, join(destinoPublic, 'og-image.png'))
 
@@ -147,8 +152,8 @@ async function main(): Promise<void> {
 
     // Falha se sobrar imagem larga (a mesma checagem de `npm run docs:images:check`).
     const gravadas = readdirSync(destino)
-      .filter((arquivo) => arquivo.endsWith('.png'))
-      .map((arquivo) => ({ nome: arquivo, png: readFileSync(join(destino, arquivo)) }))
+      .filter((arquivo) => arquivo.endsWith('.webp'))
+      .map((arquivo) => ({ nome: arquivo, bytes: readFileSync(join(destino, arquivo)) }))
     const fora = imagensForaDoPadrao(gravadas)
     if (fora.length > 0) throw new Error(`readme-images: imagem larga fora do padrão de celular: ${fora.join(', ')}`)
     console.log(`readme-images: ${CAPTURAS.length} capturas gravadas em ${destino}, og-image.png em ${destinoPublic}`)

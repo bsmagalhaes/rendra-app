@@ -27,13 +27,13 @@ Página de apresentação: [`https://bsmagalhaes.github.io/rendra-ui-app/`](http
 Telas de celular (390 px, com moldura de aparelho), geradas por script a partir do app real. Toque numa imagem para vê-la ampliada na página de apresentação.
 
 <p align="center">
-  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-home-mobile"><img src="docs/images/safira-home-mobile.png" alt="Início, modelo Safira" width="200"></a>
-  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-componentes-mobile"><img src="docs/images/safira-componentes-mobile.png" alt="Vitrine de componentes, modelo Safira" width="200"></a>
-  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=aurora-escuro-mobile"><img src="docs/images/aurora-escuro-mobile.png" alt="Vitrine de componentes em modo escuro, modelo Aurora" width="200"></a>
-  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=equilibrio-painel-mobile"><img src="docs/images/equilibrio-painel-mobile.png" alt="Painel, modelo Equilíbrio" width="200"></a>
-  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-atendimento-mobile"><img src="docs/images/safira-atendimento-mobile.png" alt="Atendimento: chat completo com histórico, anexo e reações" width="200"></a>
-  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=equilibrio-agenda-mobile"><img src="docs/images/equilibrio-agenda-mobile.png" alt="Agenda: calendário com os compromissos do dia" width="200"></a>
-  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=aurora-funil-mobile"><img src="docs/images/aurora-funil-mobile.png" alt="Funil comercial: quadro de negócios com P&amp;S e MRR por coluna" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-home-mobile"><img src="docs/images/safira-home-mobile.webp" alt="Início, modelo Safira" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-componentes-mobile"><img src="docs/images/safira-componentes-mobile.webp" alt="Vitrine de componentes, modelo Safira" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=aurora-escuro-mobile"><img src="docs/images/aurora-escuro-mobile.webp" alt="Vitrine de componentes em modo escuro, modelo Aurora" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=equilibrio-painel-mobile"><img src="docs/images/equilibrio-painel-mobile.webp" alt="Painel, modelo Equilíbrio" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=safira-atendimento-mobile"><img src="docs/images/safira-atendimento-mobile.webp" alt="Atendimento: chat completo com histórico, anexo e reações" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=equilibrio-agenda-mobile"><img src="docs/images/equilibrio-agenda-mobile.webp" alt="Agenda: calendário com os compromissos do dia" width="200"></a>
+  <a href="https://bsmagalhaes.github.io/rendra-ui-app/?imagem=aurora-funil-mobile"><img src="docs/images/aurora-funil-mobile.webp" alt="Funil comercial: quadro de negócios com P&amp;S e MRR por coluna" width="200"></a>
 </p>
 
 ## O que é
@@ -175,7 +175,7 @@ npm run test:layout    # Playwright, layout e toque
 npm run test:a11y      # Playwright + axe, WCAG 2.1 AA
 npm run test:site      # Playwright, a página de apresentação (SEO, iframe, links, axe)
 npm run test:demo      # Playwright, a demo em /demo/ (prefixo mantido ao navegar e ao voltar)
-npm run docs:images    # capturas de celular do README e da página, e a og-image.png (rode npm run build antes)
+npm run docs:images    # capturas de celular do README e da página (WebP otimizado), e a og-image.png (rode npm run build antes)
 npm run docs:images:check # confere que toda captura é de celular e a og-image tem 1200x630
 ```
 

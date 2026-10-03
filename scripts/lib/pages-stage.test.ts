@@ -29,7 +29,7 @@ function arranjo() {
   writeFileSync(join(dist, 'sitemap.xml'), SITEMAP_DEMO)
   writeFileSync(join(dist, '_expo', 'app.js'), 'x')
   mkdirSync(join(docs, 'images'), { recursive: true })
-  writeFileSync(join(docs, 'images', 'safira-home-mobile.png'), 'png')
+  writeFileSync(join(docs, 'images', 'safira-home-mobile.webp'), 'webp')
   for (const nome of ARQUIVOS) writeFileSync(join(docs, nome), `raiz:${nome}`)
   return { dist, docs, out: join(raiz, '.pages', 'rendra-ui-app') }
 }
@@ -47,7 +47,7 @@ describe('stagePages', () => {
     expect(readFileSync(join(a.out, 'phone.css'), 'utf8')).toBe('raiz:phone.css')
     expect(readFileSync(join(a.out, 'demo', 'index.html'), 'utf8')).toBe('<html>demo</html>')
     expect(existsSync(join(a.out, 'demo', '_expo', 'app.js'))).toBe(true)
-    expect(existsSync(join(a.out, 'images', 'safira-home-mobile.png'))).toBe(true)
+    expect(existsSync(join(a.out, 'images', 'safira-home-mobile.webp'))).toBe(true)
   })
 
   it('o 404 da raiz é o 404 da demo com o script de desvio; o da demo fica intacto (D6)', () => {
